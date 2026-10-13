@@ -6,7 +6,7 @@ import { formatMoney } from '@/shared/lib/money';
 import { ROUTES } from '@/shared/config/routes';
 import { Badge } from '@/shared/ui/Badge';
 import { useCart } from '@/app/providers/CartProvider';
-import { ShoppingBag, Check, MapPin, Heart } from 'lucide-react';
+import { ShoppingBag, Check, Store, Heart } from 'lucide-react';
 import styles from './ProductCard.module.css';
 
 export interface ProductCardProps {
@@ -90,10 +90,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <Link to={ROUTES.PRODUCT_DETAIL(product.id)}>{product.name}</Link>
         </h3>
 
-        {/* Ubicación y Negocio */}
-        <div className={styles.locationSubtitle}>
-          <MapPin size={13} className={styles.locationIcon} />
-          <span>{business ? business.location : 'Tingo María'}</span>
+        {/* Tienda que publica el producto */}
+        <div className={styles.storeSubtitle} title={`Tienda: ${business ? business.name : 'Tienda JUÁCIL'}`}>
+          <Store size={13} className={styles.storeIcon} />
+          <span>{business ? business.name : 'Tienda JUÁCIL'}</span>
         </div>
 
         {errorMessage && (

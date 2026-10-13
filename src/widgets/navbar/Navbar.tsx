@@ -16,12 +16,13 @@ import {
   Sparkles,
   Tag,
   Package,
+  MapPin,
 } from 'lucide-react';
 import { useCart } from '@/app/providers/CartProvider';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useConnectivity } from '@/app/providers/ConnectivityProvider';
 import { ROUTES } from '@/shared/config/routes';
-import { CATEGORIES } from '@/shared/config/constants';
+import { CATEGORIES, LOCATIONS } from '@/shared/config/constants';
 import { CategoryMegaOverlay } from './CategoryMegaOverlay';
 import styles from './Navbar.module.css';
 
@@ -32,7 +33,9 @@ export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesModalOpen, setCategoriesModalOpen] = useState(false);
   const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
+  const [locationsDropdownOpen, setLocationsDropdownOpen] = useState(false);
   const dropdownTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const locationsTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const navigate = useNavigate();
 
@@ -50,9 +53,24 @@ export const Navbar: React.FC = () => {
     }, 120);
   };
 
+  const handleLocationsMouseEnter = () => {
+    if (locationsTimeoutRef.current) {
+      clearTimeout(locationsTimeoutRef.current);
+      locationsTimeoutRef.current = null;
+    }
+    setLocationsDropdownOpen(true);
+  };
+
+  const handleLocationsMouseLeave = () => {
+    locationsTimeoutRef.current = setTimeout(() => {
+      setLocationsDropdownOpen(false);
+    }, 120);
+  };
+
   useEffect(() => {
     return () => {
       if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+      if (locationsTimeoutRef.current) clearTimeout(locationsTimeoutRef.current);
     };
   }, []);
 
@@ -323,12 +341,58 @@ export const Navbar: React.FC = () => {
                 <Store size={14} /> Tiendas & MYPES
               </NavLink>
 
-              <NavLink
-                to={`${ROUTES.CATALOG}?ubicacion=Tingo%20Mar%C3%ADa`}
-                className={styles.promotionsBadge}
+              {/* Menú Desplegable de Lugares / Zonas estilo Mercado Libre (hover dropdown vertical de fondo negro) */}
+              <div
+                className={styles.categoriesDropdownContainer}
+                onMouseEnter={handleLocationsMouseEnter}
+                onMouseLeave={handleLocationsMouseLeave}
               >
-                <Sparkles size={13} /> TINGO MARÍA
-              </NavLink>
+                <button
+                  type="button"
+                  className={`${styles.categoriesNavButton} ${locationsDropdownOpen ? styles.categoriesNavButtonActive : ''}`}
+                  onClick={() => setLocationsDropdownOpen((prev) => !prev)}
+                  aria-expanded={locationsDropdownOpen}
+                  aria-haspopup="true"
+                  aria-label="Lugares y Zonas"
+                >
+                  <MapPin size={14} style={{ color: '#16a34a' }} /> Lugares <ChevronDown size={14} className={`${styles.chevronIcon} ${locationsDropdownOpen ? styles.chevronIconRotated : ''}`} />
+                </button>
+
+                {locationsDropdownOpen && (
+                  <div className={styles.mercadoLibreMenu} role="menu" style={{ width: '280px' }}>
+                    <div className={styles.mercadoLibreArrow} />
+                    <div className={styles.mercadoLibreList}>
+                      {LOCATIONS.map((loc) => (
+                        <button
+                          key={loc}
+                          type="button"
+                          className={styles.mercadoLibreItem}
+                          onClick={() => {
+                            navigate(`${ROUTES.CATALOG}?ubicacion=${encodeURIComponent(loc)}`);
+                            setLocationsDropdownOpen(false);
+                          }}
+                          role="menuitem"
+                        >
+                          <span className={styles.mercadoLibreItemName}>📍 {loc}</span>
+                          <ChevronRight size={14} className={styles.mercadoLibreItemArrow} />
+                        </button>
+                      ))}
+                    </div>
+                    <div className={styles.mercadoLibreFooter}>
+                      <button
+                        type="button"
+                        className={styles.mercadoLibreFooterBtn}
+                        onClick={() => {
+                          navigate(`${ROUTES.CATALOG}?ubicacion=Tingo%20Mar%C3%ADa`);
+                          setLocationsDropdownOpen(false);
+                        }}
+                      >
+                        Ver todas las zonas de Tingo María ›
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </nav>
 
             <div className={styles.subNavRightLinks}>

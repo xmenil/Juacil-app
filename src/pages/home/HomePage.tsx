@@ -16,13 +16,6 @@ import {
   ShoppingBag,
   CheckCircle2,
   ShoppingCart,
-  ShoppingBasket,
-  Sparkles,
-  Coffee,
-  Sun,
-  Apple,
-  Wine,
-  Feather,
 } from 'lucide-react';
 import styles from './HomePage.module.css';
 
@@ -57,10 +50,6 @@ export const HomePage: React.FC = () => {
   const featuredProducts = allProducts.slice(0, 8);
   const businesses = LocalStoreRepository.getBusinesses();
 
-  const handleQuickLocation = (loc: string) => {
-    navigate(`${ROUTES.CATALOG}?ubicacion=${encodeURIComponent(loc)}`);
-  };
-
   const handleFloatingWhatsApp = () => {
     const text = encodeURIComponent(
       '¡Hola JUÁCIL! Quisiera consultar sobre productos y envíos desde Tingo María y la Selva Central.'
@@ -74,63 +63,63 @@ export const HomePage: React.FC = () => {
       title: 'Abarrotes & Canasta Básica',
       badge: 'Esencial',
       description: 'Arroz, azúcar, aceites, fideos, menestras y conservas familiares y mayoristas.',
-      icon: <ShoppingBasket size={22} />,
+      imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80',
     },
     {
       id: 'hogar',
       title: 'Hogar, Papelería & Limpieza',
       badge: 'Empresas & Hogar',
       description: 'Papel higiénico, servilletas, detergentes, lejía y útiles de aseo.',
-      icon: <Sparkles size={22} />,
+      imageUrl: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=300&q=80',
     },
     {
       id: 'cafe',
       title: 'Café de Especialidad & Altura',
       badge: '84+ Puntos',
       description: 'Cafés de altura del Monzón y Castillo Grande, molido y grano tostado.',
-      icon: <Coffee size={22} />,
+      imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=300&q=80',
     },
     {
       id: 'cacao',
       title: 'Cacao, Chocolate & Confitería',
       badge: 'Cacao Nativo',
       description: 'Tabletas al 70%, pasta pura tradicional y nibs crocantes.',
-      icon: <Sparkles size={22} />,
+      imageUrl: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=300&q=80',
     },
     {
       id: 'miel',
       title: 'Miel Pura & Apicultura',
       badge: '100% Virgen',
       description: 'Miel de monte de la Bella Durmiente, propóleo silvestre y polen puro.',
-      icon: <Sun size={22} />,
+      imageUrl: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?auto=format&fit=crop&w=300&q=80',
     },
     {
       id: 'frutas',
       title: 'Frutas, Chifles & Snacks',
       badge: 'Crocantes',
       description: 'Chifles de plátano bellaco de Castillo Grande, frutas secas y snacks.',
-      icon: <Apple size={22} />,
+      imageUrl: 'https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=300&q=80',
     },
     {
       id: 'licores',
       title: 'Bebidas & Licores Amazónicos',
       badge: 'Tradicional',
       description: 'Uvachado, 7 Raíces, chuchuhuasi y macerados típicos de Tingo María.',
-      icon: <Wine size={22} />,
+      imageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=300&q=80',
     },
     {
       id: 'artesania',
       title: 'Artesanías & Cultura Amazónica',
       badge: 'Hecho a Mano',
       description: 'Tallados en madera noble, huayruro y recuerdos emblemáticos de la selva.',
-      icon: <Feather size={22} />,
+      imageUrl: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=300&q=80',
     },
     {
       id: 'superfoods',
       title: 'Superfoods & Derivados del Campo',
       badge: 'Nutrición',
       description: 'Sacha inchi, harina de plátano, aguaje y productos naturales de la región.',
-      icon: <ShieldCheck size={22} />,
+      imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=80',
     },
   ];
 
@@ -159,30 +148,29 @@ export const HomePage: React.FC = () => {
         </div>
 
         {/* Centro: Mensaje de Misión y Enfoque de JUÁCIL */}
-        <div className={styles.heroCenterCard}>
+        {/* Centro: Mensaje Integrado sin tarjeta (Captura 1 + Captura 2) */}
+        <div className={styles.heroIntegratedContent}>
           <div className={styles.heroEyebrowTag}>
-            <ShoppingBag size={14} /> MERCADO ONLINE INTEGRAL • TINGO MARÍA & SELVA CENTRAL
+            <ShoppingBag size={13} /> MERCADO ONLINE • TINGO MARÍA & SELVA CENTRAL
           </div>
 
-          <h1 id="hero-heading" className={styles.heroMainTitle}>
-            ¡En JUÁCIL encuentras absolutamente de todo!
+          <h1 id="hero-heading" className={styles.heroIntegratedTitle}>
+            Todo para tu <span className={styles.heroHighlightUnderline}>hogar</span> y <span className={styles.heroHighlightUnderline}>negocio</span>.
           </h1>
 
-          <p className={styles.heroMissionText}>
-            Tu plataforma comercial para pequeñas y grandes empresas: desde la canasta básica familiar con arroz,
-            papel higiénico, abarrotes y artículos para el hogar, hasta los cafés de especialidad, cacao nativo,
-            miel pura y artesanías emblemáticas de la Amazonía. Compra fácil al por menor o mayor con entrega directa y segura.
+          <p className={styles.heroIntegratedSubtitle}>
+            Compra fácil en las tiendas de Tingo María y la Selva Central. Canasta básica familiar, abarrotes y productos locales.
           </p>
 
           <div className={styles.heroActionsRow}>
             <Link to={ROUTES.CATALOG} className={styles.heroBtnPrimary}>
-              <ShoppingCart size={16} /> Explorar Catálogo
+              <ShoppingCart size={16} /> Ver catálogo
             </Link>
             <Link to={`${ROUTES.CATALOG}?categoria=abarrotes`} className={styles.heroBtnSecondary}>
               <ShoppingBag size={15} /> Abarrotes & Canasta
             </Link>
-            <Link to={ROUTES.REGISTER_BUSINESS} className={styles.heroBtnOutline}>
-              <Store size={15} /> Vender como Tienda / MYPE
+            <Link to={ROUTES.REGISTER_BUSINESS} className={styles.heroLinkSell}>
+              Vende en JUÁCIL <ArrowRight size={16} />
             </Link>
           </div>
 
@@ -245,57 +233,8 @@ export const HomePage: React.FC = () => {
           </Link>
         </div>
 
-        {/* 3. Chips de Ubicaciones Territoriales de Tingo María y Alrededores */}
-        <section className={styles.searchSection} aria-label="Zonas de Tingo María">
-          <div className={styles.locationChipsRow}>
-            <span className={styles.locationChipLabel}>Zonas destacadas:</span>
-            <button
-              type="button"
-              className={styles.locationChip}
-              onClick={() => handleQuickLocation('Tingo María (Centro / Rupa-Rupa)')}
-            >
-              📍 Tingo María Centro
-            </button>
-            <button
-              type="button"
-              className={styles.locationChip}
-              onClick={() => handleQuickLocation('Castillo Grande')}
-            >
-              📍 Castillo Grande
-            </button>
-            <button
-              type="button"
-              className={styles.locationChip}
-              onClick={() => handleQuickLocation('Valle del Monzón')}
-            >
-              📍 Valle del Monzón
-            </button>
-            <button
-              type="button"
-              className={styles.locationChip}
-              onClick={() => handleQuickLocation('Naranjillo / Luyando')}
-            >
-              📍 Naranjillo / Luyando
-            </button>
-            <button
-              type="button"
-              className={styles.locationChip}
-              onClick={() => handleQuickLocation('Mariano Dámaso Beraún / Las Palmas')}
-            >
-              📍 Las Palmas
-            </button>
-            <button
-              type="button"
-              className={styles.locationChip}
-              onClick={() => handleQuickLocation('Aucayacu')}
-            >
-              📍 Aucayacu
-            </button>
-          </div>
-        </section>
-
-        {/* 4. Sección "Explora por categoría" */}
-        <section className={styles.sectionBlock} aria-labelledby="categories-heading">
+        {/* 3. Sección "Explora por categoría" - Fondo Claro Diferenciado con Fotos */}
+        <section className={styles.sectionCategoriesCard} aria-labelledby="categories-heading">
           <div className={styles.sectionHeaderRow}>
             <h2 id="categories-heading" className={styles.sectionHeading}>
               Explora por categoría
@@ -315,9 +254,16 @@ export const HomePage: React.FC = () => {
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && navigate(`${ROUTES.CATALOG}?categoria=${cat.id}`)}
               >
-                <div className={styles.categoryCardIconBox}>
-                  {cat.icon}
-                </div>
+                <img
+                  src={cat.imageUrl}
+                  alt={cat.title}
+                  className={styles.categoryCardThumb}
+                  loading="lazy"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80';
+                  }}
+                />
                 <div className={styles.categoryCardBody}>
                   <div className={styles.categoryCardHeader}>
                     <h3 className={styles.categoryCardTitle}>{cat.title}</h3>
@@ -330,8 +276,8 @@ export const HomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* 5. Sección "Productos destacados" */}
-        <section className={styles.sectionBlock} aria-labelledby="featured-products-heading">
+        {/* 4. Sección "Productos destacados" - Fondo Claro Diferenciado */}
+        <section className={styles.sectionProductsCard} aria-labelledby="featured-products-heading">
           <div className={styles.sectionHeaderRow}>
             <h2 id="featured-products-heading" className={styles.sectionHeading}>
               Productos destacados
@@ -348,8 +294,8 @@ export const HomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* 6. Emprendimientos y MYPES de la Región */}
-        <section className={styles.sectionBlock} aria-labelledby="businesses-heading" style={{ marginTop: '20px' }}>
+        {/* 5. Emprendimientos y MYPES de la Región - Fondo Claro Diferenciado */}
+        <section className={styles.sectionBusinessesCard} aria-labelledby="businesses-heading">
           <div className={styles.sectionHeaderRow}>
             <h2 id="businesses-heading" className={styles.sectionHeading}>
               Emprendimientos de la Selva Central

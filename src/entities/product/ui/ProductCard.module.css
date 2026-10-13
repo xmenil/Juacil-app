@@ -100,20 +100,21 @@
   color: #135d38;
 }
 
-.locationSubtitle {
+.storeSubtitle {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   font-size: 12px;
-  color: #6b7280;
-  margin-bottom: 14px;
+  font-weight: 600;
+  color: #135d38;
+  margin-bottom: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.locationIcon {
-  color: #9ca3af;
+.storeIcon {
+  color: #16a34a;
   flex-shrink: 0;
 }
 
