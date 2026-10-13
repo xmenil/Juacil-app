@@ -104,7 +104,76 @@
 
 /* 2. Banner Principal con Verde de Fondo en las Letras e Imagen a la Derecha */
 .heroBannerSection {
-  padding: 12px 0 28px;
+  padding: 12px 0 24px;
+}
+
+.carouselWrapper {
+  position: relative;
+}
+
+.sliderNavBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.92);
+  color: #15803d;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sliderNavBtn:hover {
+  background-color: #ffffff;
+  color: #166534;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.sliderNavBtnLeft {
+  left: 14px;
+}
+
+.sliderNavBtnRight {
+  right: 14px;
+}
+
+.sliderDotsRow {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.35);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  backdrop-filter: blur(4px);
+}
+
+.sliderDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.sliderDotActive {
+  background-color: #84cc16;
+  width: 24px;
+  border-radius: 9999px;
 }
 
 .heroBannerCard {
@@ -116,12 +185,129 @@
   box-shadow: 0 10px 25px -5px rgba(7, 53, 26, 0.25);
   border: 1px solid rgba(132, 204, 22, 0.2);
   position: relative;
+  min-height: 380px;
 }
 
 @media (min-width: 900px) {
   .heroBannerCard {
     grid-template-columns: 1.15fr 0.85fr;
   }
+}
+
+/* Barra de Promociones con Contador Regresivo estilo Organa */
+.promoCountdownBar {
+  background: linear-gradient(90deg, #16a34a 0%, #15803d 100%);
+  border-radius: 16px;
+  padding: 16px 24px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.2);
+}
+
+.promoBarTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.promoBarTitle {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.promoTimeTag {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.countdownBlocks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.countdownUnit {
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  border-radius: 8px;
+  padding: 6px 12px;
+  min-width: 50px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.countdownVal {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.countdownLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  opacity: 0.85;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.promoButtonLink {
+  background-color: #ffffff;
+  color: #15803d;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.promoButtonLink:hover {
+  background-color: #f0fdf4;
+  transform: translateY(-1px);
+}
+
+/* Botón Flotante de WhatsApp en la esquina inferior derecha */
+.floatingWhatsApp {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.45);
+  cursor: pointer;
+  z-index: 50;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: none;
+}
+
+.floatingWhatsApp:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
 }
 
 .heroBannerText {

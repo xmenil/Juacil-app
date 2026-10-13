@@ -1,19 +1,49 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Menu, X, LayoutDashboard, UserCheck, Store, WifiOff } from 'lucide-react';
+import {
+  ShoppingBag,
+  Search,
+  MessageCircle,
+  Truck,
+  User,
+  Heart,
+  Store,
+  Menu,
+  X,
+  WifiOff,
+  ChevronDown,
+  Sparkles,
+} from 'lucide-react';
 import { useCart } from '@/app/providers/CartProvider';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useConnectivity } from '@/app/providers/ConnectivityProvider';
 import { ROUTES } from '@/shared/config/routes';
-import { Button } from '@/shared/ui/Button';
 import styles from './Navbar.module.css';
 
 export const Navbar: React.FC = () => {
   const { itemCount } = useCart();
-  const { currentUser, isMerchant, isClient, logout } = useSession();
+  const { currentUser, isMerchant, logout } = useSession();
   const { isOnline } = useConnectivity();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const navigate = useNavigate();
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (headerSearchQuery.trim()) {
+      navigate(`${ROUTES.CATALOG}?q=${encodeURIComponent(headerSearchQuery.trim())}`);
+    } else {
+      navigate(ROUTES.CATALOG);
+    }
+    setMobileMenuOpen(false);
+  };
+
+  const handleWhatsAppContact = () => {
+    const text = encodeURIComponent(
+      '¡Hola JUÁCIL! Quisiera más información sobre los productos y tiendas de Tingo María y la Selva Central.'
+    );
+    window.open(`https://wa.me/51962881234?text=${text}`, '_blank');
+  };
 
   const handleLogout = () => {
     logout();
@@ -23,6 +53,11 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
+      {/* 1. Cintillo Superior Verde */}
+      <div className={styles.topAnnouncementBar}>
+        <span>🚚 ✨ Envíos directos desde Tingo María y Selva Central. ¡Apoya a las MYPES locales y compra fácil! 💚</span>
+      </div>
+
       {!isOnline && (
         <div className={styles.offlineBanner} role="status">
           <WifiOff size={16} />
@@ -33,13 +68,14 @@ export const Navbar: React.FC = () => {
         </div>
       )}
 
-      <header className={styles.navbar}>
-        <div className={`container ${styles.inner}`}>
+      {/* 2. Cabecera Principal con Logo, Buscador y Contacto */}
+      <header className={styles.mainHeader}>
+        <div className={`container ${styles.mainHeaderInner}`}>
           {/* Logo y Marca */}
           <Link to={ROUTES.HOME} className={styles.brand} aria-label="Ir a inicio de JUÁCIL">
             <img
               src="/images/juacil-logo.png"
-              alt="Logo oficial JUÁCIL - Bolsa con vegetación y montañas de la Selva"
+              alt="Logo oficial JUÁCIL - Tu tienda online de la Selva Central"
               className={styles.logoImg}
             />
             <div className={styles.brandText}>
@@ -48,179 +84,252 @@ export const Navbar: React.FC = () => {
             </div>
           </Link>
 
-          {/* Enlaces de Navegación de Escritorio */}
-          <nav className={styles.navLinks} aria-label="Navegación principal">
-            <NavLink
-              to={ROUTES.HOME}
-              className={({ isActive }) =>
-                [styles.navLink, isActive ? styles.navLinkActive : ''].join(' ')
-              }
-              end
-            >
-              Inicio
-            </NavLink>
-            <NavLink
-              to={ROUTES.CATALOG}
-              className={({ isActive }) =>
-                [styles.navLink, isActive ? styles.navLinkActive : ''].join(' ')
-              }
-            >
-              Catálogo de la Selva
-            </NavLink>
-            <NavLink
-              to={ROUTES.HELP}
-              className={({ isActive }) =>
-                [styles.navLink, isActive ? styles.navLinkActive : ''].join(' ')
-              }
-            >
-              Ayuda & Validación
-            </NavLink>
+          {/* Buscador Central */}
+          <div className={styles.searchContainer}>
+            <form className={styles.searchForm} onSubmit={handleSearchSubmit}>
+              <input
+                type="text"
+                className={styles.searchInput}
+                placeholder="¿Qué estás buscando hoy en Tingo María y la Selva?"
+                value={headerSearchQuery}
+                onChange={(e) => setHeaderSearchQuery(e.target.value)}
+                aria-label="Buscar productos"
+              />
+              <button type="submit" className={styles.searchButton} aria-label="Ejecutar búsqueda">
+                <Search size={18} />
+              </button>
+            </form>
+          </div>
 
-            {isMerchant && (
-              <NavLink
-                to={ROUTES.MERCHANT_DASHBOARD}
-                className={({ isActive }) =>
-                  [styles.navLink, isActive ? styles.navLinkActive : ''].join(' ')
+          {/* Información de WhatsApp y Envíos */}
+          <div className={styles.headerContactSection}>
+            <div
+              className={styles.contactItem}
+              onClick={handleWhatsAppContact}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && handleWhatsAppContact()}
+              title="Escríbenos a WhatsApp"
+            >
+              <div className={styles.contactIconCircle}>
+                <MessageCircle size={18} />
+              </div>
+              <div className={styles.contactItemText}>
+                <span className={styles.contactItemTitle}>+51 962 881 234</span>
+                <span className={styles.contactItemSub}>Solo WhatsApp • Pedidos MYPE</span>
+              </div>
+            </div>
+
+            <div
+              className={styles.contactItem}
+              onClick={() => navigate(ROUTES.CATALOG)}
+              role="button"
+              tabIndex={0}
+              title="Información de envíos regionales"
+            >
+              <div className={styles.contactIconCircle}>
+                <Truck size={18} />
+              </div>
+              <div className={styles.contactItemText}>
+                <span className={styles.contactItemTitle}>Envíos</span>
+                <span className={styles.contactItemSub}>Tingo María y todo el Perú</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Iconos de Acción del Usuario */}
+          <div className={styles.userActions}>
+            {/* Usuario / Perfil */}
+            {currentUser ? (
+              <button
+                type="button"
+                className={styles.actionIconButton}
+                onClick={() =>
+                  navigate(isMerchant ? ROUTES.MERCHANT_DASHBOARD : ROUTES.CUSTOMER_ORDERS)
                 }
+                title={`Sesión iniciada: ${currentUser.name}`}
+                aria-label="Mi perfil o panel"
               >
-                Panel MYPE
-              </NavLink>
+                <User size={22} />
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={styles.actionIconButton}
+                onClick={() => navigate(ROUTES.LOGIN)}
+                title="Ingresar a mi cuenta"
+                aria-label="Ingresar"
+              >
+                <User size={22} />
+              </button>
             )}
 
-            {isClient && (
-              <NavLink
-                to={ROUTES.CUSTOMER_ORDERS}
-                className={({ isActive }) =>
-                  [styles.navLink, isActive ? styles.navLinkActive : ''].join(' ')
-                }
-              >
-                Mis Pedidos
-              </NavLink>
-            )}
-          </nav>
+            {/* Favoritos */}
+            <button
+              type="button"
+              className={styles.actionIconButton}
+              onClick={() => navigate(ROUTES.CATALOG)}
+              title="Mis productos favoritos"
+              aria-label="Favoritos"
+            >
+              <Heart size={22} />
+            </button>
 
-          {/* Botones de Acción */}
-          <div className={styles.actions}>
             {/* Carrito de Compras */}
             <Link
               to={ROUTES.CART}
-              className={styles.cartButton}
-              aria-label={`Ver carrito de compras con ${itemCount} productos`}
+              className={styles.actionIconButton}
+              title={`Ver carrito con ${itemCount} productos`}
+              aria-label="Ver carrito"
             >
               <ShoppingBag size={22} />
-              {itemCount > 0 && <span className={styles.cartBadge}>{itemCount}</span>}
+              {itemCount > 0 && <span className={styles.actionBadge}>{itemCount}</span>}
             </Link>
 
-            {/* Acceso / Perfil */}
-            {currentUser ? (
-              <div className="desktopOnly" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                {isMerchant ? (
-                  <Button
-                    size="sm"
-                    variant="primary"
-                    leftIcon={<LayoutDashboard size={14} />}
-                    onClick={() => navigate(ROUTES.MERCHANT_DASHBOARD)}
-                  >
-                    Mi Negocio
-                  </Button>
-                ) : (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    leftIcon={<UserCheck size={14} />}
-                    onClick={() => navigate(ROUTES.CUSTOMER_ORDERS)}
-                  >
-                    {currentUser.name.split(' ')[0]}
-                  </Button>
-                )}
-                <Button size="sm" variant="ghost" onClick={handleLogout}>
-                  Salir
-                </Button>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <Button size="sm" variant="outline" onClick={() => navigate(ROUTES.LOGIN)}>
-                  Ingresar
-                </Button>
-                <Button
-                  size="sm"
-                  variant="accent"
-                  leftIcon={<Store size={14} />}
-                  onClick={() => navigate(ROUTES.REGISTER_BUSINESS)}
-                >
-                  Vender
-                </Button>
-              </div>
-            )}
-
-            {/* Botón Móvil */}
+            {/* Botón de Menú Móvil */}
             <button
               type="button"
               className={styles.mobileMenuToggle}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
-              aria-expanded={mobileMenuOpen}
+              aria-label="Abrir menú"
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
 
-        {/* Drawer Móvil */}
-        {mobileMenuOpen && (
-          <div className={styles.mobileDrawer} onClick={() => setMobileMenuOpen(false)}>
-            <div className={styles.mobileDrawerContent} onClick={(e) => e.stopPropagation()}>
-              <Link
+        {/* 3. Sub-Barra de Categorías y Enlaces */}
+        <div className={styles.subNavBar}>
+          <div className={`container ${styles.subNavInner}`}>
+            <nav className={styles.categoryLinksList} aria-label="Categorías principales">
+              <NavLink
                 to={ROUTES.HOME}
-                className={styles.mobileLink}
-                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  [styles.categoryLink, isActive ? styles.categoryLinkActive : ''].join(' ')
+                }
+                end
               >
-                🏠 Inicio
-              </Link>
-              <Link
-                to={ROUTES.CATALOG}
-                className={styles.mobileLink}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                🌿 Catálogo de la Selva
-              </Link>
-              <Link
-                to={ROUTES.HELP}
-                className={styles.mobileLink}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                ❓ Ayuda & Encuesta
-              </Link>
+                Inicio
+              </NavLink>
 
-              {isMerchant && (
-                <Link
-                  to={ROUTES.MERCHANT_DASHBOARD}
-                  className={styles.mobileLink}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  📊 Mi Panel de Emprendedor
+              <NavLink
+                to={`${ROUTES.CATALOG}?categoria=cafe`}
+                className={styles.categoryLink}
+              >
+                Café de Altura <ChevronDown size={14} />
+              </NavLink>
+
+              <NavLink
+                to={`${ROUTES.CATALOG}?categoria=cacao`}
+                className={styles.categoryLink}
+              >
+                Cacao & Chocolate <ChevronDown size={14} />
+              </NavLink>
+
+              <NavLink
+                to={`${ROUTES.CATALOG}?categoria=miel`}
+                className={styles.categoryLink}
+              >
+                Miel Pura <ChevronDown size={14} />
+              </NavLink>
+
+              <NavLink
+                to={`${ROUTES.CATALOG}?categoria=frutas`}
+                className={styles.categoryLink}
+              >
+                Chifles & Frutas <ChevronDown size={14} />
+              </NavLink>
+
+              <NavLink
+                to={`${ROUTES.CATALOG}?categoria=artesania`}
+                className={styles.categoryLink}
+              >
+                Artesanías & Licores <ChevronDown size={14} />
+              </NavLink>
+
+              <NavLink
+                to={`${ROUTES.CATALOG}?ubicacion=Tingo%20Mar%C3%ADa`}
+                className={styles.promotionsBadge}
+              >
+                <Sparkles size={13} /> TINGO MARÍA
+              </NavLink>
+            </nav>
+
+            <div className={styles.subNavRightLinks}>
+              {currentUser ? (
+                <>
+                  {isMerchant ? (
+                    <Link to={ROUTES.MERCHANT_DASHBOARD} className={styles.venderButtonHighlight}>
+                      <Store size={14} /> Mi Negocio MYPE
+                    </Link>
+                  ) : (
+                    <Link to={ROUTES.CUSTOMER_ORDERS} className={styles.subNavLinkRight}>
+                      Mis Pedidos
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#6b7280', fontWeight: 600 }}
+                  >
+                    Salir
+                  </button>
+                </>
+              ) : (
+                <Link to={ROUTES.REGISTER_BUSINESS} className={styles.venderButtonHighlight}>
+                  <Store size={14} /> Vender en JUÁCIL
                 </Link>
               )}
 
-              {isClient && (
-                <Link
-                  to={ROUTES.CUSTOMER_ORDERS}
-                  className={styles.mobileLink}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  📦 Mis Pedidos
-                </Link>
-              )}
+              <Link to={ROUTES.HELP} className={styles.subNavLinkRight}>
+                Ayuda & Validación
+              </Link>
+            </div>
+          </div>
+        </div>
 
+        {/* Menú Desplegable Móvil */}
+        {mobileMenuOpen && (
+          <div className={styles.mobileMenu}>
+            <form className={styles.mobileSearchRow} onSubmit={handleSearchSubmit}>
+              <input
+                type="text"
+                className={styles.searchInput}
+                placeholder="Buscar café, cacao, miel..."
+                value={headerSearchQuery}
+                onChange={(e) => setHeaderSearchQuery(e.target.value)}
+              />
+              <button type="submit" className={styles.searchButton}>
+                <Search size={18} />
+              </button>
+            </form>
+
+            <div className={styles.mobileNavLinks}>
+              <Link to={ROUTES.HOME} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                Inicio
+              </Link>
+              <Link to={`${ROUTES.CATALOG}?categoria=cafe`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                Café de Altura
+              </Link>
+              <Link to={`${ROUTES.CATALOG}?categoria=cacao`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                Cacao & Chocolate
+              </Link>
+              <Link to={`${ROUTES.CATALOG}?categoria=miel`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                Miel Pura
+              </Link>
+              <Link to={`${ROUTES.CATALOG}?categoria=frutas`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                Chifles & Frutas
+              </Link>
+              <Link to={`${ROUTES.CATALOG}?categoria=artesania`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                Artesanías & Licores
+              </Link>
+              <Link to={ROUTES.HELP} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                Ayuda & Validación
+              </Link>
               {!currentUser && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
-                  <Button fullWidth variant="outline" onClick={() => { setMobileMenuOpen(false); navigate(ROUTES.LOGIN); }}>
-                    Ingresar con Perfil Demo
-                  </Button>
-                  <Button fullWidth variant="accent" onClick={() => { setMobileMenuOpen(false); navigate(ROUTES.REGISTER_BUSINESS); }}>
-                    Registrar mi Emprendimiento
-                  </Button>
-                </div>
+                <Link to={ROUTES.REGISTER_BUSINESS} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)} style={{ color: '#16a34a', fontWeight: 700 }}>
+                  Registrar mi Negocio (Vender)
+                </Link>
               )}
             </div>
           </div>

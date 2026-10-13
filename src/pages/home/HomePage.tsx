@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { ProductCard } from '@/entities/product/ui/ProductCard';
@@ -7,40 +7,130 @@ import { Button } from '@/shared/ui/Button';
 import { Modal } from '@/shared/ui/Modal';
 import { ROUTES } from '@/shared/config/routes';
 import {
-  Search,
   ChevronRight,
+  ChevronLeft,
   Sprout,
-  Users,
-  Truck,
   ArrowRight,
   Store,
   ShieldCheck,
   QrCode,
+  Zap,
+  MessageCircle,
 } from 'lucide-react';
 import styles from './HomePage.module.css';
 
+interface CarouselSlide {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  features: { text: string }[];
+  image: string;
+  imageAlt: string;
+  ctaText?: string;
+  ctaLink?: string;
+}
+
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [isExpModalOpen, setIsExpModalOpen] = useState(false);
   const [isPrefModalOpen, setIsPrefModalOpen] = useState(false);
+
+  // Contador regresivo en vivo para la barra de promociones (tipo Organa)
+  const [timeLeft, setTimeLeft] = useState({
+    days: 28,
+    hours: 9,
+    minutes: 11,
+    seconds: 41,
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
+        if (prev.minutes > 0) return { ...prev, minutes: 59, seconds: 59 };
+        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        if (prev.days > 0) return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
+        return prev;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Diapositivas interactivas del carrusel central
+  const slides: CarouselSlide[] = [
+    {
+      eyebrow: 'PRODUCTOS DE LA AMAZONÍA PERUANA',
+      title: 'Compra local. Descubre la Selva.',
+      subtitle: 'Café de altura del Monzón, cacao al 70%, miel virgen y artesanías directas de Tingo María.',
+      features: [
+        { text: 'Apoyas negocios locales' },
+        { text: 'Productos auténticos' },
+        { text: 'Envíos a todo el Perú' },
+      ],
+      image: '/images/hero-amazon-products.jpg',
+      imageAlt: 'Café de especialidad, miel pura, chocolate amazónico y cestería indígena',
+    },
+    {
+      eyebrow: 'COSECHA FRESCA DE TINGO MARÍA',
+      title: 'Directo del productor sin intermediarios.',
+      subtitle: 'Chifles crocantes de Castillo Grande, miel de la Bella Durmiente y pasta de cacao puro para taza.',
+      features: [
+        { text: 'Castillo Grande & Monzón' },
+        { text: 'Cosecha 100% natural' },
+        { text: 'Coordinación por WhatsApp' },
+      ],
+      image: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=1200&q=80',
+      imageAlt: 'Chocolatería y derivados de cacao de Tingo María',
+      ctaText: 'Ver Cosecha Local',
+      ctaLink: `${ROUTES.CATALOG}?ubicacion=Tingo%20Mar%C3%ADa`,
+    },
+    {
+      eyebrow: 'IMPULSA TU MYPE REGIONAL',
+      title: '¿Tienes un negocio en la Selva?',
+      subtitle: 'Crea tu catálogo online gratis en JUÁCIL y recibe pedidos organizados directamente en tu WhatsApp.',
+      features: [
+        { text: 'Sin comisiones abusivas' },
+        { text: 'Digitalización asistida' },
+        { text: 'Cobro por Yape y Plin' },
+      ],
+      image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80',
+      imageAlt: 'Productores cafetaleros y artesanos de la Selva Central',
+      ctaText: 'Vender en JUÁCIL',
+      ctaLink: ROUTES.REGISTER_BUSINESS,
+    },
+  ];
+
+  // Auto-avance del carrusel cada 6 segundos
+  useEffect(() => {
+    const slideInterval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(slideInterval);
+  }, [slides.length]);
+
+  const handlePrevSlide = () => {
+    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  };
+
+  const handleNextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
 
   // Productos y negocios desde el almacenamiento local
   const allProducts = LocalStoreRepository.getProducts();
   const featuredProducts = allProducts.slice(0, 8);
   const businesses = LocalStoreRepository.getBusinesses();
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`${ROUTES.CATALOG}?q=${encodeURIComponent(searchQuery.trim())}`);
-    } else {
-      navigate(ROUTES.CATALOG);
-    }
-  };
-
   const handleQuickLocation = (loc: string) => {
     navigate(`${ROUTES.CATALOG}?ubicacion=${encodeURIComponent(loc)}`);
+  };
+
+  const handleFloatingWhatsApp = () => {
+    const text = encodeURIComponent(
+      '¡Hola JUÁCIL! Quisiera consultar sobre productos y envíos desde Tingo María y la Selva Central.'
+    );
+    window.open(`https://wa.me/51962881234?text=${text}`, '_blank');
   };
 
   const categories = [
@@ -66,117 +156,193 @@ export const HomePage: React.FC = () => {
     },
   ];
 
+  const activeSlide = slides[currentSlide];
+
   return (
     <div className={styles.homePage}>
       <div className="container">
-        {/* 1. Barra de Búsqueda Superior */}
-        <section className={styles.searchSection} aria-label="Buscador de productos">
-          <div className={styles.searchBarWrapper}>
-            <form className={styles.searchBar} onSubmit={handleSearchSubmit}>
-              <Search size={20} className={styles.searchIcon} aria-hidden="true" />
-              <input
-                type="text"
-                className={styles.searchInput}
-                placeholder="¿Qué estás buscando? (ej. café Villa Rica, chocolate, miel...)"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                aria-label="Buscar productos"
-              />
-              <button type="submit" className={styles.searchButton}>
-                Buscar
-              </button>
-            </form>
-
-            {/* Chips de ubicaciones en Tingo María y zonas aledañas */}
-            <div className={styles.locationChipsRow}>
-              <span className={styles.locationChipLabel}>Zonas destacadas:</span>
-              <button
-                type="button"
-                className={styles.locationChip}
-                onClick={() => handleQuickLocation('Tingo María (Centro / Rupa-Rupa)')}
-              >
-                📍 Tingo María Centro
-              </button>
-              <button
-                type="button"
-                className={styles.locationChip}
-                onClick={() => handleQuickLocation('Castillo Grande')}
-              >
-                📍 Castillo Grande
-              </button>
-              <button
-                type="button"
-                className={styles.locationChip}
-                onClick={() => handleQuickLocation('Valle del Monzón')}
-              >
-                📍 Valle del Monzón
-              </button>
-              <button
-                type="button"
-                className={styles.locationChip}
-                onClick={() => handleQuickLocation('Naranjillo / Luyando')}
-              >
-                📍 Naranjillo / Luyando
-              </button>
-              <button
-                type="button"
-                className={styles.locationChip}
-                onClick={() => handleQuickLocation('Mariano Dámaso Beraún / Las Palmas')}
-              >
-                📍 Las Palmas
-              </button>
-              <button
-                type="button"
-                className={styles.locationChip}
-                onClick={() => handleQuickLocation('Aucayacu')}
-              >
-                📍 Aucayacu
-              </button>
-            </div>
+        {/* 1. Chips de Ubicaciones Territoriales de Tingo María y Alrededores */}
+        <section className={styles.searchSection} aria-label="Zonas de Tingo María">
+          <div className={styles.locationChipsRow}>
+            <span className={styles.locationChipLabel}>Zonas destacadas:</span>
+            <button
+              type="button"
+              className={styles.locationChip}
+              onClick={() => handleQuickLocation('Tingo María (Centro / Rupa-Rupa)')}
+            >
+              📍 Tingo María Centro
+            </button>
+            <button
+              type="button"
+              className={styles.locationChip}
+              onClick={() => handleQuickLocation('Castillo Grande')}
+            >
+              📍 Castillo Grande
+            </button>
+            <button
+              type="button"
+              className={styles.locationChip}
+              onClick={() => handleQuickLocation('Valle del Monzón')}
+            >
+              📍 Valle del Monzón
+            </button>
+            <button
+              type="button"
+              className={styles.locationChip}
+              onClick={() => handleQuickLocation('Naranjillo / Luyando')}
+            >
+              📍 Naranjillo / Luyando
+            </button>
+            <button
+              type="button"
+              className={styles.locationChip}
+              onClick={() => handleQuickLocation('Mariano Dámaso Beraún / Las Palmas')}
+            >
+              📍 Las Palmas
+            </button>
+            <button
+              type="button"
+              className={styles.locationChip}
+              onClick={() => handleQuickLocation('Aucayacu')}
+            >
+              📍 Aucayacu
+            </button>
           </div>
         </section>
 
-        {/* 2. Banner Principal con Verde de Fondo en las Letras e Imagen a la Derecha */}
+        {/* 2. Banner Principal Interactivo (Carrusel en el Centro) */}
         <section className={styles.heroBannerSection} aria-labelledby="banner-heading">
-          <div className={styles.heroBannerCard}>
-            {/* Lado Izquierdo con fondo verde y textos */}
-            <div className={styles.heroBannerText}>
-              <span className={styles.heroEyebrow}>PRODUCTOS DE LA AMAZONÍA PERUANA</span>
-              <h1 id="banner-heading" className={styles.heroTitle}>
-                Compra local. Descubre la Selva.
-              </h1>
-              <p className={styles.heroSubtitle}>
-                Productos de pequeños negocios, cerca de ti en Tingo María y la Selva Central.
-              </p>
+          <div className={styles.carouselWrapper}>
+            {/* Botones de navegación izquierda y derecha */}
+            <button
+              type="button"
+              className={`${styles.sliderNavBtn} ${styles.sliderNavBtnLeft}`}
+              onClick={handlePrevSlide}
+              aria-label="Diapositiva anterior"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
+              type="button"
+              className={`${styles.sliderNavBtn} ${styles.sliderNavBtnRight}`}
+              onClick={handleNextSlide}
+              aria-label="Siguiente diapositiva"
+            >
+              <ChevronRight size={24} />
+            </button>
 
-              <div className={styles.heroFeaturesRow}>
-                <div className={styles.heroFeatureItem}>
-                  <Sprout size={18} className={styles.heroFeatureIcon} />
-                  <span>Apoyas negocios locales</span>
+            {/* Contenido de la diapositiva */}
+            <div className={styles.heroBannerCard}>
+              {/* Lado Izquierdo con fondo verde unificado */}
+              <div className={styles.heroBannerText}>
+                <span className={styles.heroEyebrow}>{activeSlide.eyebrow}</span>
+                <h1 id="banner-heading" className={styles.heroTitle}>
+                  {activeSlide.title}
+                </h1>
+                <p className={styles.heroSubtitle}>{activeSlide.subtitle}</p>
+
+                {activeSlide.ctaText && activeSlide.ctaLink ? (
+                  <div style={{ marginBottom: '24px' }}>
+                    <Link
+                      to={activeSlide.ctaLink}
+                      style={{
+                        backgroundColor: '#ffffff',
+                        color: '#135d38',
+                        padding: '10px 22px',
+                        borderRadius: '9999px',
+                        fontWeight: 700,
+                        fontSize: '14px',
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                      }}
+                    >
+                      {activeSlide.ctaText} <ArrowRight size={16} />
+                    </Link>
+                  </div>
+                ) : null}
+
+                <div className={styles.heroFeaturesRow}>
+                  {activeSlide.features.map((feat, idx) => (
+                    <div key={idx} className={styles.heroFeatureItem}>
+                      <Sprout size={18} className={styles.heroFeatureIcon} />
+                      <span>{feat.text}</span>
+                    </div>
+                  ))}
                 </div>
-                <div className={styles.heroFeatureItem}>
-                  <Users size={18} className={styles.heroFeatureIcon} />
-                  <span>Productos auténticos</span>
-                </div>
-                <div className={styles.heroFeatureItem}>
-                  <Truck size={18} className={styles.heroFeatureIcon} />
-                  <span>Envíos a todo el Perú</span>
-                </div>
+              </div>
+
+              {/* Lado Derecho con fotografía */}
+              <div className={styles.heroBannerMedia}>
+                <img
+                  src={activeSlide.image}
+                  alt={activeSlide.imageAlt}
+                  className={styles.heroBannerImage}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/images/hero-amazon-products.jpg';
+                  }}
+                />
               </div>
             </div>
 
-            {/* Lado Derecho con fotografía de productos de la Selva */}
-            <div className={styles.heroBannerMedia}>
-              <img
-                src="/images/hero-amazon-products.jpg"
-                alt="Café de especialidad, miel pura, chocolate amazónico y cestería indígena"
-                className={styles.heroBannerImage}
-              />
+            {/* Indicadores de puntos inferiores */}
+            <div className={styles.sliderDotsRow}>
+              {slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className={`${styles.sliderDot} ${currentSlide === idx ? styles.sliderDotActive : ''}`}
+                  onClick={() => setCurrentSlide(idx)}
+                  aria-label={`Ir a diapositiva ${idx + 1}`}
+                />
+              ))}
             </div>
+          </div>
+
+          {/* 3. Barra de Promociones y Contador Regresivo estilo Organa */}
+          <div className={styles.promoCountdownBar}>
+            <div className={styles.promoBarTitleGroup}>
+              <h3 className={styles.promoBarTitle}>
+                <Zap size={20} fill="#ffffff" /> PROMOS TINGO MARÍA 💚
+              </h3>
+              <span className={styles.promoTimeTag}>¡POR TIEMPO LIMITADO!</span>
+            </div>
+
+            <div className={styles.countdownBlocks}>
+              <div className={styles.countdownUnit}>
+                <span className={styles.countdownVal}>
+                  {String(timeLeft.days).padStart(2, '0')}
+                </span>
+                <span className={styles.countdownLabel}>Días</span>
+              </div>
+              <div className={styles.countdownUnit}>
+                <span className={styles.countdownVal}>
+                  {String(timeLeft.hours).padStart(2, '0')}
+                </span>
+                <span className={styles.countdownLabel}>Horas</span>
+              </div>
+              <div className={styles.countdownUnit}>
+                <span className={styles.countdownVal}>
+                  {String(timeLeft.minutes).padStart(2, '0')}
+                </span>
+                <span className={styles.countdownLabel}>Minutos</span>
+              </div>
+              <div className={styles.countdownUnit}>
+                <span className={styles.countdownVal}>
+                  {String(timeLeft.seconds).padStart(2, '0')}
+                </span>
+                <span className={styles.countdownLabel}>Segundos</span>
+              </div>
+            </div>
+
+            <Link to={ROUTES.CATALOG} className={styles.promoButtonLink}>
+              Ver Promociones <ArrowRight size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />
+            </Link>
           </div>
         </section>
 
-        {/* 3. Sección "Explora por categoría" */}
+        {/* 4. Sección "Explora por categoría" */}
         <section className={styles.sectionBlock} aria-labelledby="categories-heading">
           <div className={styles.sectionHeaderRow}>
             <h2 id="categories-heading" className={styles.sectionHeading}>
@@ -200,7 +366,7 @@ export const HomePage: React.FC = () => {
                   className={styles.categoryImage}
                   onError={(e) => {
                     (e.target as HTMLImageElement).src =
-                      'https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=200&q=80';
+                      'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=200&q=80';
                   }}
                 />
                 <span className={styles.categoryTitle}>{cat.title}</span>
@@ -210,7 +376,7 @@ export const HomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* 4. Sección "Productos destacados" */}
+        {/* 5. Sección "Productos destacados" */}
         <section className={styles.sectionBlock} aria-labelledby="featured-products-heading">
           <div className={styles.sectionHeaderRow}>
             <h2 id="featured-products-heading" className={styles.sectionHeading}>
@@ -228,7 +394,7 @@ export const HomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* 5. Emprendimientos y MYPES de la Región */}
+        {/* 6. Emprendimientos y MYPES de la Región */}
         <section className={styles.sectionBlock} aria-labelledby="businesses-heading" style={{ marginTop: '20px' }}>
           <div className={styles.sectionHeaderRow}>
             <h2 id="businesses-heading" className={styles.sectionHeading}>
@@ -246,15 +412,15 @@ export const HomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* 6. Banner para Vendedores / Registrar Emprendimiento */}
+        {/* 7. Banner para Vendedores / Registrar Emprendimiento */}
         <div className={styles.registerBanner}>
-          <Store size={36} color="#84cc16" />
+          <Store size={36} color="#bbf7d0" />
           <h2 className={styles.registerBannerTitle}>
             ¿Tienes un emprendimiento en Tingo María o la Selva?
           </h2>
           <p className={styles.registerBannerText}>
             Crea tu tienda virtual en minutos, digitaliza tu catálogo y recibe pedidos directamente
-            en tu WhatsApp personal sin intermediarios ni comisiones abusivas.
+            en tu WhatsApp personal sin comisiones abusivas.
           </p>
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <Button
@@ -262,6 +428,7 @@ export const HomePage: React.FC = () => {
               size="lg"
               leftIcon={<Store size={18} />}
               onClick={() => navigate(ROUTES.REGISTER_BUSINESS)}
+              style={{ backgroundColor: '#ffffff', color: '#135d38', borderColor: '#ffffff' }}
             >
               Registrar mi Tienda Gratis
             </Button>
@@ -269,7 +436,7 @@ export const HomePage: React.FC = () => {
               variant="outline"
               size="lg"
               onClick={() => navigate(ROUTES.HELP)}
-              style={{ color: '#ffffff', borderColor: 'rgba(255,255,255,0.4)' }}
+              style={{ color: '#ffffff', borderColor: 'rgba(255,255,255,0.6)' }}
             >
               Conocer Cómo Funciona
             </Button>
@@ -277,14 +444,14 @@ export const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* 7. Cómo comprar en JUÁCIL en 3 pasos */}
+      {/* 8. Cómo comprar en JUÁCIL en 3 pasos */}
       <section className={styles.stepsSection}>
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto' }}>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-primary-700)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: '#135d38', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Proceso Simple y Transparente
             </span>
-            <h2 style={{ fontSize: '26px', fontWeight: 800, marginTop: '6px', color: 'var(--color-primary-950)' }}>
+            <h2 style={{ fontSize: '26px', fontWeight: 800, marginTop: '6px', color: '#112117' }}>
               ¿Cómo comprar en JUÁCIL en 3 pasos?
             </h2>
           </div>
@@ -317,6 +484,17 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* Botón Flotante de WhatsApp tipo Organa */}
+      <button
+        type="button"
+        className={styles.floatingWhatsApp}
+        onClick={handleFloatingWhatsApp}
+        title="Consultar por WhatsApp con JUÁCIL"
+        aria-label="Abrir WhatsApp"
+      >
+        <MessageCircle size={30} />
+      </button>
+
       {/* Modales Informativos */}
       <Modal
         isOpen={isExpModalOpen}
@@ -326,7 +504,7 @@ export const HomePage: React.FC = () => {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <ShieldCheck size={32} color="var(--color-primary-700)" />
+            <ShieldCheck size={32} color="#135d38" />
             <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>
               Garantía de Trato Directo
             </h4>
@@ -349,7 +527,7 @@ export const HomePage: React.FC = () => {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <QrCode size={32} color="var(--color-primary-700)" />
+            <QrCode size={32} color="#135d38" />
             <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>
               Filtro Territorial Tingalés
             </h4>

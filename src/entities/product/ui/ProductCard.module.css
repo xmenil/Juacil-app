@@ -97,7 +97,7 @@
 }
 
 .title a:hover {
-  color: #15803d;
+  color: #135d38;
 }
 
 .locationSubtitle {
@@ -138,9 +138,9 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: 9999px;
-  border: 1.5px solid #16a34a;
+  border: 1.5px solid #135d38;
   background-color: #ffffff;
-  color: #15803d;
+  color: #135d38;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -150,7 +150,8 @@
 
 .addButton:hover:not(:disabled) {
   background-color: #f0fdf4;
-  border-color: #15803d;
+  border-color: #0e4a2c;
+  color: #0e4a2c;
 }
 
 .addButton:active:not(:disabled) {
@@ -158,9 +159,9 @@
 }
 
 .addButton.added {
-  background-color: #16a34a;
+  background-color: #135d38;
   color: #ffffff;
-  border-color: #16a34a;
+  border-color: #135d38;
 }
 
 .addButton.disabled {
