@@ -102,95 +102,233 @@
   color: #0369a1;
 }
 
-/* 2. Banner Principal con Verde de Fondo en las Letras e Imagen a la Derecha */
-.heroBannerSection {
-  padding: 12px 0 24px;
-}
-
-.carouselWrapper {
+/* 2. Banner Principal de Esquina a Esquina (Dual Images + Misión Central) */
+.fullWidthHeroSection {
+  width: 100%;
   position: relative;
-}
-
-.sliderNavBtn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.92);
-  color: #15803d;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #07351a 0%, #135d38 50%, #0d4a2b 100%);
+  overflow: hidden;
+  padding: 56px 16px;
+  min-height: 480px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-bottom: 2px solid rgba(132, 204, 22, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
-.sliderNavBtn:hover {
-  background-color: #ffffff;
-  color: #166534;
-  transform: translateY(-50%) scale(1.08);
-}
-
-.sliderNavBtnLeft {
-  left: 14px;
-}
-
-.sliderNavBtnRight {
-  right: 14px;
-}
-
-.sliderDotsRow {
+.heroSideMediaLeft {
   position: absolute;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 36%;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.heroSideMediaRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 36%;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.heroSideImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0.95) contrast(1.08);
+}
+
+.heroOverlayLeft {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(19, 93, 56, 0.08) 0%, rgba(19, 93, 56, 0.45) 55%, #135d38 100%),
+              linear-gradient(to top, rgba(7, 53, 26, 0.8) 0%, transparent 40%);
+}
+
+.heroOverlayRight {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to left, rgba(19, 93, 56, 0.08) 0%, rgba(19, 93, 56, 0.45) 55%, #135d38 100%),
+              linear-gradient(to top, rgba(7, 53, 26, 0.8) 0%, transparent 40%);
+}
+
+.heroCenterCard {
+  position: relative;
+  z-index: 10;
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 38px 32px;
+  text-align: center;
+  color: #ffffff;
+  background: rgba(7, 45, 25, 0.86);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border-radius: 28px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.heroEyebrowTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #84cc16;
+  background-color: rgba(132, 204, 22, 0.16);
+  border: 1px solid rgba(132, 204, 22, 0.35);
+  padding: 5px 14px;
+  border-radius: 9999px;
+  margin-bottom: 14px;
+}
+
+.heroMainTitle {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.18;
+  color: #ffffff;
+  margin: 0 0 14px 0;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .heroMainTitle {
+    font-size: 42px;
+  }
+}
+
+.heroMissionText {
+  font-size: 15px;
+  line-height: 1.55;
+  color: #e2e8f0;
+  margin: 0 auto 28px auto;
+  max-width: 620px;
+}
+
+.heroActionsRow {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.heroBtnPrimary {
+  background-color: #ffffff;
+  color: #135d38;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
-  z-index: 10;
-  background-color: rgba(0, 0, 0, 0.35);
-  padding: 6px 14px;
-  border-radius: 9999px;
-  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: all 0.18s ease;
 }
 
-.sliderDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 0;
+.heroBtnPrimary:hover {
+  background-color: #f0fdf4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
-.sliderDotActive {
+.heroBtnSecondary {
   background-color: #84cc16;
-  width: 24px;
+  color: #052e16;
+  padding: 12px 22px;
   border-radius: 9999px;
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.18s ease;
 }
 
-.heroBannerCard {
-  display: grid;
-  grid-template-columns: 1fr;
-  background: linear-gradient(135deg, #07351a 0%, #0d542e 100%);
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px -5px rgba(7, 53, 26, 0.25);
-  border: 1px solid rgba(132, 204, 22, 0.2);
-  position: relative;
-  min-height: 380px;
+.heroBtnSecondary:hover {
+  background-color: #a3e635;
+  transform: translateY(-2px);
 }
 
-@media (min-width: 900px) {
-  .heroBannerCard {
-    grid-template-columns: 1.15fr 0.85fr;
+.heroBtnOutline {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 12px 20px;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 13.5px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.18s ease;
+}
+
+.heroBtnOutline:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: #ffffff;
+}
+
+.heroPillsRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 12.5px;
+  color: #cbd5e1;
+}
+
+.heroPillItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 900px) {
+  .fullWidthHeroSection {
+    padding: 36px 12px;
+    min-height: auto;
+  }
+  .heroSideMediaLeft,
+  .heroSideMediaRight {
+    width: 100%;
+    opacity: 0.22;
+  }
+  .heroCenterCard {
+    padding: 24px 16px;
+    border-radius: 20px;
+  }
+  .heroMainTitle {
+    font-size: 26px;
+  }
+  .heroMissionText {
+    font-size: 14px;
+  }
+  .heroBtnPrimary,
+  .heroBtnSecondary,
+  .heroBtnOutline {
+    width: 100%;
+    justify-content: center;
   }
 }
 

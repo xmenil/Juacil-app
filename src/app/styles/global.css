@@ -107,3 +107,14 @@ img, svg {
     scroll-behavior: auto !important;
   }
 }
+
+:root {
+  --bottom-nav-height: 0px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --bottom-nav-height: 68px;
+  }
+}
+

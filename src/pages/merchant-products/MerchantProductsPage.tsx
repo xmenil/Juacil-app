@@ -17,6 +17,7 @@ import {
   ArrowLeft,
   Package,
 } from 'lucide-react';
+import styles from './MerchantProductsPage.module.css';
 
 export const MerchantProductsPage: React.FC = () => {
   const { isMerchant, businessId } = useSession();
@@ -129,108 +130,178 @@ export const MerchantProductsPage: React.FC = () => {
 
         {/* Tabla o Listado */}
         {filteredProducts.length > 0 ? (
-          <div
-            style={{
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              borderRadius: '16px',
-              overflow: 'hidden',
-              boxShadow: 'var(--shadow-sm)',
-            }}
-          >
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
-                <thead>
-                  <tr style={{ backgroundColor: 'var(--color-surface-subtle)', borderBottom: '1px solid var(--color-border)', color: 'var(--color-text-muted)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    <th style={{ padding: '14px 16px' }}>Producto</th>
-                    <th style={{ padding: '14px 16px' }}>Categoría</th>
-                    <th style={{ padding: '14px 16px' }}>Precio</th>
-                    <th style={{ padding: '14px 16px' }}>Stock</th>
-                    <th style={{ padding: '14px 16px' }}>Estado</th>
-                    <th style={{ padding: '14px 16px', textAlign: 'right' }}>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredProducts.map((p) => (
-                    <tr key={p.id} style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
-                      <td style={{ padding: '14px 16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <img
-                            src={p.imageUrl}
-                            alt=""
-                            style={{ width: '48px', height: '48px', borderRadius: '8px', objectFit: 'cover' }}
-                          />
-                          <div>
-                            <strong style={{ display: 'block', color: 'var(--color-primary-950)' }}>
-                              {p.name}
-                            </strong>
-                            <span style={{ fontSize: '11px', color: 'var(--color-text-subtle)' }}>
-                              ID: {p.id}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
+          <>
+            {/* 1. Vista de Tabla para Escritorio */}
+            <div className={styles.desktopTableWrapper}>
+              <div
+                style={{
+                  backgroundColor: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: 'var(--shadow-sm)',
+                }}
+              >
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+                    <thead>
+                      <tr style={{ backgroundColor: 'var(--color-surface-subtle)', borderBottom: '1px solid var(--color-border)', color: 'var(--color-text-muted)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        <th style={{ padding: '14px 16px' }}>Producto</th>
+                        <th style={{ padding: '14px 16px' }}>Categoría</th>
+                        <th style={{ padding: '14px 16px' }}>Precio</th>
+                        <th style={{ padding: '14px 16px' }}>Stock</th>
+                        <th style={{ padding: '14px 16px' }}>Estado</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'right' }}>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredProducts.map((p) => (
+                        <tr key={p.id} style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+                          <td style={{ padding: '14px 16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <img
+                                src={p.imageUrl}
+                                alt=""
+                                style={{ width: '48px', height: '48px', borderRadius: '8px', objectFit: 'cover' }}
+                              />
+                              <div>
+                                <strong style={{ display: 'block', color: 'var(--color-primary-950)' }}>
+                                  {p.name}
+                                </strong>
+                                <span style={{ fontSize: '11px', color: 'var(--color-text-subtle)' }}>
+                                  ID: {p.id}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
 
-                      <td style={{ padding: '14px 16px', textTransform: 'capitalize' }}>
-                        {p.category}
-                      </td>
+                          <td style={{ padding: '14px 16px', textTransform: 'capitalize' }}>
+                            {p.category}
+                          </td>
 
-                      <td style={{ padding: '14px 16px', fontWeight: 700 }}>
-                        {formatMoney(p.priceCents)}
-                      </td>
+                          <td style={{ padding: '14px 16px', fontWeight: 700 }}>
+                            {formatMoney(p.priceCents)}
+                          </td>
 
-                      <td style={{ padding: '14px 16px' }}>
-                        {p.stock === 0 ? (
-                          <Badge variant="danger">0 (Agotado)</Badge>
-                        ) : p.stock <= 4 ? (
-                          <Badge variant="warning">{p.stock} unids.</Badge>
-                        ) : (
-                          <span style={{ fontWeight: 600 }}>{p.stock} unids.</span>
-                        )}
-                      </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            {p.stock === 0 ? (
+                              <Badge variant="danger">0 (Agotado)</Badge>
+                            ) : p.stock <= 4 ? (
+                              <Badge variant="warning">{p.stock} unids.</Badge>
+                            ) : (
+                              <span style={{ fontWeight: 600 }}>{p.stock} unids.</span>
+                            )}
+                          </td>
 
-                      <td style={{ padding: '14px 16px' }}>
-                        {p.status === 'published' ? (
-                          <Badge variant="success">Publicado</Badge>
-                        ) : (
-                          <Badge variant="neutral">Borrador</Badge>
-                        )}
-                      </td>
+                          <td style={{ padding: '14px 16px' }}>
+                            {p.status === 'published' ? (
+                              <Badge variant="success">Publicado</Badge>
+                            ) : (
+                              <Badge variant="neutral">Borrador</Badge>
+                            )}
+                          </td>
 
-                      <td style={{ padding: '14px 16px', textAlign: 'right' }}>
-                        <div style={{ display: 'inline-flex', gap: '6px' }}>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            title={p.status === 'published' ? 'Despublicar (pasar a borrador)' : 'Publicar producto'}
-                            onClick={() => handleToggleStatus(p)}
-                          >
-                            {p.status === 'published' ? <EyeOff size={15} /> : <Eye size={15} />}
-                          </Button>
+                          <td style={{ padding: '14px 16px', textAlign: 'right' }}>
+                            <div style={{ display: 'inline-flex', gap: '6px' }}>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                title={p.status === 'published' ? 'Despublicar (pasar a borrador)' : 'Publicar producto'}
+                                onClick={() => handleToggleStatus(p)}
+                              >
+                                {p.status === 'published' ? <EyeOff size={15} /> : <Eye size={15} />}
+                              </Button>
 
-                          <Link to={ROUTES.MERCHANT_PRODUCT_EDIT(p.id)}>
-                            <Button size="sm" variant="ghost" title="Editar detalles">
-                              <Edit2 size={15} />
-                            </Button>
-                          </Link>
+                              <Link to={ROUTES.MERCHANT_PRODUCT_EDIT(p.id)}>
+                                <Button size="sm" variant="ghost" title="Editar detalles">
+                                  <Edit2 size={15} />
+                                </Button>
+                              </Link>
 
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            style={{ color: 'var(--color-danger)' }}
-                            title="Eliminar producto"
-                            onClick={() => setDeleteProductCandidate(p)}
-                          >
-                            <Trash2 size={15} />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                style={{ color: 'var(--color-danger)' }}
+                                title="Eliminar producto"
+                                onClick={() => setDeleteProductCandidate(p)}
+                              >
+                                <Trash2 size={15} />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-          </div>
+
+            {/* 2. Vista de Tarjetas Adaptadas para Móvil (< 768px) */}
+            <div className={styles.mobileCardsWrapper}>
+              {filteredProducts.map((p) => (
+                <div key={p.id} className={styles.mobileProductCard}>
+                  <div className={styles.mobileProductHeader}>
+                    <img src={p.imageUrl} alt="" className={styles.mobileProductThumb} />
+                    <div className={styles.mobileProductInfo}>
+                      <h4 className={styles.mobileProductName}>{p.name}</h4>
+                      <div className={styles.mobileProductMeta}>
+                        <span style={{ textTransform: 'capitalize', fontWeight: 600, color: 'var(--color-primary-800)' }}>
+                          {p.category}
+                        </span>
+                        <span>•</span>
+                        <span>ID: {p.id}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.mobileProductDetailsRow}>
+                    <span className={styles.mobilePrice}>{formatMoney(p.priceCents)}</span>
+                    <div className={styles.mobileBadges}>
+                      {p.stock === 0 ? (
+                        <Badge variant="danger">0 Agotado</Badge>
+                      ) : p.stock <= 4 ? (
+                        <Badge variant="warning">{p.stock} unids.</Badge>
+                      ) : (
+                        <span style={{ fontSize: '12px', fontWeight: 600 }}>{p.stock} unids.</span>
+                      )}
+                      {p.status === 'published' ? (
+                        <Badge variant="success">Publicado</Badge>
+                      ) : (
+                        <Badge variant="neutral">Borrador</Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={styles.mobileActionsRow}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleToggleStatus(p)}
+                      leftIcon={p.status === 'published' ? <EyeOff size={14} /> : <Eye size={14} />}
+                    >
+                      {p.status === 'published' ? 'Pausar' : 'Activar'}
+                    </Button>
+
+                    <Link to={ROUTES.MERCHANT_PRODUCT_EDIT(p.id)}>
+                      <Button size="sm" variant="outline" leftIcon={<Edit2 size={14} />}>
+                        Editar
+                      </Button>
+                    </Link>
+
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      style={{ color: 'var(--color-danger)' }}
+                      onClick={() => setDeleteProductCandidate(p)}
+                    >
+                      <Trash2 size={15} />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         ) : (
           <div style={{ backgroundColor: 'var(--color-surface)', border: '1px dashed var(--color-border)', borderRadius: '16px', padding: '64px 20px', textAlign: 'center' }}>
             <Package size={36} color="var(--color-text-subtle)" />

@@ -1,4 +1,6 @@
 export const CATEGORIES = [
+  { id: 'abarrotes', name: 'Abarrotes & Canasta Básica', icon: 'ShoppingBasket', description: 'Arroz, azúcar, fideos, aceites, menestras y conservas para el hogar y empresas' },
+  { id: 'hogar', name: 'Hogar, Papelería & Limpieza', icon: 'Sparkles', description: 'Papel higiénico, servilletas, detergentes y suministros de aseo' },
   { id: 'cafe', name: 'Café de Especialidad', icon: 'Coffee', description: 'Cafés de altura del Valle del Monzón y Castillo Grande' },
   { id: 'cacao', name: 'Cacao & Chocolatería', icon: 'Sparkles', description: 'Chocolates finos al 70%, nibs y manteca de Tingo María' },
   { id: 'miel', name: 'Miel & Apicultura', icon: 'Sun', description: 'Miel pura de monte virgen de Naranjillo y Las Palmas' },
@@ -23,7 +25,7 @@ export const LOCATIONS = [
 export const APP_METADATA = {
   name: 'JUÁCIL',
   slogan: 'Tu tienda online',
-  description: 'Plataforma para que las micro y pequeñas empresas (MYPES) de Tingo María y sus lugares aledaños exhiban y coordinen sus ventas fácilmente.',
+  description: 'Plataforma integral para comprar y vender cualquier producto: canasta básica, abarrotes, artículos del hogar y especialidades de la Amazonía para pequeñas y grandes empresas.',
   region: 'Tingo María y alrededores (Leoncio Prado, Huánuco)',
-  version: '2.0.0-tingomaria',
+  version: '2.3.0-multitienda',
 };

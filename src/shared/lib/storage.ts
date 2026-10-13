@@ -9,7 +9,7 @@ import { MOCK_PRODUCTS } from '@/entities/product/model/mockProducts';
 import { MOCK_ORDERS } from '@/entities/order/model/mockOrders';
 import { generateId, generateOrderCode } from './id';
 
-const STORAGE_KEY = 'juacil_app_store_v2.2';
+const STORAGE_KEY = 'juacil_app_store_v2.3';
 
 export interface StorageSchema {
   version: string;
@@ -22,7 +22,7 @@ export interface StorageSchema {
 
 function getInitialData(): StorageSchema {
   return {
-    version: '2.2.0',
+    version: '2.3.0',
     users: [...MOCK_USERS],
     businesses: [...MOCK_BUSINESSES],
     products: [...MOCK_PRODUCTS],
@@ -41,7 +41,7 @@ export class LocalStoreRepository {
         return initial;
       }
       const parsed = JSON.parse(serialized) as StorageSchema;
-      if (!parsed || parsed.version !== '2.2.0' || !Array.isArray(parsed.products)) {
+      if (!parsed || parsed.version !== '2.3.0' || !Array.isArray(parsed.products)) {
         console.warn('Almacenamiento local incompatible o corrupto. Restaurando estado seguro.');
         const initial = getInitialData();
         this.save(initial);

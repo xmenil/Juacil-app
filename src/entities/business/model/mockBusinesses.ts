@@ -57,4 +57,18 @@ export const MOCK_BUSINESSES: Business[] = [
     onboardingStep: 4,
     createdAt: '2026-03-10T14:00:00.000Z',
   },
+  {
+    id: 'biz-distribuidora-tingo',
+    name: 'Distribuidora & Bodega Central Tingalesa',
+    description: 'Venta mayorista y minorista de abarrotes de primera necesidad, sacos de arroz, azúcar, aceites, papel higiénico y productos de limpieza para hogares, restaurantes y empresas de Tingo María.',
+    category: 'abarrotes',
+    location: 'Tingo María (Centro / Rupa-Rupa)',
+    whatsapp: '962881234',
+    ruc: '20609876543',
+    logoUrl: '/images/hero-cart-groceries.jpg',
+    bannerUrl: '/images/hero-stacked-goods.jpg',
+    ownerId: 'user-merchant-02',
+    onboardingStep: 4,
+    createdAt: '2026-03-12T10:00:00.000Z',
+  },
 ];

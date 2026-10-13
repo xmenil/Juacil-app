@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   ShoppingBag,
@@ -13,11 +13,15 @@ import {
   WifiOff,
   ChevronDown,
   Sparkles,
+  LayoutGrid,
+  Tag,
+  Package,
 } from 'lucide-react';
 import { useCart } from '@/app/providers/CartProvider';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useConnectivity } from '@/app/providers/ConnectivityProvider';
 import { ROUTES } from '@/shared/config/routes';
+import { CategoryMegaOverlay } from './CategoryMegaOverlay';
 import styles from './Navbar.module.css';
 
 export const Navbar: React.FC = () => {
@@ -25,8 +29,15 @@ export const Navbar: React.FC = () => {
   const { currentUser, isMerchant, logout } = useSession();
   const { isOnline } = useConnectivity();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [categoriesModalOpen, setCategoriesModalOpen] = useState(false);
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleOpenCategories = () => setCategoriesModalOpen(true);
+    window.addEventListener('juacil:open-categories', handleOpenCategories);
+    return () => window.removeEventListener('juacil:open-categories', handleOpenCategories);
+  }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -212,39 +223,38 @@ export const Navbar: React.FC = () => {
                 Inicio
               </NavLink>
 
+              {/* Botón desplegable que abre el panel completo de categorías con fondo oscuro */}
+              <button
+                type="button"
+                className={styles.categoriesDropdownButton}
+                onClick={() => setCategoriesModalOpen(true)}
+                aria-label="Abrir catálogo completo de categorías"
+              >
+                <LayoutGrid size={15} /> Categorías <ChevronDown size={14} />
+              </button>
+
               <NavLink
-                to={`${ROUTES.CATALOG}?categoria=cafe`}
+                to={`${ROUTES.CATALOG}?ofertas=true`}
                 className={styles.categoryLink}
               >
-                Café de Altura <ChevronDown size={14} />
+                <Tag size={14} /> Ofertas
               </NavLink>
 
               <NavLink
-                to={`${ROUTES.CATALOG}?categoria=cacao`}
-                className={styles.categoryLink}
+                to={ROUTES.CATALOG}
+                className={({ isActive }) =>
+                  [styles.categoryLink, isActive ? styles.categoryLinkActive : ''].join(' ')
+                }
+                end
               >
-                Cacao & Chocolate <ChevronDown size={14} />
+                <Package size={14} /> Productos
               </NavLink>
 
               <NavLink
-                to={`${ROUTES.CATALOG}?categoria=miel`}
+                to={`${ROUTES.CATALOG}?filtro=tiendas`}
                 className={styles.categoryLink}
               >
-                Miel Pura <ChevronDown size={14} />
-              </NavLink>
-
-              <NavLink
-                to={`${ROUTES.CATALOG}?categoria=frutas`}
-                className={styles.categoryLink}
-              >
-                Chifles & Frutas <ChevronDown size={14} />
-              </NavLink>
-
-              <NavLink
-                to={`${ROUTES.CATALOG}?categoria=artesania`}
-                className={styles.categoryLink}
-              >
-                Artesanías & Licores <ChevronDown size={14} />
+                <Store size={14} /> Tiendas & MYPES
               </NavLink>
 
               <NavLink
@@ -295,7 +305,7 @@ export const Navbar: React.FC = () => {
               <input
                 type="text"
                 className={styles.searchInput}
-                placeholder="Buscar café, cacao, miel..."
+                placeholder="Buscar abarrotes, café, arroz, papel..."
                 value={headerSearchQuery}
                 onChange={(e) => setHeaderSearchQuery(e.target.value)}
               />
@@ -308,26 +318,34 @@ export const Navbar: React.FC = () => {
               <Link to={ROUTES.HOME} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
                 Inicio
               </Link>
-              <Link to={`${ROUTES.CATALOG}?categoria=cafe`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
-                Café de Altura
+              <button
+                type="button"
+                className={styles.mobileNavLink}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setCategoriesModalOpen(true);
+                }}
+                style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-primary-800)', fontWeight: 700 }}
+              >
+                <LayoutGrid size={18} /> Explorar Todas las Categorías ▾
+              </button>
+              <Link to={`${ROUTES.CATALOG}?ofertas=true`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                <Tag size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Ofertas Especiales
               </Link>
-              <Link to={`${ROUTES.CATALOG}?categoria=cacao`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
-                Cacao & Chocolate
+              <Link to={ROUTES.CATALOG} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                <Package size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Todos los Productos
               </Link>
-              <Link to={`${ROUTES.CATALOG}?categoria=miel`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
-                Miel Pura
+              <Link to={`${ROUTES.CATALOG}?filtro=tiendas`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                <Store size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Tiendas & Bodegas
               </Link>
-              <Link to={`${ROUTES.CATALOG}?categoria=frutas`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
-                Chifles & Frutas
-              </Link>
-              <Link to={`${ROUTES.CATALOG}?categoria=artesania`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
-                Artesanías & Licores
+              <Link to={`${ROUTES.CATALOG}?ubicacion=Tingo%20Mar%C3%ADa`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                <Sparkles size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Zonas de Tingo María
               </Link>
               <Link to={ROUTES.HELP} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
                 Ayuda & Validación
               </Link>
               {!currentUser && (
-                <Link to={ROUTES.REGISTER_BUSINESS} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)} style={{ color: '#16a34a', fontWeight: 700 }}>
+                <Link to={ROUTES.REGISTER_BUSINESS} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--color-primary-700)', fontWeight: 700 }}>
                   Registrar mi Negocio (Vender)
                 </Link>
               )}
@@ -335,6 +353,12 @@ export const Navbar: React.FC = () => {
           </div>
         )}
       </header>
+
+      {/* Modal Desplegable de Categorías con Fondo Oscuro Transparente */}
+      <CategoryMegaOverlay
+        isOpen={categoriesModalOpen}
+        onClose={() => setCategoriesModalOpen(false)}
+      />
     </>
   );
 };

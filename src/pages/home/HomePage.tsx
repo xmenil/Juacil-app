@@ -7,36 +7,24 @@ import { Button } from '@/shared/ui/Button';
 import { Modal } from '@/shared/ui/Modal';
 import { ROUTES } from '@/shared/config/routes';
 import {
-  ChevronRight,
-  ChevronLeft,
-  Sprout,
   ArrowRight,
   Store,
   ShieldCheck,
   QrCode,
   Zap,
   MessageCircle,
+  ShoppingBag,
+  CheckCircle2,
+  ShoppingCart,
 } from 'lucide-react';
 import styles from './HomePage.module.css';
 
-interface CarouselSlide {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
-  features: { text: string }[];
-  image: string;
-  imageAlt: string;
-  ctaText?: string;
-  ctaLink?: string;
-}
-
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [isExpModalOpen, setIsExpModalOpen] = useState(false);
   const [isPrefModalOpen, setIsPrefModalOpen] = useState(false);
 
-  // Contador regresivo en vivo para la barra de promociones (tipo Organa)
+  // Contador regresivo en vivo para la barra de promociones
   const [timeLeft, setTimeLeft] = useState({
     days: 28,
     hours: 9,
@@ -57,66 +45,6 @@ export const HomePage: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Diapositivas interactivas del carrusel central
-  const slides: CarouselSlide[] = [
-    {
-      eyebrow: 'PRODUCTOS DE LA AMAZONÍA PERUANA',
-      title: 'Compra local. Descubre la Selva.',
-      subtitle: 'Café de altura del Monzón, cacao al 70%, miel virgen y artesanías directas de Tingo María.',
-      features: [
-        { text: 'Apoyas negocios locales' },
-        { text: 'Productos auténticos' },
-        { text: 'Envíos a todo el Perú' },
-      ],
-      image: '/images/hero-amazon-products.jpg',
-      imageAlt: 'Café de especialidad, miel pura, chocolate amazónico y cestería indígena',
-    },
-    {
-      eyebrow: 'COSECHA FRESCA DE TINGO MARÍA',
-      title: 'Directo del productor sin intermediarios.',
-      subtitle: 'Chifles crocantes de Castillo Grande, miel de la Bella Durmiente y pasta de cacao puro para taza.',
-      features: [
-        { text: 'Castillo Grande & Monzón' },
-        { text: 'Cosecha 100% natural' },
-        { text: 'Coordinación por WhatsApp' },
-      ],
-      image: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=1200&q=80',
-      imageAlt: 'Chocolatería y derivados de cacao de Tingo María',
-      ctaText: 'Ver Cosecha Local',
-      ctaLink: `${ROUTES.CATALOG}?ubicacion=Tingo%20Mar%C3%ADa`,
-    },
-    {
-      eyebrow: 'IMPULSA TU MYPE REGIONAL',
-      title: '¿Tienes un negocio en la Selva?',
-      subtitle: 'Crea tu catálogo online gratis en JUÁCIL y recibe pedidos organizados directamente en tu WhatsApp.',
-      features: [
-        { text: 'Sin comisiones abusivas' },
-        { text: 'Digitalización asistida' },
-        { text: 'Cobro por Yape y Plin' },
-      ],
-      image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80',
-      imageAlt: 'Productores cafetaleros y artesanos de la Selva Central',
-      ctaText: 'Vender en JUÁCIL',
-      ctaLink: ROUTES.REGISTER_BUSINESS,
-    },
-  ];
-
-  // Auto-avance del carrusel cada 6 segundos
-  useEffect(() => {
-    const slideInterval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 6000);
-    return () => clearInterval(slideInterval);
-  }, [slides.length]);
-
-  const handlePrevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
-  };
-
-  const handleNextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
   // Productos y negocios desde el almacenamiento local
   const allProducts = LocalStoreRepository.getProducts();
   const featuredProducts = allProducts.slice(0, 8);
@@ -134,6 +62,16 @@ export const HomePage: React.FC = () => {
   };
 
   const categories = [
+    {
+      id: 'abarrotes',
+      title: 'Abarrotes',
+      imageUrl: '/images/hero-cart-groceries.jpg',
+    },
+    {
+      id: 'hogar',
+      title: 'Hogar & Papel',
+      imageUrl: '/images/hero-stacked-goods.jpg',
+    },
     {
       id: 'cafe',
       title: 'Café',
@@ -156,12 +94,118 @@ export const HomePage: React.FC = () => {
     },
   ];
 
-  const activeSlide = slides[currentSlide];
-
   return (
     <div className={styles.homePage}>
+      {/* 1. Banner Principal de Esquina a Esquina (Dual Images + Misión Central de la Tienda) */}
+      <section className={styles.fullWidthHeroSection} aria-labelledby="hero-heading">
+        {/* Lado Izquierdo: Carrito lleno de productos de tienda (arroz, papel, abarrotes) */}
+        <div className={styles.heroSideMediaLeft}>
+          <img
+            src="/images/hero-cart-groceries.jpg"
+            alt="Carrito de compras repleto de arroz, papel higiénico, despensa y abarrotes"
+            className={styles.heroSideImg}
+          />
+          <div className={styles.heroOverlayLeft} />
+        </div>
+
+        {/* Lado Derecho: Estantes y almacén lleno de productos arrumados variados */}
+        <div className={styles.heroSideMediaRight}>
+          <img
+            src="/images/hero-stacked-goods.jpg"
+            alt="Gran variedad de productos, mercadería y alimentos en exhibición"
+            className={styles.heroSideImg}
+          />
+          <div className={styles.heroOverlayRight} />
+        </div>
+
+        {/* Centro: Mensaje de Misión y Enfoque de JUÁCIL */}
+        <div className={styles.heroCenterCard}>
+          <div className={styles.heroEyebrowTag}>
+            <ShoppingBag size={14} /> MERCADO ONLINE INTEGRAL • TINGO MARÍA & SELVA CENTRAL
+          </div>
+
+          <h1 id="hero-heading" className={styles.heroMainTitle}>
+            ¡En JUÁCIL encuentras absolutamente de todo!
+          </h1>
+
+          <p className={styles.heroMissionText}>
+            Tu plataforma comercial para pequeñas y grandes empresas: desde la canasta básica familiar con arroz,
+            papel higiénico, abarrotes y artículos para el hogar, hasta los cafés de especialidad, cacao nativo,
+            miel pura y artesanías emblemáticas de la Amazonía. Compra fácil al por menor o mayor con entrega directa y segura.
+          </p>
+
+          <div className={styles.heroActionsRow}>
+            <Link to={ROUTES.CATALOG} className={styles.heroBtnPrimary}>
+              <ShoppingCart size={16} /> Explorar Catálogo
+            </Link>
+            <Link to={`${ROUTES.CATALOG}?categoria=abarrotes`} className={styles.heroBtnSecondary}>
+              <ShoppingBag size={15} /> Abarrotes & Canasta
+            </Link>
+            <Link to={ROUTES.REGISTER_BUSINESS} className={styles.heroBtnOutline}>
+              <Store size={15} /> Vender como Tienda / MYPE
+            </Link>
+          </div>
+
+          <div className={styles.heroPillsRow}>
+            <div className={styles.heroPillItem}>
+              <CheckCircle2 size={15} color="#84cc16" />
+              <span>Para Familias y Negocios</span>
+            </div>
+            <div className={styles.heroPillItem}>
+              <CheckCircle2 size={15} color="#84cc16" />
+              <span>Precios de Bodega y Mayorista</span>
+            </div>
+            <div className={styles.heroPillItem}>
+              <CheckCircle2 size={15} color="#84cc16" />
+              <span>Envíos en Tingo María y Todo el Perú</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className="container">
-        {/* 1. Chips de Ubicaciones Territoriales de Tingo María y Alrededores */}
+        {/* 2. Barra de Promociones y Contador Regresivo estilo Organa */}
+        <div className={styles.promoCountdownBar}>
+          <div className={styles.promoBarTitleGroup}>
+            <h3 className={styles.promoBarTitle}>
+              <Zap size={20} fill="#ffffff" /> PROMOS TINGO MARÍA 💚
+            </h3>
+            <span className={styles.promoTimeTag}>¡POR TIEMPO LIMITADO!</span>
+          </div>
+
+          <div className={styles.countdownBlocks}>
+            <div className={styles.countdownUnit}>
+              <span className={styles.countdownVal}>
+                {String(timeLeft.days).padStart(2, '0')}
+              </span>
+              <span className={styles.countdownLabel}>Días</span>
+            </div>
+            <div className={styles.countdownUnit}>
+              <span className={styles.countdownVal}>
+                {String(timeLeft.hours).padStart(2, '0')}
+              </span>
+              <span className={styles.countdownLabel}>Horas</span>
+            </div>
+            <div className={styles.countdownUnit}>
+              <span className={styles.countdownVal}>
+                {String(timeLeft.minutes).padStart(2, '0')}
+              </span>
+              <span className={styles.countdownLabel}>Minutos</span>
+            </div>
+            <div className={styles.countdownUnit}>
+              <span className={styles.countdownVal}>
+                {String(timeLeft.seconds).padStart(2, '0')}
+              </span>
+              <span className={styles.countdownLabel}>Segundos</span>
+            </div>
+          </div>
+
+          <Link to={`${ROUTES.CATALOG}?ofertas=true`} className={styles.promoButtonLink}>
+            Ver Promociones <ArrowRight size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />
+          </Link>
+        </div>
+
+        {/* 3. Chips de Ubicaciones Territoriales de Tingo María y Alrededores */}
         <section className={styles.searchSection} aria-label="Zonas de Tingo María">
           <div className={styles.locationChipsRow}>
             <span className={styles.locationChipLabel}>Zonas destacadas:</span>
@@ -210,138 +254,6 @@ export const HomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* 2. Banner Principal Interactivo (Carrusel en el Centro) */}
-        <section className={styles.heroBannerSection} aria-labelledby="banner-heading">
-          <div className={styles.carouselWrapper}>
-            {/* Botones de navegación izquierda y derecha */}
-            <button
-              type="button"
-              className={`${styles.sliderNavBtn} ${styles.sliderNavBtnLeft}`}
-              onClick={handlePrevSlide}
-              aria-label="Diapositiva anterior"
-            >
-              <ChevronLeft size={24} />
-            </button>
-            <button
-              type="button"
-              className={`${styles.sliderNavBtn} ${styles.sliderNavBtnRight}`}
-              onClick={handleNextSlide}
-              aria-label="Siguiente diapositiva"
-            >
-              <ChevronRight size={24} />
-            </button>
-
-            {/* Contenido de la diapositiva */}
-            <div className={styles.heroBannerCard}>
-              {/* Lado Izquierdo con fondo verde unificado */}
-              <div className={styles.heroBannerText}>
-                <span className={styles.heroEyebrow}>{activeSlide.eyebrow}</span>
-                <h1 id="banner-heading" className={styles.heroTitle}>
-                  {activeSlide.title}
-                </h1>
-                <p className={styles.heroSubtitle}>{activeSlide.subtitle}</p>
-
-                {activeSlide.ctaText && activeSlide.ctaLink ? (
-                  <div style={{ marginBottom: '24px' }}>
-                    <Link
-                      to={activeSlide.ctaLink}
-                      style={{
-                        backgroundColor: '#ffffff',
-                        color: '#135d38',
-                        padding: '10px 22px',
-                        borderRadius: '9999px',
-                        fontWeight: 700,
-                        fontSize: '14px',
-                        textDecoration: 'none',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                      }}
-                    >
-                      {activeSlide.ctaText} <ArrowRight size={16} />
-                    </Link>
-                  </div>
-                ) : null}
-
-                <div className={styles.heroFeaturesRow}>
-                  {activeSlide.features.map((feat, idx) => (
-                    <div key={idx} className={styles.heroFeatureItem}>
-                      <Sprout size={18} className={styles.heroFeatureIcon} />
-                      <span>{feat.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Lado Derecho con fotografía */}
-              <div className={styles.heroBannerMedia}>
-                <img
-                  src={activeSlide.image}
-                  alt={activeSlide.imageAlt}
-                  className={styles.heroBannerImage}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/images/hero-amazon-products.jpg';
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Indicadores de puntos inferiores */}
-            <div className={styles.sliderDotsRow}>
-              {slides.map((_, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  className={`${styles.sliderDot} ${currentSlide === idx ? styles.sliderDotActive : ''}`}
-                  onClick={() => setCurrentSlide(idx)}
-                  aria-label={`Ir a diapositiva ${idx + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* 3. Barra de Promociones y Contador Regresivo estilo Organa */}
-          <div className={styles.promoCountdownBar}>
-            <div className={styles.promoBarTitleGroup}>
-              <h3 className={styles.promoBarTitle}>
-                <Zap size={20} fill="#ffffff" /> PROMOS TINGO MARÍA 💚
-              </h3>
-              <span className={styles.promoTimeTag}>¡POR TIEMPO LIMITADO!</span>
-            </div>
-
-            <div className={styles.countdownBlocks}>
-              <div className={styles.countdownUnit}>
-                <span className={styles.countdownVal}>
-                  {String(timeLeft.days).padStart(2, '0')}
-                </span>
-                <span className={styles.countdownLabel}>Días</span>
-              </div>
-              <div className={styles.countdownUnit}>
-                <span className={styles.countdownVal}>
-                  {String(timeLeft.hours).padStart(2, '0')}
-                </span>
-                <span className={styles.countdownLabel}>Horas</span>
-              </div>
-              <div className={styles.countdownUnit}>
-                <span className={styles.countdownVal}>
-                  {String(timeLeft.minutes).padStart(2, '0')}
-                </span>
-                <span className={styles.countdownLabel}>Minutos</span>
-              </div>
-              <div className={styles.countdownUnit}>
-                <span className={styles.countdownVal}>
-                  {String(timeLeft.seconds).padStart(2, '0')}
-                </span>
-                <span className={styles.countdownLabel}>Segundos</span>
-              </div>
-            </div>
-
-            <Link to={ROUTES.CATALOG} className={styles.promoButtonLink}>
-              Ver Promociones <ArrowRight size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />
-            </Link>
-          </div>
-        </section>
-
         {/* 4. Sección "Explora por categoría" */}
         <section className={styles.sectionBlock} aria-labelledby="categories-heading">
           <div className={styles.sectionHeaderRow}>
@@ -353,25 +265,21 @@ export const HomePage: React.FC = () => {
             </Link>
           </div>
 
-          <div className={styles.categoriesGrid}>
+          <div className={styles.categoriesRow}>
             {categories.map((cat) => (
-              <Link
+              <div
                 key={cat.id}
-                to={`${ROUTES.CATALOG}?categoria=${cat.id}`}
-                className={styles.categoryCard}
+                className={styles.categoryCircleCard}
+                onClick={() => navigate(`${ROUTES.CATALOG}?categoria=${cat.id}`)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && navigate(`${ROUTES.CATALOG}?categoria=${cat.id}`)}
               >
-                <img
-                  src={cat.imageUrl}
-                  alt={cat.title}
-                  className={styles.categoryImage}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=200&q=80';
-                  }}
-                />
-                <span className={styles.categoryTitle}>{cat.title}</span>
-                <ChevronRight size={18} className={styles.categoryArrow} />
-              </Link>
+                <div className={styles.categoryCircleThumb}>
+                  <img src={cat.imageUrl} alt={cat.title} />
+                </div>
+                <span className={styles.categoryCircleTitle}>{cat.title}</span>
+              </div>
             ))}
           </div>
         </section>
