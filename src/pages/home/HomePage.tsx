@@ -16,6 +16,13 @@ import {
   ShoppingBag,
   CheckCircle2,
   ShoppingCart,
+  ShoppingBasket,
+  Sparkles,
+  Coffee,
+  Sun,
+  Apple,
+  Wine,
+  Feather,
 } from 'lucide-react';
 import styles from './HomePage.module.css';
 
@@ -61,36 +68,69 @@ export const HomePage: React.FC = () => {
     window.open(`https://wa.me/51962881234?text=${text}`, '_blank');
   };
 
-  const categories = [
+  const homeCategories = [
     {
       id: 'abarrotes',
-      title: 'Abarrotes',
-      imageUrl: '/images/hero-cart-groceries.jpg',
+      title: 'Abarrotes & Canasta Básica',
+      badge: 'Esencial',
+      description: 'Arroz, azúcar, aceites, fideos, menestras y conservas familiares y mayoristas.',
+      icon: <ShoppingBasket size={22} />,
     },
     {
       id: 'hogar',
-      title: 'Hogar & Papel',
-      imageUrl: '/images/hero-stacked-goods.jpg',
+      title: 'Hogar, Papelería & Limpieza',
+      badge: 'Empresas & Hogar',
+      description: 'Papel higiénico, servilletas, detergentes, lejía y útiles de aseo.',
+      icon: <Sparkles size={22} />,
     },
     {
       id: 'cafe',
-      title: 'Café',
-      imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=200&q=80',
+      title: 'Café de Especialidad & Altura',
+      badge: '84+ Puntos',
+      description: 'Cafés de altura del Monzón y Castillo Grande, molido y grano tostado.',
+      icon: <Coffee size={22} />,
     },
     {
       id: 'cacao',
-      title: 'Cacao',
-      imageUrl: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=200&q=80',
+      title: 'Cacao, Chocolate & Confitería',
+      badge: 'Cacao Nativo',
+      description: 'Tabletas al 70%, pasta pura tradicional y nibs crocantes.',
+      icon: <Sparkles size={22} />,
     },
     {
       id: 'miel',
-      title: 'Miel',
-      imageUrl: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?auto=format&fit=crop&w=200&q=80',
+      title: 'Miel Pura & Apicultura',
+      badge: '100% Virgen',
+      description: 'Miel de monte de la Bella Durmiente, propóleo silvestre y polen puro.',
+      icon: <Sun size={22} />,
+    },
+    {
+      id: 'frutas',
+      title: 'Frutas, Chifles & Snacks',
+      badge: 'Crocantes',
+      description: 'Chifles de plátano bellaco de Castillo Grande, frutas secas y snacks.',
+      icon: <Apple size={22} />,
+    },
+    {
+      id: 'licores',
+      title: 'Bebidas & Licores Amazónicos',
+      badge: 'Tradicional',
+      description: 'Uvachado, 7 Raíces, chuchuhuasi y macerados típicos de Tingo María.',
+      icon: <Wine size={22} />,
     },
     {
       id: 'artesania',
-      title: 'Artesanías',
-      imageUrl: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=200&q=80',
+      title: 'Artesanías & Cultura Amazónica',
+      badge: 'Hecho a Mano',
+      description: 'Tallados en madera noble, huayruro y recuerdos emblemáticos de la selva.',
+      icon: <Feather size={22} />,
+    },
+    {
+      id: 'superfoods',
+      title: 'Superfoods & Derivados del Campo',
+      badge: 'Nutrición',
+      description: 'Sacha inchi, harina de plátano, aguaje y productos naturales de la región.',
+      icon: <ShieldCheck size={22} />,
     },
   ];
 
@@ -265,20 +305,26 @@ export const HomePage: React.FC = () => {
             </Link>
           </div>
 
-          <div className={styles.categoriesRow}>
-            {categories.map((cat) => (
+          <div className={styles.categoriesGrid}>
+            {homeCategories.map((cat) => (
               <div
                 key={cat.id}
-                className={styles.categoryCircleCard}
+                className={styles.categoryCard}
                 onClick={() => navigate(`${ROUTES.CATALOG}?categoria=${cat.id}`)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && navigate(`${ROUTES.CATALOG}?categoria=${cat.id}`)}
               >
-                <div className={styles.categoryCircleThumb}>
-                  <img src={cat.imageUrl} alt={cat.title} />
+                <div className={styles.categoryCardIconBox}>
+                  {cat.icon}
                 </div>
-                <span className={styles.categoryCircleTitle}>{cat.title}</span>
+                <div className={styles.categoryCardBody}>
+                  <div className={styles.categoryCardHeader}>
+                    <h3 className={styles.categoryCardTitle}>{cat.title}</h3>
+                    <span className={styles.categoryCardBadge}>{cat.badge}</span>
+                  </div>
+                  <p className={styles.categoryCardDesc}>{cat.description}</p>
+                </div>
               </div>
             ))}
           </div>

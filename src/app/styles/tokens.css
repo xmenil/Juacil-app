@@ -21,10 +21,10 @@
   --color-earth-600: #8c531b;
   --color-earth-100: #fef3c7;
 
-  /* Neutros y Superficies */
-  --color-bg-app: #f7faf8;
+  /* Neutros y Superficies (Fondo verde clarito y blanco) */
+  --color-bg-app: #f0f7f3;
   --color-surface: #ffffff;
-  --color-surface-subtle: #f1f6f3;
+  --color-surface-subtle: #ebf5ee;
   --color-surface-muted: #e4ebe6;
   
   --color-text-main: #112117;

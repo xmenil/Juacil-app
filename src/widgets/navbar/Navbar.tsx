@@ -12,8 +12,8 @@ import {
   X,
   WifiOff,
   ChevronDown,
+  ChevronRight,
   Sparkles,
-  LayoutGrid,
   Tag,
   Package,
 } from 'lucide-react';
@@ -21,6 +21,7 @@ import { useCart } from '@/app/providers/CartProvider';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useConnectivity } from '@/app/providers/ConnectivityProvider';
 import { ROUTES } from '@/shared/config/routes';
+import { CATEGORIES } from '@/shared/config/constants';
 import { CategoryMegaOverlay } from './CategoryMegaOverlay';
 import styles from './Navbar.module.css';
 
@@ -30,8 +31,30 @@ export const Navbar: React.FC = () => {
   const { isOnline } = useConnectivity();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesModalOpen, setCategoriesModalOpen] = useState(false);
+  const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
+  const dropdownTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const navigate = useNavigate();
+
+  const handleCategoriesMouseEnter = () => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+      dropdownTimeoutRef.current = null;
+    }
+    setCategoriesDropdownOpen(true);
+  };
+
+  const handleCategoriesMouseLeave = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setCategoriesDropdownOpen(false);
+    }, 120);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const handleOpenCategories = () => setCategoriesModalOpen(true);
@@ -223,15 +246,58 @@ export const Navbar: React.FC = () => {
                 Inicio
               </NavLink>
 
-              {/* Botón desplegable que abre el panel completo de categorías con fondo oscuro */}
-              <button
-                type="button"
-                className={styles.categoriesDropdownButton}
-                onClick={() => setCategoriesModalOpen(true)}
-                aria-label="Abrir catálogo completo de categorías"
+              {/* Menú Desplegable de Categorías estilo Mercado Libre (hover dropdown vertical) */}
+              <div
+                className={styles.categoriesDropdownContainer}
+                onMouseEnter={handleCategoriesMouseEnter}
+                onMouseLeave={handleCategoriesMouseLeave}
               >
-                <LayoutGrid size={15} /> Categorías <ChevronDown size={14} />
-              </button>
+                <button
+                  type="button"
+                  className={`${styles.categoriesNavButton} ${categoriesDropdownOpen ? styles.categoriesNavButtonActive : ''}`}
+                  onClick={() => setCategoriesDropdownOpen((prev) => !prev)}
+                  aria-expanded={categoriesDropdownOpen}
+                  aria-haspopup="true"
+                  aria-label="Categorías"
+                >
+                  Categorías <ChevronDown size={14} className={`${styles.chevronIcon} ${categoriesDropdownOpen ? styles.chevronIconRotated : ''}`} />
+                </button>
+
+                {categoriesDropdownOpen && (
+                  <div className={styles.mercadoLibreMenu} role="menu">
+                    <div className={styles.mercadoLibreArrow} />
+                    <div className={styles.mercadoLibreList}>
+                      {CATEGORIES.map((cat) => (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          className={styles.mercadoLibreItem}
+                          onClick={() => {
+                            navigate(`${ROUTES.CATALOG}?categoria=${cat.id}`);
+                            setCategoriesDropdownOpen(false);
+                          }}
+                          role="menuitem"
+                        >
+                          <span className={styles.mercadoLibreItemName}>{cat.name}</span>
+                          <ChevronRight size={14} className={styles.mercadoLibreItemArrow} />
+                        </button>
+                      ))}
+                    </div>
+                    <div className={styles.mercadoLibreFooter}>
+                      <button
+                        type="button"
+                        className={styles.mercadoLibreFooterBtn}
+                        onClick={() => {
+                          navigate(ROUTES.CATALOG);
+                          setCategoriesDropdownOpen(false);
+                        }}
+                      >
+                        Ver todo el catálogo JUÁCIL ›
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               <NavLink
                 to={`${ROUTES.CATALOG}?ofertas=true`}
@@ -327,7 +393,7 @@ export const Navbar: React.FC = () => {
                 }}
                 style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-primary-800)', fontWeight: 700 }}
               >
-                <LayoutGrid size={18} /> Explorar Todas las Categorías ▾
+                <ChevronRight size={18} /> Explorar Todas las Categorías ▾
               </button>
               <Link to={`${ROUTES.CATALOG}?ofertas=true`} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
                 <Tag size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Ofertas Especiales

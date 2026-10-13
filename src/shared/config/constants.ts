@@ -1,13 +1,13 @@
 export const CATEGORIES = [
-  { id: 'abarrotes', name: 'Abarrotes & Canasta Básica', icon: 'ShoppingBasket', description: 'Arroz, azúcar, fideos, aceites, menestras y conservas para el hogar y empresas' },
-  { id: 'hogar', name: 'Hogar, Papelería & Limpieza', icon: 'Sparkles', description: 'Papel higiénico, servilletas, detergentes y suministros de aseo' },
-  { id: 'cafe', name: 'Café de Especialidad', icon: 'Coffee', description: 'Cafés de altura del Valle del Monzón y Castillo Grande' },
-  { id: 'cacao', name: 'Cacao & Chocolatería', icon: 'Sparkles', description: 'Chocolates finos al 70%, nibs y manteca de Tingo María' },
-  { id: 'miel', name: 'Miel & Apicultura', icon: 'Sun', description: 'Miel pura de monte virgen de Naranjillo y Las Palmas' },
-  { id: 'frutas', name: 'Frutas, Chifles & Snacks', icon: 'Apple', description: 'Chifles de plátano bellaco, cecina, camu camu y cocona' },
-  { id: 'licores', name: 'Licores & Bebidas Amazónicas', icon: 'Sparkles', description: 'Uvachado, 7 Raíces, chuchuhuasi y macerados de Tingo María' },
-  { id: 'artesania', name: 'Artesanía & Souvenirs', icon: 'Feather', description: 'Tallados en madera noble, huayruro y recuerdos de la Bella Durmiente' },
-  { id: 'superfoods', name: 'Superfoods & Derivados', icon: 'ShieldCheck', description: 'Sacha inchi, harina de plátano y aguaje de Leoncio Prado' },
+  { id: 'abarrotes', name: 'Abarrotes & Canasta Básica', badge: 'Esencial', icon: 'ShoppingBasket', description: 'Arroz, azúcar, aceites, fideos, menestras y conservas familiares y mayoristas.' },
+  { id: 'hogar', name: 'Hogar, Papelería & Limpieza', badge: 'Empresas & Hogar', icon: 'Sparkles', description: 'Papel higiénico, servilletas, detergentes, lejía y útiles de aseo.' },
+  { id: 'cafe', name: 'Café de Especialidad & Altura', badge: '84+ Puntos', icon: 'Coffee', description: 'Cafés de altura del Monzón y Castillo Grande, molido y grano tostado.' },
+  { id: 'cacao', name: 'Cacao, Chocolate & Confitería', badge: 'Cacao Nativo', icon: 'Sparkles', description: 'Tabletas al 70%, pasta pura tradicional y nibs crocantes.' },
+  { id: 'miel', name: 'Miel Pura & Apicultura', badge: '100% Virgen', icon: 'Sun', description: 'Miel de monte de la Bella Durmiente, propóleo silvestre y polen puro.' },
+  { id: 'frutas', name: 'Frutas, Chifles & Snacks', badge: 'Crocantes', icon: 'Apple', description: 'Chifles de plátano bellaco, frutas deshidratadas y snacks.' },
+  { id: 'licores', name: 'Bebidas & Licores Amazónicos', badge: 'Tradicional', icon: 'Wine', description: 'Uvachado, 7 Raíces, chuchuhuasi y macerados típicos de Tingo María.' },
+  { id: 'artesania', name: 'Artesanías & Cultura Amazónica', badge: 'Hecho a Mano', icon: 'Feather', description: 'Tallados en madera noble, huayruro y recuerdos emblemáticos de la selva.' },
+  { id: 'superfoods', name: 'Superfoods & Derivados del Campo', badge: 'Nutrición', icon: 'ShieldCheck', description: 'Sacha inchi, harina de plátano, aguaje y productos naturales de Leoncio Prado.' },
 ] as const;
 
 export const LOCATIONS = [
