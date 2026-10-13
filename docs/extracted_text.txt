@@ -1,0 +1,170 @@
+“AÑO DE LA ESPERANZA Y EL FORTALECIMIENTO DE LA DEMOCRACIA”
+INSTITUTO DE EDUCACIÓN SUPERIOR PRIVADO
+“PROGRAMA DE ESTUDIO CONTABILIDAD”
+PROYECTO: “JUÀCIL”
+“Tu tienda online”
+DOCENTE       : ECON. RONALD ANDRADE ENCISO
+                   CURSO          : INNOVACIÒN II
+ALUMNOS       : DIONICIO TACUCHI TOLENTINO
+                          JOSUE SANTAMARIA VELASQUEZ
+                           MARCO ANTONIO SINCHI ROMERO
+                                          RUTH LIPA CHATATA
+                                  WUENNY ANGELICA CARUZO ORDOÑEZ                 
+CICLO           : VI                            TURNO          : A.N
+2026
+INDICE
+CAPÍTULO II. PROTOTIPADO Y PRUEBA DE CONCEPTO3
+2.1. DEFINICIÓN DEL PROTOTIPO3
+2.2 CARACTERÍSTICAS TÉCNICAS Y FUNCIONALES3
+2.3 HERRAMIENTAS, MATERIALES Y RECURSOS EMPLEADOS4
+2.4 PROCESO DE CONSTRUCCIÓN O DESARROLLO DEL PROTOTIPO5
+2.5 DISEÑO Y EJECUCION DE LA PRUEBA DE CONCEPTOS6
+2.6 EVIDENCIAS Y RESULTADOS INICIALES DEL PROTOTIPADO7
+CAPÍTULO III. VALIDACIÓN Y ANÁLISIS DE RESULTADOS8
+3.1. OBJETIVO DE LA VALIDACIÓN8
+3.2. SELECCIÓN DE USUARIOS, CLIENTES O BENEFICIARIOS8
+3.3. TÉCNICAS E INSTRUMENTOS DE VALIDACIÓN9
+3.4. APLICACIÓN DE ENCUESTAS, ENTREVISTAS O PRUEBAS PILOTO9
+3.5. ORGANIZACIÓN Y PROCESAMIENTO DE LA INFORMACIÓN10
+3.6. ANÁLISIS E INTERPRETACIÓN DE LOS RESULTADOS10
+3.7. RETROALIMENTACIÓN DE LOS PARTICIPANTES10
+3.8. IDENTIFICACIÓN DE MEJORAS NECESARIAS11
+CAPÍTULO II. PROTOTIPADO Y PRUEBA DE CONCEPTO
+2.1. DEFINICIÓN DEL PROTOTIPO
+El prototipo de nuestro proyecto consiste en una propuesta digital orientada a facilitar las ventas de las MYPES de la región. Su función principal es permitir que los pequeños negocios pueden presentar sus productos de una manera ordena, sencilla y atractiva mediante herramientas digitales.
+La propuesta incluye elementos básicos como fotografías, precios, características de los productos y medios de contacto con los clientes. De esta manera, las MYPES pueden contar con un espacio que les ayude a mostrar lo que ofrecen y recibir pedidos.
+Según Ries (2011), un prototipo o producto inicial permite comprobar una idea en la practica y conocer la respuesta de los usuarios antes de realizar una implementación mas amplia. Por ello, nuestra propuesta busca comprobar si una herramienta digital sencilla pueda ayudar a mejorar las ventas.
+Asimismo, Osterwalder y Pigneur (2011) señalan que una propuesta de negocio debe responder a las necesidades de los clientes. En nuestro caso, el prototipo busca adaptarse a las condiciones de las MYPES y facilitar su incorporación al uso de herramientas digitales.
+2.2 CARACTERÍSTICAS TÉCNICAS Y FUNCIONALES 
+El prototipo tendrá características enfocadas principalmente en facilitar la presentación y comercialización de productos. Entre sus funciones se considera un catalogo digital donde se puedan mostrar fotografías, precios, y una breve descripción de cada producto.
+También permitirá registrar los pedidos realizados por los clientes y mantener una comunicación directa para coordinar las ventas. Estas funciones buscan simplificar actividades que normalmente pueden resultar complicadas para los pequeños negocios.
+Desde el punto de vita técnico, se plantea utilizar herramientas digitales de fácil acceso y qe puedan ser utilizadas desde una computadora o teléfono celular. Esto permitirá que las MYPES puedan administrar la información de sus productos sin requerir conocimientos tecnológicos avanzados.
+Según Kotler y Keller (2016), conocer las necesidades de los clientes permite desarrollar propuestas que general mayor valor. Por ello, las características del prototipo estarán orientadas a brindar una experiencia sencilla, practica y útil para las MYPES y sus clientes. 
+Contacto en línea: facilitará la comunicación entre los emprendedores y sus clientes mediante medios digitales, permitiendo responder consultas, brindar información adicional y coordinar los pedidos de manera más directa.
+Facilidad de uso: el prototipo estará pensado para que pueda ser utilizado de manera sencilla, incluso por personas que no tengan mucha experiencia con herramientas digitales. Además, se buscará que sus funciones se adapten a las características y necesidades de las MYPES de la región Selva.
+Ampliación del mercado: permitirá dar mayor visibilidad a los productos de los pequeños negocios, ayudándolos a promocionar su oferta y llegar a clientes de distintas zonas de la región y de otras partes del país.
+En general, estas características buscan que el prototipo sea una herramienta práctica que contribuya a mejorar la forma en que las MYPES presentan y comercializan sus productos mediante el uso de medios digitales.
+ 2.3 HERRAMIENTAS, MATERIALES Y RECURSOS EMPLEADOS 
+Para desarrollar el prototipo se realizarán principalmente una computadora o teléfono celular, conexión a internet y una plataforma digital que permita organizar la información de los productos. Estos recursos son necesarios para crear, actualizar y administrar la propuesta.
+También se emplearán herramientas de diseño para elaborar imágenes y contenidos que permitan presentar los productos de manera clara y atractiva. La información proporcionada por las MYPES, como fotografías, precios y características, será utilizada para completar el catálogo.
+Los recursos tecnológicos seleccionados buscan ser accesibles y fáciles de manejar, considerando las condiciones de los pequeños negocios de la localidad. De esta manera, se pretende evitar que el uso de la propuesta dependa de equipos o conocimientos demasiado especializados. Entre los principales recursos considerados se encuentran:
+Computadora o celular: serán utilizados como medios principales para elaborar, administrar y realizar las modificaciones necesarias en el prototipo.
+Conexión a Internet: permitirá acceder a las plataformas digitales, actualizar la información y facilitar la difusión de los productos hacia los posibles clientes.
+Plataforma digital: servirá como espacio para mostrar los productos mediante un catálogo virtual, incluyendo información importante y facilitando el contacto entre los clientes y las MYPES.
+Herramientas de diseño: se emplearán programas y aplicaciones de diseño para crear imágenes, publicaciones y otros contenidos visuales que permitan presentar los productos de una forma atractiva y ordenada.
+Información de los productos: se recopilarán fotografías, precios, características y descripciones proporcionadas por las MYPES, con la finalidad de brindar a los clientes información clara y útil antes de realizar una compra.
+Según Ulrich y Eppinger (2012), durante el desarrollo de un producto es importante considerar los recursos y herramientas disponibles para lograr una propuesta funcional. En nuestro proyecto, estos recursos permitan construir y probar una solución adaptada a las necesidades identificadas. 
+2.4 PROCESO DE CONSTRUCCIÓN O DESARROLLO DEL PROTOTIPO
+El desarrollo del prototipo comienza identificando las principales dificultades que tienen las MYPES para realizar ventas mediante medios digitales. A partir de esta información se determina que funciones serán necesarias para responder al problema planteado.
+Lugo se organiza la estructura del prototipo y se define la forma en que serán presentados de los productos. En esta etapa se incorpora las fotografías, precios, características y medios de contacto que utilizaran los posibles clientes.
+Después se realiza primera prueba para verificar que las funciones sean comprensibles y fáciles de utilizar. Durante esta etapa también se pueden detectar errores o elementos que necesitan ser modificados.
+Finamente, se realizan los ajustes necesarios de acuerdo con las observaciones obtenidas. Ries (2011) plantea que probar una propuesta y aprender de los resultados permite realizar mejoras antes de desarrollar una solución definitiva.
+2.5 DISEÑO Y EJECUCION DE LA PRUEBA DE CONCEPTOS
+La prueba de concepto tiene como finalidad comprobar si el prototipo puede ser útil para apoyar las ventas de las MYPES. Para ello, se presenta la propuesta a un pequeño grupo de participantes que puedan revisar su funcionamiento.
+Durante la prueba, los usuarios podrán observar los productos, revisar la información disponible y simular o realizar pedidos. También se observará si encuentran dificultades para utilizar las diferentes funciones.
+Después de la actividad se recogerán sus opiniones y sugerencias sobre la propuesta. Esto permitirá que loe elementos funcionan correctamente y cuales deberían modificarse. 
+De acuerdo con Ries (2011), probar una idea con usuarios permite obtener información real para saber si la propuesta responde al problema identificado. Por ello, la prueba de concepto será importante para mejorar el prototipo antes de continuar con su implementación.
+Imagen 1
+2.6 EVIDENCIAS Y RESULTADOS INICIALES DEL PROTOTIPADO
+Las evidencias del prototipado estarán conformadas por capturas, fotografías y representaciones de las diferentes partes del programa digital. Estas evidencias permitirán demostrar el desarrollo del catalogo y sus principales funciones.
+Durante las primeras pruebas se espera comprobar si los usuarios pueden visualizar los productos, encontrar información y comprender el proceso para realizar un pedido. También se registrarán las dificultades que pueden presentarse durante la utilización del prototipo.
+Los resultados iniciales permitirán conocer los puntos fuertes de la propuesta y aquellos aspectos que necesitan ser corregidos. Esta información será útil para realizar cambios antes de aplicar una validación más completa.
+Según Osterwalder y Pigneur (2011) probar una propuesta con los usuarios permite obtener información para mejorarla y ajustarla a sus necesidades. Por ello, las evidencias y resultados obtenidos servirán como base para continuar perfeccionando nuestro proyecto.
+Imagen 2
+CAPÍTULO III. VALIDACIÓN Y ANÁLISIS DE RESULTADOS
+3.1. OBJETIVO DE LA VALIDACIÓN
+La validación tiene como objetivo conocer si el prototipo responde al problema identificado en las MYPES. Principalmente, se busca comprobar si la propuesta resulta útil, sencilla y accesible para facilitar la digitalización de sus ventas.
+También se pretende conocer la opinión de los usuarios sobre las funciones incorporadas en el prototipo. Esto permitirá determinar si la presentación de productos, el registro de pedidos y la comunicación digital cumplen con lo esperado.
+La validación permitirá detectar posibles dificultades que no fueron identificadas durante el desarrollo inicial. De esta manera, se podrán realizar cambios antes de una implementación más amplia.
+Según Hernández-Sampieri y Mendoza (2018), la investigación debe relacionar la información obtenida con los objetivos planteados. Por ello, los resultados de la validación serán analizados considerando el propósito principal de nuestro proyecto.
+3.2. SELECCIÓN DE USUARIOS, CLIENTES O BENEFICIARIOS
+Para realizar la validación se considerarán personas relacionadas con las MYPES y posibles clientes de los productos ofrecidos. La selección busca contar con participantes que puedan brindar opiniones relacionadas con el uso de herramientas digitales para las ventas.
+Los participantes podrán revisar el prototipo y expresar si consideran que sus funciones son fáciles de comprender. También podrán señalar que elementos le parecen útiles y cuales podrían mejorarse.
+La participación de usuarios relacionados con el problema permitirá obtener opiniones mas cercanas a la realidad del proyecto. Esto ayudara a comprobar si la propuesta realmente responde a las necesidades identificadas. 
+Hernández-Sampieri y Mendoza (2018), señalan que la selección de los participantes debe estar relacionada con el propósito de estudio. En nuestro caso, se buscar recoger información de personas que puedan aportar una opinión útil sobre la propuesta.
+3.3. TÉCNICAS E INSTRUMENTOS DE VALIDACIÓN
+Para validar el prototipo se pueden utilizar técnicas como la encuesta, entrevista y observación durante la prueba. Estas herramientas permitirán recoger información sobre la opinión y experiencia de los participantes. 
+La encuesta ayudara a obtener respuestas organizadas sobre aspectos como facilidad de uso, utilidad y presentación del prototipo. La entrevista permitirá conocer con mayor detalle las sugerencias y comentarios de los participantes.
+También se podrá observar directamente como los usuarios interactúan con la propuesta. Esto ayudara a identificar dificultades que posiblemente no sean mencionadas en las encuestas o entrevistas.
+Según Hernández-Sampieri y Mendoza (2018), las técnicas e instrumentos deben seleccionarse de acuerdo con la información que se desea obtener. Por ello, se utilizarán herramientas que permitan conocer de manera sencilla la percepción de los usuarios.
+3.4. APLICACIÓN DE ENCUESTAS, ENTREVISTAS O PRUEBAS PILOTO
+Las encuestas, entrevistas o pruebas de piloto se aplicarán a los participantes seleccionados después de presentarles el prototipo. Primero se explicará brevemente el funcionamiento de la propuesta para que puedan interactuar con ella. 
+Durante la actividad, los participantes podrán revisar los productos, observar sus características y realizar una prueba del proceso de pedido. También podrán comentar si encuentran dificultades durante el uso.
+Al final, se recogerán sus opiniones mediante preguntas sencillas relacionadas con la utilidad., facilidad de uso y funcionamiento del prototipo. Esta información será utilizada posteriormente para analizar los resultados.
+Creswell y Creswell (2018), destacan la importancia de utilizar procedimientos ordenados para obtener información que permita responder a los objetivos planteados. Por ello, la aplicación de las pruebas seguirá un proceso organizado.
+3.5. ORGANIZACIÓN Y PROCESAMIENTO DE LA INFORMACIÓN
+Después de aplicar las encuestas, entrevistas o pruebas piloto, la información obtenida será organizada para facilitar su análisis. Las respuestas podrán clasificarse según aspectos como facilidad de uso, utilidad, presentación de productos y comunicación.
+Los datos de las encuestas podrán ser registrados en tablas para conocer las respuestas de los participantes. En el uso de las entrevistas, se podrán agrupar la opiniones y sugerencias que tengan características similares.
+Esta organización permitirá identificar los aspectos que tuvieron mayor aceptación y aquellos que necesitan ser mejorados. De esta manera, será mas sencillo interpretar la información obtenida durante la validación.
+Según Hernández-Sampieri y Mendoza (2018), organizar y analizar adecuadamente los datos permite obtener conclusiones relacionadas con los objetivos de una investigación. Por ello, la información será procesada de manera ordenada y clara.
+3.6. ANÁLISIS E INTERPRETACIÓN DE LOS RESULTADOS
+Muy pronto...
+3.7. RETROALIMENTACIÓN DE LOS PARTICIPANTES
+La retroalimentación permitirá conocer las opiniones, comentarios y sugerencias de los participantes después de utilizar o revisar el prototipo. Esta información ayudara a identificar que partes de la propuesta fueron fáciles de comprender y cuales generaron alguna dificultad.
+Entre los aspectos que se pueden considerar están la presentación de los productos, facilidad para encontrar información, registro de pedidos y comunicación con los clientes. Los comentarios permitirán conocer la experiencia de los usuarios desde una perspectiva práctica.
+Además, las opiniones recibidas servirán para reconocer los puntos positivos y las oportunidades de la mejora de prototipo. Esto permitirá realizar cambios que respondan mejor a las necesidades de las MYPES.
+Kotler y Keller (2016) señalan que conocer las necesidades y percepciones de los usuarios ayuda a mejorar las propuestas y generar mayor valor. Osterwalder y Pigneur (2011) destacan l importancia de utilizar la información obtenida de los usuarios para ajustar una propuesta de valor para ajustar una propuesta de valor antes de su implementación.
+3.8. IDENTIFICACIÓN DE MEJORAS NECESARIAS
+Este también, muy pronto...
+1. ¿Qué tan útil considera JUÁCIL para las MYPES?
+☐ Muy útil
+☐ Útil
+☐ Regular
+☐ Poco útil
+☐ Nada útil
+2. ¿Qué tan clara le parece la presentación de los productos?
+☐ Muy clara
+☐ Clara
+☐ Regular
+☐ Poco clara
+☐ Nada clara
+3. ¿Qué tan fácil considera encontrar información como precio, fotografía y características?
+☐ Muy fácil
+☐ Fácil
+☐ Regular
+☐ Difícil
+☐ Muy difícil
+4. ¿Considera que JUÁCIL facilitaría la comunicación entre el cliente y la MYPE?
+☐ Sí, bastante
+☐ Sí, un poco
+☐ No estoy seguro(a)
+☐ Poco
+☐ No
+5. ¿Qué tan sencillo considera el proceso para realizar un pedido?
+☐ Muy sencillo
+☐ Sencillo
+☐ Regular
+☐ Difícil
+☐ Muy difícil
+6. ¿Considera que JUÁCIL ayudaría a una MYPE a llegar a más clientes?
+☐ Sí, bastante
+☐ Sí, en cierta medida
+☐ No estoy seguro(a)
+☐ Poco
+☐ No
+Esto se relaciona con la propuesta de ampliar la visibilidad de los productos y llegar a clientes de distintas zonas.
+7. ¿Qué tan fácil considera utilizar JUÁCIL desde un celular?
+☐ Muy fácil
+☐ Fácil
+☐ Regular
+☐ Difícil
+☐ Muy difícil
+8. ¿Considera que JUÁCIL facilitaría la digitalización de las ventas de las MYPES?
+☐ Totalmente de acuerdo
+☐ De acuerdo
+☐ Ni de acuerdo ni en desacuerdo
+☐ En desacuerdo
+☐ Totalmente en desacuerdo
+La validación busca precisamente comprobar si la propuesta resulta útil, sencilla y accesible para facilitar la digitalización de las ventas.
+9. Después de conocer JUÁCIL, ¿qué tan dispuesto(a) estaría a utilizarlo?
+☐ Muy dispuesto(a)
+☐ Dispuesto(a)
+☐ Indeciso(a)
+☐ Poco dispuesto(a)
+☐ Nada dispuesto(a)
+10. ¿Qué aspecto considera que debería mejorarse principalmente?
+☐ Diseño y presentación
+☐ Facilidad de uso
+☐ Información de los productos
+☐ Proceso de pedidos
+☐ Comunicación con el vendedor

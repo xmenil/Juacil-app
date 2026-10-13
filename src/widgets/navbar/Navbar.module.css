@@ -1,0 +1,178 @@
+.navbar {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-shadow: var(--shadow-sm);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+  gap: var(--space-4);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+}
+
+.logoImg {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--color-primary-900);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.brandSlogan {
+  font-size: 11px;
+  color: var(--color-primary-600);
+  font-weight: 600;
+}
+
+.navLinks {
+  display: none;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+@media (min-width: 840px) {
+  .navLinks {
+    display: flex;
+  }
+}
+
+.navLink {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-main);
+  padding: var(--space-2) var(--space-1);
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.navLink:hover {
+  color: var(--color-primary-700);
+}
+
+.navLinkActive {
+  color: var(--color-primary-800);
+  border-bottom-color: var(--color-primary-800);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.cartButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--min-touch-target);
+  height: var(--min-touch-target);
+  border-radius: var(--radius-md);
+  color: var(--color-primary-900);
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+}
+
+.cartButton:hover {
+  background-color: var(--color-primary-100);
+}
+
+.cartBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: var(--color-accent-lime);
+  color: var(--color-accent-lime-text);
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 1.5px solid var(--color-surface);
+}
+
+.offlineBanner {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border-bottom: 1px solid #fecaca;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-xs);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.mobileMenuToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--min-touch-target);
+  height: var(--min-touch-target);
+  border-radius: var(--radius-md);
+  color: var(--color-text-main);
+}
+
+@media (min-width: 840px) {
+  .mobileMenuToggle {
+    display: none;
+  }
+}
+
+.mobileDrawer {
+  position: fixed;
+  inset: 0;
+  top: 104px; /* Debajo de navbar + demo bar */
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileDrawerContent {
+  background-color: var(--color-surface);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mobileLink {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text-main);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}

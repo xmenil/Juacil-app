@@ -1,0 +1,46 @@
+import { Business } from './types';
+
+export const MOCK_BUSINESSES: Business[] = [
+  {
+    id: 'biz-cafe-aroma',
+    name: 'Café Aroma de Oxapampa',
+    description: 'Café arábica de estricta altura (1,800 msnm), cultivo agroforestal bajo sombra en la Reserva de Biósfera Oxapampa-Asháninka-Yánesha. Tueste medio recién empacado con notas achocolatadas.',
+    category: 'cafe',
+    location: 'Oxapampa (Pasco)',
+    whatsapp: '964882190',
+    ruc: '20601234567',
+    logoUrl: 'https://images.unsplash.com/photo-1559525839-8f8ec320b95c?auto=format&fit=crop&w=200&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80',
+    ownerId: 'user-merchant-01',
+    onboardingStep: 4,
+    createdAt: '2026-01-15T08:00:00.000Z',
+  },
+  {
+    id: 'biz-cacao-miel',
+    name: 'Chanchamayo Cacao & Miel',
+    description: 'Chocolatería artesanal Bean-to-Bar con cacao nativo chuncho y criollo, además de miel de abeja multifloral 100% pura cosechada en bosques nativos de San Ramón y La Merced.',
+    category: 'cacao',
+    location: 'Chanchamayo (Junín)',
+    whatsapp: '954120883',
+    ruc: '10452319871',
+    logoUrl: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=200&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1614088685112-0a760b71a3c8?auto=format&fit=crop&w=1200&q=80',
+    ownerId: 'user-merchant-02',
+    onboardingStep: 4,
+    createdAt: '2026-02-10T09:30:00.000Z',
+  },
+  {
+    id: 'biz-yanesha-arte',
+    name: 'Artesanías Ancestrales Yánesha',
+    description: 'Arte indígena auténtico de la comunidad Tsachopen. Bolsos tradicionales tejidos en fibra silvestre de tamshi, collares ceremoniales de semillas naturales y tallados en madera dura rescatada.',
+    category: 'artesania',
+    location: 'Villa Rica (Pasco)',
+    whatsapp: '989012345',
+    ruc: '', // Demostración de negocio sin RUC formal aún
+    logoUrl: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=200&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80',
+    ownerId: 'user-merchant-03',
+    onboardingStep: 3,
+    createdAt: '2026-03-01T11:00:00.000Z',
+  },
+];
