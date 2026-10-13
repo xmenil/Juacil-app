@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/shared/ui/Button';
-import { Alert } from '@/shared/ui/Alert';
-import { HelpCircle, CheckCircle2, MessageSquare, ClipboardCheck, ArrowRight } from 'lucide-react';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 interface SurveyAnswers {
   q1: string;

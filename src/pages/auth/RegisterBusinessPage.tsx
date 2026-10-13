@@ -13,7 +13,7 @@ import { Select } from '@/shared/ui/Select';
 import { Textarea } from '@/shared/ui/Textarea';
 import { Button } from '@/shared/ui/Button';
 import { Alert } from '@/shared/ui/Alert';
-import { Store, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const registerBusinessSchema = z.object({
   ownerName: z.string().min(3, 'Ingresa tu nombre y apellido (mínimo 3 caracteres).'),

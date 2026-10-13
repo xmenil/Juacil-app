@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useSession } from '@/app/providers/SessionProvider';
 import { MOCK_USERS } from '@/entities/user/model/mockUsers';
 import { ROUTES } from '@/shared/config/routes';
-import { Button } from '@/shared/ui/Button';
 import { UserCheck, Store, ArrowRight } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {

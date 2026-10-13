@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -9,8 +9,7 @@ import { Input } from '@/shared/ui/Input';
 import { Textarea } from '@/shared/ui/Textarea';
 import { Select } from '@/shared/ui/Select';
 import { Button } from '@/shared/ui/Button';
-import { Alert } from '@/shared/ui/Alert';
-import { Image, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 const PRESET_DEMO_IMAGES = [
   { label: 'Café en grano Villa Rica', url: 'https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=600&q=80' },
@@ -54,17 +53,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   onCancel,
   isSubmitting = false,
 }) => {
-  const [selectedPresetImage, setSelectedPresetImage] = useState<string>(
-    initialProduct?.imageUrl || PRESET_DEMO_IMAGES[0].url
-  );
-
   const {
     register,
     handleSubmit,
     setValue,
     watch,
     formState: { errors },
-  } = useForm<ProductFormValues>({
+  } = useForm<ProductFormValues, unknown, ProductFormValues>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       name: initialProduct?.name || '',
@@ -74,14 +69,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       description: initialProduct?.description || '',
       featuresText: initialProduct?.features?.join(', ') || '',
       imageUrl: initialProduct?.imageUrl || PRESET_DEMO_IMAGES[0].url,
-      status: initialProduct?.status || 'published',
+      status: (initialProduct?.status === 'draft' ? 'draft' : 'published') as 'published' | 'draft',
     },
   });
 
   const currentImageUrl = watch('imageUrl');
 
   const handleSelectPreset = (url: string) => {
-    setSelectedPresetImage(url);
     setValue('imageUrl', url, { shouldValidate: true });
   };
 

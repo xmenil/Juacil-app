@@ -6,7 +6,7 @@ import { formatMoney } from '@/shared/lib/money';
 import { formatDateTime } from '@/shared/lib/date';
 import { createWhatsAppLink } from '@/shared/lib/whatsapp';
 import { OrderStatus } from '@/entities/order/model/types';
-import { ORDER_STATUS_LABELS, canTransitionOrder } from '@/entities/order/model/orderStateMachine';
+import { ORDER_STATUS_LABELS } from '@/entities/order/model/orderStateMachine';
 import { ROUTES } from '@/shared/config/routes';
 import { OrderStatusBadge } from '@/entities/order/ui/OrderStatusBadge';
 import { Button } from '@/shared/ui/Button';

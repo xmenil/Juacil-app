@@ -36,16 +36,13 @@ export const MerchantBusinessPage: React.FC = () => {
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  if (!isMerchant || !businessId) {
-    navigate(ROUTES.FORBIDDEN);
-    return null;
-  }
+  const business = businessId ? LocalStoreRepository.getBusinessById(businessId) : null;
 
-  const business = LocalStoreRepository.getBusinessById(businessId);
-
-  if (!business) {
-    return <div className="container" style={{ padding: '64px 16px' }}>Negocio no encontrado.</div>;
-  }
+  React.useEffect(() => {
+    if (!isMerchant || !businessId) {
+      navigate(ROUTES.FORBIDDEN);
+    }
+  }, [isMerchant, businessId, navigate]);
 
   const {
     register,
@@ -53,15 +50,25 @@ export const MerchantBusinessPage: React.FC = () => {
     formState: { errors, isSubmitting },
   } = useForm<BusinessFormValues>({
     resolver: zodResolver(businessSchema),
-    defaultValues: {
-      name: business.name,
-      category: business.category,
-      location: business.location,
-      whatsapp: business.whatsapp,
-      ruc: business.ruc || '',
-      description: business.description,
-    },
+    values: business
+      ? {
+          name: business.name,
+          category: business.category,
+          location: business.location,
+          whatsapp: business.whatsapp,
+          ruc: business.ruc || '',
+          description: business.description,
+        }
+      : undefined,
   });
+
+  if (!isMerchant || !businessId) {
+    return null;
+  }
+
+  if (!business) {
+    return <div className="container" style={{ padding: '64px 16px' }}>Negocio no encontrado.</div>;
+  }
 
   const onSubmit = (values: BusinessFormValues) => {
     LocalStoreRepository.saveBusiness({

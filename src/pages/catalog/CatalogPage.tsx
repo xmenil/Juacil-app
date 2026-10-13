@@ -6,7 +6,7 @@ import { CATEGORIES, LOCATIONS } from '@/shared/config/constants';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Select } from '@/shared/ui/Select';
-import { Search, RotateCcw, PackageX, Filter } from 'lucide-react';
+import { Search, RotateCcw, PackageX, Filter, MapPin } from 'lucide-react';
 import styles from './CatalogPage.module.css';
 
 export const CatalogPage: React.FC = () => {
@@ -83,11 +83,54 @@ export const CatalogPage: React.FC = () => {
     <div className={styles.page}>
       <div className="container">
         <div className={styles.header}>
-          <h1 className={styles.title}>Catálogo de la Selva Central</h1>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: 'var(--color-primary-100)', color: 'var(--color-primary-800)', padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: 700, marginBottom: '8px' }}>
+            <MapPin size={13} />
+            <span>Leoncio Prado, Huánuco</span>
+          </div>
+          <h1 className={styles.title}>Catálogo de Tingo María y Alrededores</h1>
           <p className={styles.subtitle}>
-            Productos representativos de Oxapampa, Villa Rica, Satipo y Chanchamayo directamente de
-            sus productores.
+            Productos representativos de Rupa-Rupa, Castillo Grande, Naranjillo, Valle del Monzón,
+            Las Palmas y la Bella Durmiente directos de sus productores.
           </p>
+
+          {/* Chips de Zonas Rápidas de Tingo María */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '16px' }}>
+            <button
+              type="button"
+              style={{
+                backgroundColor: !location ? 'var(--color-primary-800)' : 'var(--color-surface)',
+                color: !location ? '#ffffff' : 'var(--color-text-main)',
+                border: '1px solid var(--color-border)',
+                borderRadius: '999px',
+                padding: '5px 14px',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+              onClick={() => updateParam('ubicacion', '')}
+            >
+              📍 Todo Tingo María y aledaños
+            </button>
+            {LOCATIONS.slice(0, 6).map((loc) => (
+              <button
+                key={loc}
+                type="button"
+                style={{
+                  backgroundColor: location === loc ? 'var(--color-primary-800)' : 'var(--color-surface)',
+                  color: location === loc ? '#ffffff' : 'var(--color-text-main)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '999px',
+                  padding: '5px 14px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+                onClick={() => updateParam('ubicacion', loc)}
+              >
+                {loc}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className={styles.layout}>
@@ -96,7 +139,7 @@ export const CatalogPage: React.FC = () => {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h2 className={styles.filterLabel}>
                 <Filter size={16} />
-                <span>Filtros</span>
+                <span>Filtros de Búsqueda</span>
               </h2>
               {hasActiveFilters && (
                 <Button size="sm" variant="ghost" onClick={handleClearFilters} leftIcon={<RotateCcw size={12} />}>
@@ -112,7 +155,7 @@ export const CatalogPage: React.FC = () => {
               </label>
               <Input
                 id="catalog-search"
-                placeholder="Ej. Café, miel, bolso..."
+                placeholder="Ej. Cacao, café del Monzón, chifles..."
                 value={query}
                 onChange={(e) => updateParam('q', e.target.value)}
                 leftIcon={<Search size={16} />}
@@ -135,17 +178,17 @@ export const CatalogPage: React.FC = () => {
               />
             </div>
 
-            {/* Ubicación */}
+            {/* Ubicación en Tingo María y aledaños */}
             <div className={styles.filterGroup}>
               <label htmlFor="catalog-location" className={styles.filterLabel}>
-                Origen / Ubicación
+                Zona / Distrito
               </label>
               <Select
                 id="catalog-location"
                 value={location}
                 onChange={(e) => updateParam('ubicacion', e.target.value)}
                 options={[
-                  { value: '', label: 'Toda la Selva Central' },
+                  { value: '', label: 'Todo Tingo María y aledaños' },
                   ...LOCATIONS.map((loc) => ({ value: loc, label: loc })),
                 ]}
               />
@@ -157,7 +200,7 @@ export const CatalogPage: React.FC = () => {
             <div className={styles.topBar}>
               <div className={styles.counter}>
                 Mostrando <strong className={styles.counterStrong}>{filteredProducts.length}</strong>{' '}
-                {filteredProducts.length === 1 ? 'producto encontrado' : 'productos encontrados'}
+                {filteredProducts.length === 1 ? 'producto de Tingo María' : 'productos de Tingo María y aledaños'}
               </div>
 
               {/* Ordenamiento */}
@@ -195,7 +238,7 @@ export const CatalogPage: React.FC = () => {
                 <h3 className={styles.emptyTitle}>No hay productos con estos filtros</h3>
                 <p className={styles.emptyText}>
                   Intenta cambiar el término de búsqueda o limpia los filtros para explorar otras
-                  opciones de la Selva Central.
+                  zonas de Tingo María y Leoncio Prado.
                 </p>
                 <Button variant="primary" onClick={handleClearFilters} leftIcon={<RotateCcw size={16} />}>
                   Limpiar filtros

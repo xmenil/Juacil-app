@@ -1,26 +1,29 @@
 export const CATEGORIES = [
-  { id: 'cafe', name: 'Café de Especialidad', icon: 'Coffee', description: 'Granos de altura, tueste artesanal de Villa Rica y Oxapampa' },
-  { id: 'cacao', name: 'Cacao & Chocolatería', icon: 'Sparkles', description: 'Chocolates finos al 70%, nibs y manteca de Chanchamayo' },
-  { id: 'miel', name: 'Miel & Apicultura', icon: 'Sun', description: 'Miel pura de monte, polen y propóleo virgen' },
-  { id: 'artesania', name: 'Artesanía Indígena', icon: 'Feather', description: 'Tejidos y tallados ancestrales Yánesha y Asháninka' },
-  { id: 'frutas', name: 'Frutas & Deshidratados', icon: 'Apple', description: 'Plátano bellaco, piña Golden y camu camu' },
-  { id: 'superfoods', name: 'Superfoods & Aceites', icon: 'ShieldCheck', description: 'Sacha inchi, macambo y aguaje amazónico' },
+  { id: 'cafe', name: 'Café de Especialidad', icon: 'Coffee', description: 'Cafés de altura del Valle del Monzón y Castillo Grande' },
+  { id: 'cacao', name: 'Cacao & Chocolatería', icon: 'Sparkles', description: 'Chocolates finos al 70%, nibs y manteca de Tingo María' },
+  { id: 'miel', name: 'Miel & Apicultura', icon: 'Sun', description: 'Miel pura de monte virgen de Naranjillo y Las Palmas' },
+  { id: 'frutas', name: 'Frutas, Chifles & Snacks', icon: 'Apple', description: 'Chifles de plátano bellaco, cecina, camu camu y cocona' },
+  { id: 'licores', name: 'Licores & Bebidas Amazónicas', icon: 'Sparkles', description: 'Uvachado, 7 Raíces, chuchuhuasi y macerados de Tingo María' },
+  { id: 'artesania', name: 'Artesanía & Souvenirs', icon: 'Feather', description: 'Tallados en madera noble, huayruro y recuerdos de la Bella Durmiente' },
+  { id: 'superfoods', name: 'Superfoods & Derivados', icon: 'ShieldCheck', description: 'Sacha inchi, harina de plátano y aguaje de Leoncio Prado' },
 ] as const;
 
 export const LOCATIONS = [
-  'Villa Rica (Pasco)',
-  'Oxapampa (Pasco)',
-  'Chanchamayo (Junín)',
-  'La Merced (Junín)',
-  'Satipo (Junín)',
-  'Pichanaqui (Junín)',
-  'San Ramón (Junín)',
+  'Tingo María (Centro / Rupa-Rupa)',
+  'Castillo Grande',
+  'Naranjillo / Luyando',
+  'Valle del Monzón',
+  'Mariano Dámaso Beraún (Las Palmas)',
+  'Bella Durmiente (Zona Turística)',
+  'Cueva de las Pavas',
+  'Aucayacu (Leoncio Prado)',
+  'Pueblo Nuevo',
 ] as const;
 
 export const APP_METADATA = {
   name: 'JUÁCIL',
   slogan: 'Tu tienda online',
-  description: 'Plataforma para que las micro y pequeñas empresas (MYPES) de la Selva peruana exhiban y coordinen sus ventas fácilmente.',
-  region: 'Selva Central del Perú',
-  version: '1.0.0-prototipo',
+  description: 'Plataforma para que las micro y pequeñas empresas (MYPES) de Tingo María y sus lugares aledaños exhiban y coordinen sus ventas fácilmente.',
+  region: 'Tingo María y alrededores (Leoncio Prado, Huánuco)',
+  version: '2.0.0-tingomaria',
 };

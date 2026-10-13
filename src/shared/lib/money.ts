@@ -18,7 +18,8 @@ export function formatMoney(cents: number): string {
   if (isNaN(cents) || !isFinite(cents)) {
     return 'S/ 0.00';
   }
-  return PEN_FORMATTER.format(cents / 100);
+  // Reemplazar espacios de no separación (\u00a0) por espacio estándar para consistencia
+  return PEN_FORMATTER.format(cents / 100).replace(/\u00a0/g, ' ');
 }
 
 /**
@@ -44,3 +45,18 @@ export function decimalToCents(amount: number | string): number {
   if (isNaN(amount) || amount < 0) return 0;
   return Math.round(amount * 100);
 }
+
+/**
+ * Suma una lista de montos en céntimos enteros sin error de redondeo de punto flotante.
+ */
+export function sumCents(centsList: number[]): number {
+  return centsList.reduce((acc, curr) => acc + (isNaN(curr) ? 0 : Math.round(curr)), 0);
+}
+
+/**
+ * Calcula un porcentaje o impuesto sobre un monto en céntimos manteniendo enteros.
+ */
+export function calculateTax(cents: number, rate: number): number {
+  return Math.round(cents * rate);
+}
+

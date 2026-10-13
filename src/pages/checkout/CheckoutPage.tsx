@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -19,9 +19,7 @@ import {
   CheckCircle2,
   Truck,
   Store,
-  MapPin,
   MessageCircle,
-  AlertTriangle,
   Lock,
 } from 'lucide-react';
 import styles from './CheckoutPage.module.css';

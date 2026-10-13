@@ -8,9 +8,7 @@ import { Button } from '@/shared/ui/Button';
 import { Badge } from '@/shared/ui/Badge';
 import {
   Package,
-  ShoppingBag,
   AlertTriangle,
-  Store,
   Plus,
   ArrowRight,
   TrendingUp,

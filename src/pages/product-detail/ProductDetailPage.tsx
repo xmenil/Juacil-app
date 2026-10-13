@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { formatMoney } from '@/shared/lib/money';
@@ -6,6 +6,7 @@ import { createWhatsAppLink } from '@/shared/lib/whatsapp';
 import { ROUTES } from '@/shared/config/routes';
 import { useCart } from '@/app/providers/CartProvider';
 import { useSession } from '@/app/providers/SessionProvider';
+import { ProductCard } from '@/entities/product/ui/ProductCard';
 import { Badge } from '@/shared/ui/Badge';
 import { Button } from '@/shared/ui/Button';
 import {
@@ -30,8 +31,37 @@ export const ProductDetailPage: React.FC = () => {
   const [isSuccessFeedback, setIsSuccessFeedback] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // Subir el scroll automáticamente cuando cambia el producto visto
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setQuantity(1);
+    setErrorMessage(null);
+  }, [id]);
+
   const product = id ? LocalStoreRepository.getProductById(id) : undefined;
   const business = product ? LocalStoreRepository.getBusinessById(product.businessId) : undefined;
+
+  // Cálculo de productos similares
+  const similarProducts = useMemo(() => {
+    if (!product) return [];
+    const all = LocalStoreRepository.getProducts();
+
+    // 1. Misma categoría y diferente id
+    const sameCategory = all.filter(
+      (p) => p.category === product.category && p.id !== product.id
+    );
+
+    if (sameCategory.length >= 4) {
+      return sameCategory.slice(0, 4);
+    }
+
+    // 2. Si hay menos de 4, completar con otros productos de Tingo María y la misma tienda
+    const others = all.filter(
+      (p) => p.id !== product.id && !sameCategory.some((sc) => sc.id === p.id)
+    );
+
+    return [...sameCategory, ...others].slice(0, 4);
+  }, [product]);
 
   if (!product) {
     return (
@@ -87,7 +117,7 @@ export const ProductDetailPage: React.FC = () => {
     }
   };
 
-  const whatsAppInquiryMessage = `¡Hola ${business?.name || ''}! 👋 Tengo una consulta sobre el producto "${product.name}" que vi en la plataforma JUÁCIL. ¿Tienen disponibilidad para coordinar?`;
+  const whatsAppInquiryMessage = `¡Hola ${business?.name || ''}! 👋 Tengo una consulta sobre el producto "${product.name}" que vi en la plataforma JUÁCIL (Tingo María). ¿Tienen disponibilidad para coordinar?`;
   const whatsAppInquiryLink = business
     ? createWhatsAppLink(business.whatsapp, whatsAppInquiryMessage)
     : '#';
@@ -97,7 +127,7 @@ export const ProductDetailPage: React.FC = () => {
       <div className="container">
         <Link to={ROUTES.CATALOG} className={styles.backLink}>
           <ArrowLeft size={16} />
-          <span>Volver al Catálogo de la Selva</span>
+          <span>Volver al Catálogo de Tingo María</span>
         </Link>
 
         <div className={styles.grid}>
@@ -107,6 +137,10 @@ export const ProductDetailPage: React.FC = () => {
               src={product.imageUrl}
               alt={product.imageAlt || product.name}
               className={styles.mainImage}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=600&q=80';
+              }}
             />
           </div>
 
@@ -115,7 +149,7 @@ export const ProductDetailPage: React.FC = () => {
             {business && (
               <Link to={ROUTES.STORE_DETAIL(business.id)} className={styles.storeBadge}>
                 <Store size={16} />
-                <span>MYPE: {business.name} ({business.location})</span>
+                <span>MYPE: {business.name} • {business.location}</span>
               </Link>
             )}
 
@@ -233,12 +267,16 @@ export const ProductDetailPage: React.FC = () => {
                   <img
                     src={business.logoUrl}
                     alt=""
-                    style={{ width: '44px', height: '44px', borderRadius: '8px', objectFit: 'cover' }}
+                    className={styles.storeMiniLogo}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=200&q=80';
+                    }}
                   />
                   <div>
                     <h4 style={{ fontSize: '15px', fontWeight: 700 }}>{business.name}</h4>
                     <p style={{ fontSize: '12px', color: 'var(--color-text-subtle)' }}>
-                      {business.location}
+                      📍 {business.location}
                     </p>
                   </div>
                 </div>
@@ -251,6 +289,28 @@ export const ProductDetailPage: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* 2. Sección de Productos Similares */}
+        {similarProducts.length > 0 && (
+          <section className={styles.similarSection} aria-labelledby="similar-title">
+            <div className={styles.similarHeader}>
+              <span className={styles.similarSub}>RECOMENDACIONES DE TINGO MARÍA</span>
+              <h2 id="similar-title" className={styles.similarTitle}>
+                Productos Similares que te pueden interesar
+              </h2>
+              <p className={styles.similarDesc}>
+                Descubre más opciones de {product.category.toUpperCase()} y productos recomendados
+                de Castillo Grande, Monzón y Naranjillo.
+              </p>
+            </div>
+
+            <div className={styles.similarGrid}>
+              {similarProducts.map((simProd) => (
+                <ProductCard key={simProd.id} product={simProd} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

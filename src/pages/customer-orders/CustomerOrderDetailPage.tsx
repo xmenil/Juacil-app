@@ -15,8 +15,6 @@ import {
   Store,
   MessageCircle,
   Truck,
-  MapPin,
-  Calendar,
   XCircle,
   Clock,
 } from 'lucide-react';

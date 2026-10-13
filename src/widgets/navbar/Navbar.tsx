@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Menu, X, LayoutDashboard, UserCheck, HelpCircle, Store, WifiOff } from 'lucide-react';
+import { ShoppingBag, Menu, X, LayoutDashboard, UserCheck, Store, WifiOff } from 'lucide-react';
 import { useCart } from '@/app/providers/CartProvider';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useConnectivity } from '@/app/providers/ConnectivityProvider';

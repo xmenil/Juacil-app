@@ -4,7 +4,6 @@ import { useSession } from '@/app/providers/SessionProvider';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { formatMoney } from '@/shared/lib/money';
 import { formatDateTime } from '@/shared/lib/date';
-import { OrderStatus } from '@/entities/order/model/types';
 import { ROUTES } from '@/shared/config/routes';
 import { OrderStatusBadge } from '@/entities/order/ui/OrderStatusBadge';
 import { Button } from '@/shared/ui/Button';
