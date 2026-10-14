@@ -1,211 +1,257 @@
 .page {
-  padding: 32px 0 64px;
-  min-height: calc(100vh - 180px);
-  background-color: var(--color-bg-app, #f0f7f3);
+  padding: var(--space-8) 0 calc(var(--space-12) + var(--bottom-nav-height) + env(safe-area-inset-bottom));
+  background-color: var(--color-bg-app);
 }
 
 .profileHeaderCard {
-  background: linear-gradient(135deg, #0b4526 0%, #166534 100%);
-  border-radius: 20px;
-  padding: 28px 24px;
-  color: #ffffff;
+  color: var(--color-text-main);
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 24px;
-  box-shadow: 0 10px 25px rgba(11, 69, 38, 0.15);
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.headerIntro {
+  flex-basis: 100%;
+}
+
+.headerIntro h1 {
+  margin: 0 0 var(--space-2);
+  color: var(--color-primary-900);
+  font-size: var(--text-3xl);
+}
+
+.headerIntro p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: var(--space-4);
+  min-width: 0;
+  flex: 1;
 }
 
 .avatarWrapper {
-  position: relative;
-  width: 72px;
-  height: 72px;
+  width: var(--space-12);
+  height: var(--space-12);
   flex-shrink: 0;
 }
 
 .avatarImg {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   object-fit: cover;
-  border: 3px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .avatarFallback {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  background-color: #84cc16;
-  color: #062413;
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface-muted);
+  color: var(--color-primary-900);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
-  font-weight: 800;
-  border: 3px solid #ffffff;
+  font-size: var(--text-xl);
 }
 
-.statusIndicator {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 18px;
-  height: 18px;
-  background-color: #22c55e;
-  border: 2.5px solid #ffffff;
-  border-radius: 50%;
+.userInfo {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
-.userInfo h1 {
-  font-size: 24px;
-  font-weight: 800;
-  margin: 0 0 4px 0;
-  letter-spacing: -0.01em;
+.userName {
+  font-size: var(--text-lg);
+  color: var(--color-text-main);
+  margin: 0 0 var(--space-1);
 }
 
 .userEmail {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.85);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.badgesRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-
-.roleBadge {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 9999px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.statusBadgeActive {
-  background-color: #84cc16;
-  color: #062413;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 9999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
 }
 
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
   flex-wrap: wrap;
 }
 
-/* Stats Row */
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
+.panelLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--min-touch-target);
+  color: var(--color-primary-800);
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
 }
 
-.statCard {
-  background: #ffffff;
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 16px;
-  padding: 18px 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.statIconWrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background-color: #f0fdf4;
-  color: #166534;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.panelLink svg {
+  width: var(--space-5);
+  height: var(--space-5);
   flex-shrink: 0;
 }
 
-.statLabel {
-  font-size: 12px;
-  color: #64748b;
-  font-weight: 600;
-  display: block;
+/* Acceso a pedidos */
+.ordersOverview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  box-shadow: none;
 }
 
-.statValue {
-  font-size: 18px;
-  font-weight: 800;
-  color: #0f172a;
+.ordersOverviewText {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ordersOverviewText h2 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-lg);
+  color: var(--color-primary-900);
+}
+
+.ordersOverviewText p {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ordersOverviewLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  min-height: var(--min-touch-target);
+  color: var(--color-primary-800);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  text-decoration: underline;
+  text-underline-offset: var(--space-1);
+}
+
+.ordersOverviewLink:hover {
+  background-color: var(--color-surface-muted);
+}
+
+.ordersOverviewLink svg {
+  width: var(--space-5);
+  height: var(--space-5);
+  flex-shrink: 0;
 }
 
 /* Layout Columns */
 .mainLayout {
   display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 24px;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--space-6);
   align-items: start;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 768px) {
   .mainLayout {
     grid-template-columns: 1fr;
   }
 }
 
-.card {
-  background: #ffffff;
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 18px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  margin-bottom: 20px;
+.accountSidebar {
+  display: grid;
+  gap: var(--space-6);
+  min-width: 0;
 }
 
-.cardTitle {
-  font-size: 18px;
-  font-weight: 800;
-  color: #0b4526;
-  margin: 0 0 6px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.sidebarCard {
+  padding: var(--space-4);
+  min-width: 0;
 }
 
-.cardSubtitle {
-  font-size: 13px;
-  color: #64748b;
-  margin: 0 0 20px 0;
+.sidebarTitle {
+  margin: 0 0 var(--space-4);
+  color: var(--color-primary-900);
+  font-size: var(--text-lg);
+}
+
+.emptyOrders,
+.helpSection p {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.emptyOrders {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.helpSection {
+  padding: 0 var(--space-4);
+}
+
+.helpSection .ordersOverviewLink {
+  margin-top: var(--space-3);
+}
+
+.sessionActions {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.profileFormCard {
+  min-width: 0;
+  padding: var(--space-6);
+}
+
+.profileForm {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.formSection {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.formSection + .formSection {
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: var(--space-6);
+}
+
+.formSection legend {
+  float: left;
+  width: 100%;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-primary-900);
+}
+
+.formHint {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
 }
 
 .formGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-4);
 }
 
 @media (max-width: 640px) {
@@ -217,85 +263,107 @@
 .formActions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
-  border-top: 1px solid #f1f5f9;
-  padding-top: 16px;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: var(--space-4);
+}
+
+.formActionIcon {
+  width: var(--space-4);
+  height: var(--space-4);
 }
 
 .recentOrdersList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .recentOrderItem {
-  padding: 12px 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  background-color: #f8fafc;
+  padding: var(--space-3);
+  min-height: var(--min-touch-target);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: var(--space-3);
   text-decoration: none;
   color: inherit;
-  transition: all 0.15s ease;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .recentOrderItem:hover {
-  border-color: #166534;
-  background-color: #f0fdf4;
+  border-color: var(--color-primary-700);
+  background-color: var(--color-surface-subtle);
+}
+
+.recentOrderIdentity {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.recentOrderDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
 }
 
 .recentOrderCode {
-  font-weight: 800;
-  font-size: 13px;
-  color: #0b4526;
+  font-size: var(--text-sm);
+  color: var(--color-primary-900);
 }
 
 .recentOrderStore {
-  font-size: 12px;
-  color: #64748b;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
 }
 
 .recentOrderTotal {
-  font-weight: 700;
-  font-size: 13px;
-  color: #0f172a;
+  font-size: var(--text-base);
+  color: var(--color-text-main);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 /* Responsividad Móvil */
 @media (max-width: 640px) {
   .page {
-    padding: 16px 0 48px;
+    padding-top: var(--space-4);
   }
 
   .profileHeaderCard {
-    padding: 20px 16px;
-    border-radius: 16px;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .headerLeft {
-    gap: 12px;
+    gap: var(--space-3);
   }
 
   .avatarWrapper {
-    width: 58px;
-    height: 58px;
+    width: var(--space-12);
+    height: var(--space-12);
   }
 
-  .userInfo h1 {
-    font-size: 20px;
-  }
-
-  .card {
-    padding: 18px 16px;
-    border-radius: 16px;
+  .headerIntro h1 {
+    font-size: var(--text-2xl);
   }
 
   .formActions {
     flex-direction: column;
+  }
+
+  .profileFormCard {
+    padding: var(--space-4);
   }
 
   .formActions button {

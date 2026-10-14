@@ -12,44 +12,38 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Select } from '@/shared/ui/Select';
 import { Alert } from '@/shared/ui/Alert';
+import { Card } from '@/shared/ui/Card';
 import { OrderStatusBadge } from '@/entities/order/ui/OrderStatusBadge';
 import {
   User,
-  Phone,
-  Mail,
-  MapPin,
-  ShoppingBag,
-  CheckCircle,
   LogOut,
   Store,
   ShieldCheck,
   ArrowRight,
   Save,
-  Package,
 } from 'lucide-react';
 import styles from './CustomerProfilePage.module.css';
 
 const profileSchema = z.object({
-  name: z.string().min(3, 'El nombre completo debe tener al menos 3 caracteres.'),
+  name: z.string().min(3, 'Ingresa tu nombre completo, con al menos 3 caracteres.'),
   email: z.string().email('Ingresa un correo electrónico válido.'),
   phone: z
     .string()
-    .regex(/^9\d{8}$/, 'Ingresa un número de celular de 9 dígitos que inicie con 9.'),
+    .regex(/^9\d{8}$/, 'Ingresa un celular de 9 dígitos que empiece con 9.'),
   dni: z
     .string()
     .refine((val) => val === '' || /^\d{8}$/.test(val), {
-      message: 'El DNI debe tener 8 dígitos numéricos (opcional).',
+      message: 'Ingresa un DNI de 8 dígitos o deja este campo vacío.',
     }),
-  address: z.string().min(5, 'Ingresa tu dirección o referencia para envíos a domicilio.'),
-  zone: z.string().min(1, 'Selecciona tu zona o distrito de entrega.'),
+  address: z.string().min(5, 'Ingresa una dirección o referencia de al menos 5 caracteres.'),
+  zone: z.string().min(1, 'Selecciona tu zona de entrega.'),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export const CustomerProfilePage: React.FC = () => {
-  const { currentUser, isMerchant, isAdmin, logout, updateCurrentUser } = useSession();
+  const { currentUser } = useSession();
   const navigate = useNavigate();
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Redirigir a login si no hay sesión
   React.useEffect(() => {
@@ -58,9 +52,17 @@ export const CustomerProfilePage: React.FC = () => {
     }
   }, [currentUser, navigate]);
 
-  if (!currentUser) {
-    return null;
-  }
+  return currentUser ? <CustomerAccountContent key={currentUser.id} /> : null;
+};
+
+const CustomerAccountContent: React.FC = () => {
+  const { currentUser: sessionUser, isMerchant, isAdmin, logout, updateCurrentUser } = useSession();
+  // La guarda de sesión monta este componente únicamente con un usuario.
+  const currentUser = sessionUser!;
+  const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [failedAvatarUrl, setFailedAvatarUrl] = useState<string | null>(null);
 
   const userOrders = LocalStoreRepository.getOrdersByCustomer(currentUser.id);
   const pendingCount = userOrders.filter(
@@ -70,6 +72,7 @@ export const CustomerProfilePage: React.FC = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -94,11 +97,15 @@ export const CustomerProfilePage: React.FC = () => {
       zone: values.zone,
     };
 
-    updateCurrentUser(updated);
-    setSuccessMessage('¡Tus datos personales y de envío fueron actualizados con éxito!');
-    setTimeout(() => {
-      setSuccessMessage(null);
-    }, 3500);
+    setSuccessMessage(null);
+    setSaveError(null);
+    try {
+      updateCurrentUser(updated);
+      reset(values);
+      setSuccessMessage('Tus datos se guardaron.');
+    } catch {
+      setSaveError('No pudimos guardar tus datos. Intenta nuevamente.');
+    }
   };
 
   const handleLogout = () => {
@@ -110,141 +117,95 @@ export const CustomerProfilePage: React.FC = () => {
     <div className={styles.page}>
       <div className="container">
         {/* Cabecera Principal del Perfil */}
-        <div className={styles.profileHeaderCard}>
+        <header className={styles.profileHeaderCard}>
+          <div className={styles.headerIntro}>
+            <h1>Mi cuenta</h1>
+            <p>Actualiza tus datos para coordinar tus pedidos con las tiendas.</p>
+          </div>
           <div className={styles.headerLeft}>
             <div className={styles.avatarWrapper}>
-              {currentUser.avatarUrl ? (
+              {currentUser.avatarUrl && currentUser.avatarUrl !== failedAvatarUrl ? (
                 <img
                   src={currentUser.avatarUrl}
-                  alt={currentUser.name}
+                  alt=""
                   className={styles.avatarImg}
+                  onError={() => setFailedAvatarUrl(currentUser.avatarUrl || null)}
                 />
               ) : (
-                <div className={styles.avatarFallback}>
-                  {currentUser.name.charAt(0).toUpperCase()}
+                <div className={styles.avatarFallback} aria-hidden="true">
+                  {currentUser.name.trim().charAt(0).toUpperCase() || <User />}
                 </div>
               )}
-              <span className={styles.statusIndicator} title="Cuenta en línea y activa" />
             </div>
 
             <div className={styles.userInfo}>
-              <h1>{currentUser.name}</h1>
-              <span className={styles.userEmail}>
-                <Mail size={14} /> {currentUser.email}
-              </span>
-              <div className={styles.badgesRow}>
-                <span className={styles.roleBadge}>
-                  {isAdmin
-                    ? '🛡️ Super Administrador'
-                    : isMerchant
-                    ? '🏪 Emprendedor MYPE'
-                    : '👤 Cliente Comprador'}
-                </span>
-                <span className={styles.statusBadgeActive}>
-                  <CheckCircle size={12} /> Cuenta Activa
-                </span>
-              </div>
+              <p className={styles.userName}>{currentUser.name}</p>
+              <p className={styles.userEmail}>{currentUser.email}</p>
             </div>
           </div>
 
           <div className={styles.headerActions}>
             {isMerchant && (
-              <Link to={ROUTES.MERCHANT_DASHBOARD}>
-                <Button size="sm" variant="accent" leftIcon={<Store size={15} />}>
-                  Ir a mi Panel de Tienda
-                </Button>
+              <Link className={styles.panelLink} to={ROUTES.MERCHANT_DASHBOARD}>
+                <Store aria-hidden="true" /> Ir a mi panel de tienda
               </Link>
             )}
 
             {isAdmin && (
-              <Link to={ROUTES.ADMIN_DASHBOARD}>
-                <Button size="sm" variant="accent" leftIcon={<ShieldCheck size={15} />}>
-                  Ir al Panel Super Admin
-                </Button>
+              <Link className={styles.panelLink} to={ROUTES.ADMIN_DASHBOARD}>
+                <ShieldCheck aria-hidden="true" /> Ir al panel de administración
               </Link>
             )}
 
-            <Button
-              size="sm"
-              variant="outline"
-              style={{ color: '#ffffff', borderColor: 'rgba(255,255,255,0.4)' }}
-              leftIcon={<LogOut size={15} />}
-              onClick={handleLogout}
+          </div>
+        </header>
+
+        <section aria-labelledby="account-orders-title">
+          <Card variant="subtle" className={styles.ordersOverview}>
+            <div className={styles.ordersOverviewText}>
+              <h2 id="account-orders-title">Mis pedidos</h2>
+              <p>
+                {userOrders.length === 0
+                  ? 'Aún no tienes pedidos en JUÁCIL.'
+                  : pendingCount === 0
+                    ? 'No tienes pedidos en proceso.'
+                    : pendingCount === 1
+                      ? 'Tienes 1 pedido en proceso.'
+                      : `Tienes ${pendingCount} pedidos en proceso.`}
+              </p>
+              {userOrders.length === 0 && (
+                <p>Explora el catálogo y encuentra productos de las tiendas.</p>
+              )}
+            </div>
+            <Link
+              className={styles.ordersOverviewLink}
+              to={userOrders.length === 0 ? ROUTES.CATALOG : ROUTES.CUSTOMER_ORDERS}
             >
-              Cerrar Sesión
-            </Button>
-          </div>
-        </div>
-
-        {/* Tarjetas de Métricas Rápidas del Usuario */}
-        <div className={styles.statsGrid}>
-          <div className={styles.statCard}>
-            <div className={styles.statIconWrap}>
-              <ShoppingBag size={22} />
-            </div>
-            <div>
-              <span className={styles.statLabel}>Mis Pedidos Totales</span>
-              <span className={styles.statValue}>{userOrders.length} compras</span>
-            </div>
-          </div>
-
-          <div className={styles.statCard}>
-            <div className={styles.statIconWrap} style={{ color: '#b45309', backgroundColor: '#fef3c7' }}>
-              <Package size={22} />
-            </div>
-            <div>
-              <span className={styles.statLabel}>En Proceso / Espera</span>
-              <span className={styles.statValue}>{pendingCount} pedidos</span>
-            </div>
-          </div>
-
-          <div className={styles.statCard}>
-            <div className={styles.statIconWrap} style={{ color: '#15803d', backgroundColor: '#dcfce7' }}>
-              <MapPin size={22} />
-            </div>
-            <div>
-              <span className={styles.statLabel}>Zona Preferida</span>
-              <span className={styles.statValue} style={{ fontSize: '15px' }}>
-                {currentUser.zone || 'Tingo María'}
-              </span>
-            </div>
-          </div>
-
-          <div className={styles.statCard}>
-            <div className={styles.statIconWrap} style={{ color: '#0369a1', backgroundColor: '#e0f2fe' }}>
-              <Phone size={22} />
-            </div>
-            <div>
-              <span className={styles.statLabel}>WhatsApp de Contacto</span>
-              <span className={styles.statValue} style={{ fontSize: '15px' }}>
-                {currentUser.phone}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Notificación de Éxito al Guardar */}
-        {successMessage && (
-          <div style={{ marginBottom: '20px' }}>
-            <Alert variant="success">{successMessage}</Alert>
-          </div>
-        )}
+              {userOrders.length === 0 ? 'Explorar catálogo' : 'Ver mis pedidos'}
+              <ArrowRight aria-hidden="true" />
+            </Link>
+          </Card>
+        </section>
 
         {/* Grid Principal: Formulario de Datos + Resumen Lateral */}
         <div className={styles.mainLayout}>
           {/* Columna Izquierda: Formulario de Datos del Perfil */}
-          <div className={styles.card}>
-            <h2 className={styles.cardTitle}>
-              <User size={20} color="#0b4526" /> Mis Datos del Perfil
-            </h2>
-            <p className={styles.cardSubtitle}>
-              Mantén tu información y dirección actualizadas para que las tiendas de Tingo María y la Selva Central coordinen tus pedidos de forma rápida y segura.
-            </p>
-
-            <form onSubmit={handleSubmit(onSubmit)}>
+          <Card className={styles.profileFormCard}>
+            <form
+              className={styles.profileForm}
+              noValidate
+              onSubmit={handleSubmit(onSubmit)}
+              onChange={() => { setSuccessMessage(null); setSaveError(null); }}
+              aria-label="Editar mis datos"
+            >
+              <fieldset className={styles.formSection} disabled={isSubmitting}>
+                <legend>Datos personales</legend>
+                <p className={styles.formHint}>Los campos con * son obligatorios.</p>
               <div className={styles.formGrid}>
                 <Input
-                  label="Nombre Completo"
+                  label="Nombre completo"
+                  autoComplete="name"
+                  aria-required="true"
                   isRequired
                   placeholder="Ej. Lucía Ramos Córdova"
                   error={errors.name?.message}
@@ -252,7 +213,9 @@ export const CustomerProfilePage: React.FC = () => {
                 />
 
                 <Input
-                  label="Correo Electrónico"
+                  label="Correo electrónico"
+                  autoComplete="email"
+                  aria-required="true"
                   isRequired
                   type="email"
                   placeholder="ejemplo@correo.pe"
@@ -261,146 +224,138 @@ export const CustomerProfilePage: React.FC = () => {
                 />
               </div>
 
-              <div className={styles.formGrid} style={{ marginTop: '16px' }}>
+              <div className={styles.formGrid}>
                 <Input
-                  label="Celular / WhatsApp para Coordinar"
+                  label="Celular / WhatsApp"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel-national"
+                  aria-required="true"
                   isRequired
                   placeholder="Ej. 984512301"
-                  helperText="Las tiendas te escribirán a este número."
+                  helperText="Usa el número donde prefieres coordinar tus pedidos."
                   error={errors.phone?.message}
                   {...register('phone')}
                 />
 
                 <Input
-                  label="DNI o Carné de Extranjería (Opcional)"
+                  label="DNI (opcional)"
+                  inputMode="numeric"
                   placeholder="Ej. 72391048"
                   error={errors.dni?.message}
                   {...register('dni')}
                 />
               </div>
+              </fieldset>
 
-              <div style={{ marginTop: '16px' }}>
+              <fieldset className={styles.formSection} disabled={isSubmitting}>
+                <legend>Datos de entrega</legend>
                 <Select
-                  label="Distrito / Zona en Tingo María y Selva Central"
+                  label="Zona de entrega"
+                  aria-required="true"
                   isRequired
                   options={LOCATIONS.map((loc) => ({ value: loc, label: loc }))}
                   error={errors.zone?.message}
                   {...register('zone')}
                 />
-              </div>
-
-              <div style={{ marginTop: '16px' }}>
                 <Input
-                  label="Dirección o Referencia de Entrega Domiciliaria"
+                  label="Dirección o referencia"
+                  autoComplete="street-address"
+                  aria-required="true"
+                  helperText="Incluye una referencia para facilitar la coordinación con la tienda."
                   isRequired
                   placeholder="Ej. Av. Tito Jaime 320, frente a la plaza principal"
                   error={errors.address?.message}
                   {...register('address')}
                 />
-              </div>
+              </fieldset>
+
+              {saveError && <Alert variant="danger">{saveError}</Alert>}
+              {successMessage && <Alert variant="success">{successMessage}</Alert>}
+              {!isDirty && !successMessage && !saveError && (
+                <p className={styles.formHint}>No tienes cambios pendientes.</p>
+              )}
 
               <div className={styles.formActions}>
                 <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate(ROUTES.CATALOG)}
-                >
-                  Ir al Catálogo
-                </Button>
-
-                <Button
                   type="submit"
                   variant="accent"
+                  disabled={!isDirty}
                   isLoading={isSubmitting}
-                  leftIcon={<Save size={16} />}
+                  leftIcon={<Save className={styles.formActionIcon} />}
                 >
-                  {isDirty ? 'Guardar Cambios' : 'Datos Guardados'}
+                  {isSubmitting ? 'Guardando…' : 'Guardar cambios'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  disabled={!isDirty || isSubmitting}
+                  onClick={() => { reset(); setSuccessMessage(null); setSaveError(null); }}
+                >
+                  Cancelar
                 </Button>
               </div>
             </form>
-          </div>
+          </Card>
 
           {/* Columna Derecha: Acceso a Pedidos y Enlaces Útiles */}
-          <div>
-            <div className={styles.card}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0b4526', margin: 0 }}>
-                  Mis Últimas Compras
-                </h3>
-                <Link
-                  to={ROUTES.CUSTOMER_ORDERS}
-                  style={{ fontSize: '12px', fontWeight: 700, color: '#166534', textDecoration: 'none' }}
-                >
-                  Ver todos ›
-                </Link>
-              </div>
+          <aside className={styles.accountSidebar} aria-label="Pedidos recientes y ayuda">
+            <Card className={styles.sidebarCard}>
+              <h2 className={styles.sidebarTitle}>Últimos pedidos</h2>
 
               {userOrders.length > 0 ? (
-                <div className={styles.recentOrdersList}>
+                <ul className={styles.recentOrdersList}>
                   {userOrders.slice(0, 3).map((order) => (
+                    <li key={order.id}>
                     <Link
-                      key={order.id}
                       to={ROUTES.CUSTOMER_ORDER_DETAIL(order.id)}
                       className={styles.recentOrderItem}
                     >
-                      <div>
+                      <div className={styles.recentOrderIdentity}>
                         <span className={styles.recentOrderCode}>{order.orderCode}</span>
                         <div className={styles.recentOrderStore}>
-                          {order.businessName.length > 25
-                            ? `${order.businessName.substring(0, 25)}...`
-                            : order.businessName}
+                          {order.businessName}
                         </div>
                       </div>
 
-                      <div style={{ textAlign: 'right' }}>
+                      <div className={styles.recentOrderDetails}>
                         <span className={styles.recentOrderTotal}>
                           {formatMoney(order.totalCents)}
                         </span>
-                        <div style={{ marginTop: '4px' }}>
-                          <OrderStatusBadge status={order.status} />
-                        </div>
+                        <OrderStatusBadge status={order.status} />
                       </div>
                     </Link>
+                    </li>
                   ))}
-                </div>
+                </ul>
               ) : (
-                <div style={{ textAlign: 'center', padding: '24px 8px', color: '#64748b', fontSize: '13px' }}>
-                  <ShoppingBag size={28} style={{ margin: '0 auto 8px', opacity: 0.5 }} />
-                  <p style={{ margin: '0 0 10px 0' }}>Aún no has registrado pedidos en JUÁCIL.</p>
-                  <Button size="sm" variant="outline" onClick={() => navigate(ROUTES.CATALOG)}>
-                    Explorar Productos
-                  </Button>
+                <div className={styles.emptyOrders}>
+                  <p>Aún no tienes pedidos en JUÁCIL.</p>
+                  <p>Cuando hagas tu primera compra, podrás ver su estado aquí.</p>
                 </div>
               )}
-
-              {userOrders.length > 0 && (
-                <Link
-                  to={ROUTES.CUSTOMER_ORDERS}
-                  style={{ textDecoration: 'none', display: 'block', marginTop: '16px' }}
-                >
-                  <Button fullWidth size="sm" variant="outline" rightIcon={<ArrowRight size={14} />}>
-                    Ver Historial Completo ({userOrders.length})
-                  </Button>
-                </Link>
-              )}
-            </div>
+            </Card>
 
             {/* Tarjeta de Seguridad y Ayuda */}
-            <div className={styles.card} style={{ backgroundColor: '#f0fdf4', borderColor: '#bbf7d0' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#166534', marginBottom: '8px' }}>
-                <ShieldCheck size={20} />
-                <strong style={{ fontSize: '14px' }}>Compras Seguras & Soporte</strong>
-              </div>
-              <p style={{ fontSize: '12px', color: '#14532d', margin: '0 0 12px 0', lineHeight: 1.5 }}>
-                En JUÁCIL todos tus pedidos van directamente a los productores locales de Leoncio Prado. ¿Tienes alguna duda con una compra?
+            <section className={styles.helpSection} aria-labelledby="account-help-title">
+              <h2 id="account-help-title" className={styles.sidebarTitle}>Ayuda con tus pedidos</h2>
+              <p>
+                Consulta cómo comprar y coordinar con una tienda.
               </p>
-              <Link to={ROUTES.HELP} style={{ textDecoration: 'none' }}>
-                <Button size="sm" variant="outline" fullWidth style={{ borderColor: '#86efac', color: '#166534', backgroundColor: '#ffffff' }}>
-                  Centro de Ayuda & WhatsApp
-                </Button>
+              <Link className={styles.ordersOverviewLink} to={ROUTES.HELP}>
+                Ir al centro de ayuda <ArrowRight aria-hidden="true" />
               </Link>
-            </div>
-          </div>
+            </section>
+          </aside>
+        </div>
+        <div className={styles.sessionActions}>
+          <Button
+            variant="ghost"
+            leftIcon={<LogOut className={styles.formActionIcon} />}
+            onClick={handleLogout}
+          >
+            Cerrar sesión
+          </Button>
         </div>
       </div>
     </div>
