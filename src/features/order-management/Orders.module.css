@@ -1,0 +1,87 @@
+.page { padding: var(--space-6) 0 var(--space-10); }
+.page :is(a, button):focus-visible { outline: 3px solid var(--color-border-focus); outline-offset: 3px; }
+.pageHeader { margin-bottom: var(--space-6); }
+.pageHeader h1, .detailHeader h1 { font-size: clamp(1.5rem, 3vw, 1.875rem); margin: var(--space-1) 0 var(--space-2); overflow-wrap: anywhere; }
+.pageHeader > p:last-child { color: var(--color-text-muted); font-size: var(--text-sm); }
+.eyebrow { font-size: var(--text-sm); font-weight: 600; color: var(--color-primary-700); }
+.filters { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.filterButton { min-height: 44px; padding: var(--space-2) var(--space-3); font-size: var(--text-sm); white-space: normal; max-width: 100%; }
+.resultCount { margin: var(--space-4) 0; font-size: var(--text-sm); color: var(--color-text-muted); }
+.orderList, .productList, .history { list-style: none; }
+.listHeader { display: none; }
+.orderList { display: grid; gap: var(--space-3); }
+.orderRow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-3); padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); align-items: center; }
+.orderIdentity { grid-column: 1 / -1; min-width: 0; }
+.orderIdentity strong { font-family: var(--font-display); font-size: var(--text-base); display: block; overflow-wrap: anywhere; }
+.orderIdentity time, .customer span { display: block; color: var(--color-text-muted); font-size: var(--text-xs); margin-top: var(--space-1); }
+.customer { grid-column: 1 / -1; min-width: 0; overflow-wrap: anywhere; }
+.customer strong { font-size: var(--text-sm); font-weight: 600; }
+.orderStatus { min-width: 0; }
+.amount { text-align: right; font-size: var(--text-base); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.mobileLabel { display: block; color: var(--color-text-muted); font-size: var(--text-xs); }
+.detailLink { grid-column: 1 / -1; width: 100%; gap: var(--space-2); white-space: normal; }
+.emptyState { padding: var(--space-8) var(--space-5); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); text-align: center; }
+.emptyState > svg { margin: 0 auto var(--space-4); color: var(--color-primary-700); }
+.emptyState h2, .emptyState h1 { font-size: var(--text-xl); }
+.emptyState p { color: var(--color-text-muted); font-size: var(--text-sm); margin: var(--space-2) 0 var(--space-5); }
+.textLink, .backLink { display: inline-flex; min-height: 44px; align-items: center; gap: var(--space-2); color: var(--color-primary-800); font-size: var(--text-sm); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.backLink { margin-bottom: var(--space-4); }
+.detailHeader { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-6); }
+.detailHeader time { color: var(--color-text-muted); font-size: var(--text-sm); }
+.feedback { margin-bottom: var(--space-5); }
+.detailGrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+.detailGrid > section { min-width: 0; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
+.detailGrid h2 { font-size: var(--text-lg); margin-bottom: var(--space-4); }
+.detailGrid > .nextStep { background: var(--color-primary-50); border-color: var(--color-primary-200); }
+.nextStep > p { font-size: var(--text-sm); color: var(--color-text-muted); }
+.actionTotal { margin: var(--space-5) 0; }
+.actionTotal dt { font-size: var(--text-sm); color: var(--color-text-muted); }
+.actionTotal dd { font-family: var(--font-display); font-weight: 600; font-size: var(--text-2xl); font-variant-numeric: tabular-nums; color: var(--color-primary-900); overflow-wrap: anywhere; }
+.primaryAction { width: 100%; white-space: normal; padding-block: var(--space-3); }
+.primaryAction:hover { background: var(--color-accent-lime-light); color: var(--color-accent-lime-text); }
+.cancelAction { width: 100%; margin-top: var(--space-2); color: var(--color-danger); white-space: normal; }
+.cancelAction:hover { background: var(--color-danger-bg); color: var(--color-danger-text); }
+.contactDetails { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
+.contactDetails dt { color: var(--color-text-muted); font-size: var(--text-xs); }
+.contactDetails dd { font-size: var(--text-sm); font-weight: 500; overflow-wrap: anywhere; }
+.customerNote { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border-subtle); }
+.customerNote strong { font-size: var(--text-sm); }
+.customerNote p { font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-1); overflow-wrap: anywhere; white-space: pre-wrap; }
+.whatsappLink { margin-top: var(--space-4); white-space: normal; max-width: 100%; }
+.helperText { color: var(--color-text-muted); font-size: var(--text-xs); margin-top: var(--space-2); overflow-wrap: anywhere; }
+.productRow { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); align-items: start; padding: var(--space-4) 0; border-top: 1px solid var(--color-border-subtle); }
+.productImage, .imageFallback { width: 48px; height: 48px; border-radius: var(--radius-sm); object-fit: cover; }
+.imageFallback { display: grid; place-items: center; color: var(--color-text-muted); background: var(--color-surface-subtle); }
+.productDescription { min-width: 0; }
+.productDescription strong { font-size: var(--text-sm); display: block; overflow-wrap: anywhere; }
+.productDescription span { display: block; font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-1); }
+.productSubtotal { grid-column: 2; font-size: var(--text-sm); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.orderTotal { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: space-between; padding-top: var(--space-4); border-top: 1px solid var(--color-border); font-size: var(--text-base); font-weight: 600; font-variant-numeric: tabular-nums; }
+.history li { display: flex; gap: var(--space-3); padding-bottom: var(--space-5); }
+.history li:last-child { padding-bottom: 0; }
+.history li > div { min-width: 0; }
+.historyDot { width: 10px; height: 10px; border-radius: var(--radius-full); background: var(--color-primary-700); flex-shrink: 0; margin-top: var(--space-1); }
+.history strong { font-size: var(--text-sm); display: block; }
+.history time { color: var(--color-text-muted); font-size: var(--text-xs); display: block; margin-top: var(--space-1); }
+.history p { color: var(--color-text-muted); font-size: var(--text-sm); margin-top: var(--space-1); overflow-wrap: anywhere; }
+.modalFeedback { margin-top: var(--space-4); }
+@container (min-width: 640px) {
+  .contactDetails { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .productRow { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; }
+  .productSubtotal { grid-column: auto; }
+}
+@container (min-width: 1040px) {
+  .listSurface { border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; background: var(--color-surface); }
+  .listHeader, .orderRow { display: grid; grid-template-columns: minmax(130px, 1fr) minmax(0, 1.3fr) minmax(190px, 1.25fr) minmax(85px, .6fr) 140px; gap: var(--space-4); padding: var(--space-4) var(--space-5); align-items: center; }
+  .listHeader { color: var(--color-text-muted); font-size: var(--text-xs); background: var(--color-surface-subtle); }
+  .listHeader > span:nth-child(4) { text-align: right; }
+  .orderList { display: block; }
+  .orderRow { border: 0; border-top: 1px solid var(--color-border); border-radius: 0; }
+  .orderIdentity, .customer, .detailLink { grid-column: auto; }
+  .orderIdentity strong { font-size: var(--text-sm); }
+  .amount { font-size: var(--text-sm); }
+  .mobileLabel { display: none; }
+  .detailGrid { grid-template-columns: minmax(0, 1fr) minmax(260px, .55fr); align-items: start; gap: var(--space-6); }
+  .nextStep { grid-column: 2; grid-row: 1 / span 3; }
+  .contactSection, .productsSection, .historySection { grid-column: 1; }
+}

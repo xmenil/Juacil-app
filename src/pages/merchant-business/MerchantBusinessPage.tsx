@@ -12,7 +12,8 @@ import { Textarea } from '@/shared/ui/Textarea';
 import { Select } from '@/shared/ui/Select';
 import { Button } from '@/shared/ui/Button';
 import { Alert } from '@/shared/ui/Alert';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
+import styles from '@/features/business-management/StoreProfile.module.css';
 
 const businessSchema = z.object({
   name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres.'),
@@ -67,7 +68,19 @@ export const MerchantBusinessPage: React.FC = () => {
   }
 
   if (!business) {
-    return <div className="container" style={{ padding: '64px 16px' }}>Negocio no encontrado.</div>;
+    return (
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <div className={styles.emptyState}>
+            <h2>No encontramos tu negocio</h2>
+            <p>No pudimos cargar la información de tu emprendimiento.</p>
+            <Button variant="primary" onClick={() => navigate(ROUTES.MERCHANT_DASHBOARD)}>
+              Volver al panel
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const onSubmit = (values: BusinessFormValues) => {
@@ -80,94 +93,124 @@ export const MerchantBusinessPage: React.FC = () => {
       ruc: values.ruc || undefined,
       description: values.description,
     });
-    setSuccessMessage('Datos del emprendimiento actualizados correctamente.');
+    setSuccessMessage('Los datos de tu tienda se actualizaron.');
     setTimeout(() => setSuccessMessage(null), 3000);
   };
 
   return (
-    <div style={{ padding: '32px 0 64px' }}>
-      <div className="container" style={{ maxWidth: '760px' }}>
+    <div className={styles.page}>
+      <div className={styles.container}>
         <Link
-          to={ROUTES.MERCHANT_DASHBOARD}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '14px', fontWeight: 600, marginBottom: '24px' }}
+          to={`${ROUTES.MERCHANT_DASHBOARD}?tab=perfil`}
+          className={styles.backLink}
         >
-          <ArrowLeft size={16} /> Volver al Panel
+          <ArrowLeft size={16} aria-hidden="true" /> Volver a Mi tienda
         </Link>
 
-        <div style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', padding: '32px', boxShadow: 'var(--shadow-sm)' }}>
-          <div style={{ marginBottom: '24px' }}>
-            <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--color-primary-950)' }}>
-              Perfil Comercial del Emprendimiento
-            </h1>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '14px' }}>
-              Información visible para los compradores en tu página pública de tienda.
-            </p>
-          </div>
+        <header className={styles.pageHeader}>
+          <p className={styles.eyebrow}>Perfil de tu negocio</p>
+          <h1 className={styles.title}>Mi tienda</h1>
+          <p className={styles.subtitle}>
+            Actualiza la información que ven tus compradores.
+          </p>
+        </header>
 
-          {successMessage && (
-            <div style={{ marginBottom: '20px' }}>
-              <Alert variant="success">{successMessage}</Alert>
-            </div>
-          )}
+        {successMessage && (
+          <Alert variant="success" className={styles.feedback}>
+            {successMessage}
+          </Alert>
+        )}
 
-          <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <Input
-              label="Nombre Comercial de la MYPE"
-              isRequired
-              error={errors.name?.message}
-              {...register('name')}
-            />
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <Select
-                label="Rubro o Categoría Principal"
-                isRequired
-                options={CATEGORIES.map((c) => ({ value: c.id, label: c.name }))}
-                error={errors.category?.message}
-                {...register('category')}
-              />
-
-              <Select
-                label="Ciudad / Distrito de Origen"
-                isRequired
-                options={LOCATIONS.map((loc) => ({ value: loc, label: loc }))}
-                error={errors.location?.message}
-                {...register('location')}
-              />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <Input
-                label="WhatsApp para Coordinar Ventas"
-                isRequired
-                placeholder="Ej. 964882190"
-                error={errors.whatsapp?.message}
-                {...register('whatsapp')}
-              />
+        <div className={styles.formCard}>
+          <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+            <fieldset className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <legend className={styles.sectionLegend}>Información del negocio</legend>
+                <p className={styles.sectionHint}>
+                  Datos principales que identifican a tu emprendimiento en JUÁCIL.
+                </p>
+              </div>
 
               <Input
-                label="RUC Referencial (Opcional)"
-                placeholder="11 dígitos (ej. 20601234567)"
-                helperText="Formato 11 dígitos sin consulta SUNAT en prototipo."
-                error={errors.ruc?.message}
-                {...register('ruc')}
+                label="Nombre del negocio"
+                isRequired
+                error={errors.name?.message}
+                {...register('name')}
               />
-            </div>
 
-            <Textarea
-              label="Historia y Descripción del Negocio"
-              isRequired
-              rows={4}
-              error={errors.description?.message}
-              {...register('description')}
-            />
+              <div className={styles.grid2}>
+                <Select
+                  label="Categoría"
+                  isRequired
+                  options={CATEGORIES.map((c) => ({ value: c.id, label: c.name }))}
+                  error={errors.category?.message}
+                  {...register('category')}
+                />
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', borderTop: '1px solid var(--color-border-subtle)', paddingTop: '20px' }}>
-              <Button type="button" variant="outline" onClick={() => navigate(ROUTES.MERCHANT_DASHBOARD)}>
+                <Select
+                  label="Localidad"
+                  isRequired
+                  options={LOCATIONS.map((loc) => ({ value: loc, label: loc }))}
+                  error={errors.location?.message}
+                  {...register('location')}
+                />
+              </div>
+
+              <div className={styles.grid2}>
+                <Input
+                  label="RUC"
+                  placeholder="11 dígitos (ej. 20601234567)"
+                  helperText="Opcional. Ingresa 11 dígitos."
+                  error={errors.ruc?.message}
+                  {...register('ruc')}
+                />
+              </div>
+
+              <Textarea
+                label="Descripción"
+                isRequired
+                rows={4}
+                helperText="Describe tu negocio y la procedencia de tus productos."
+                error={errors.description?.message}
+                {...register('description')}
+              />
+            </fieldset>
+
+            <fieldset className={`${styles.section} ${styles.sectionWithDivider}`}>
+              <div className={styles.sectionHeader}>
+                <legend className={styles.sectionLegend}>Contacto para ventas</legend>
+                <p className={styles.sectionHint}>
+                  Número de teléfono para coordinar compras por WhatsApp.
+                </p>
+              </div>
+
+              <div className={styles.grid2}>
+                <Input
+                  label="WhatsApp"
+                  isRequired
+                  placeholder="Ej. 962881234"
+                  helperText="Ingresa 9 dígitos, sin +51."
+                  error={errors.whatsapp?.message}
+                  {...register('whatsapp')}
+                />
+              </div>
+            </fieldset>
+
+            <div className={styles.actions}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate(`${ROUTES.MERCHANT_DASHBOARD}?tab=perfil`)}
+              >
                 Cancelar
               </Button>
-              <Button type="submit" variant="accent" isLoading={isSubmitting}>
-                Guardar Información
+              <Button
+                type="submit"
+                variant="accent"
+                isLoading={isSubmitting}
+                leftIcon={<Save size={18} aria-hidden="true" />}
+              >
+                Guardar cambios
               </Button>
             </div>
           </form>
