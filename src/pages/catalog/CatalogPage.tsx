@@ -1,525 +1,121 @@
-import React, { useMemo } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Search, SlidersHorizontal, X, RotateCcw, Store, Package, Tag, ArrowRight } from 'lucide-react';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { ProductCard } from '@/entities/product/ui/ProductCard';
+import { BusinessCard } from '@/entities/business/ui/BusinessCard';
 import { CATEGORIES, LOCATIONS } from '@/shared/config/constants';
 import { ROUTES } from '@/shared/config/routes';
-import { createWhatsAppLink } from '@/shared/lib/whatsapp';
+import { formatMoney } from '@/shared/lib/money';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Select } from '@/shared/ui/Select';
-import {
-  Search,
-  RotateCcw,
-  PackageX,
-  Filter,
-  MapPin,
-  Store,
-  Package,
-  Tag,
-  Clock,
-  MessageCircle,
-  ArrowRight,
-  ShieldCheck,
-} from 'lucide-react';
+import { Modal } from '@/shared/ui/Modal';
+import { CatalogFilters } from './CatalogFilters';
+import { filterCatalogProducts, getPublicCatalog, normalizeSearch, readPriceRange } from './catalogModel';
 import styles from './CatalogPage.module.css';
 
-export const CatalogPage: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+const sortOptions = [
+  { value: 'nuevos', label: 'Más recientes' }, { value: 'precio_asc', label: 'Menor precio' },
+  { value: 'precio_desc', label: 'Mayor precio' }, { value: 'nombre_asc', label: 'Nombre A–Z' },
+];
+const filterKeys = ['q', 'categoria', 'ubicacion', 'precio_min', 'precio_max', 'disponible', 'orden'];
 
-  const query = searchParams.get('q') || '';
-  const category = searchParams.get('categoria') || '';
-  const location = searchParams.get('ubicacion') || '';
-  const sort = searchParams.get('orden') || 'nuevos';
-  const filtro = searchParams.get('filtro') || '';
-  const isTiendasView = filtro === 'tiendas';
-  const isOfertasView = searchParams.get('ofertas') === 'true';
-
-  const allProducts = useMemo(() => LocalStoreRepository.getProducts(), []);
-  const allBusinesses = useMemo(() => LocalStoreRepository.getBusinesses(), []);
-
-  // Mapeo de productos por negocio
-  const businessProductsCountMap = useMemo(() => {
-    const map = new Map<string, number>();
-    allProducts.forEach((p) => {
-      map.set(p.businessId, (map.get(p.businessId) || 0) + 1);
-    });
-    return map;
-  }, [allProducts]);
-
-  const businessLocationMap = useMemo(() => {
-    const map = new Map<string, string>();
-    allBusinesses.forEach((b) => map.set(b.id, b.location));
-    return map;
-  }, [allBusinesses]);
-
-  // Filtrado de Negocios / Tiendas cuando está en modo directorio
-  const filteredBusinesses = useMemo(() => {
-    return allBusinesses.filter((biz) => {
-      if (query) {
-        const q = query.toLowerCase();
-        const matchName = biz.name.toLowerCase().includes(q);
-        const matchDesc = biz.description.toLowerCase().includes(q);
-        const matchLoc = biz.location.toLowerCase().includes(q);
-        const matchCat = biz.category.toLowerCase().includes(q);
-        if (!matchName && !matchDesc && !matchLoc && !matchCat) return false;
-      }
-
-      if (category && biz.category.toLowerCase() !== category.toLowerCase()) {
-        return false;
-      }
-
-      if (location) {
-        if (!biz.location.toLowerCase().includes(location.toLowerCase())) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  }, [allBusinesses, query, category, location]);
-
-  // Filtrado y ordenamiento de productos
-  const filteredProducts = useMemo(() => {
-    return allProducts
-      .filter((prod) => {
-        // Búsqueda por texto (nombre, descripción, características)
-        if (query) {
-          const q = query.toLowerCase();
-          const matchName = prod.name.toLowerCase().includes(q);
-          const matchDesc = prod.description.toLowerCase().includes(q);
-          const matchFeat = prod.features.some((f) => f.toLowerCase().includes(q));
-          if (!matchName && !matchDesc && !matchFeat) return false;
-        }
-
-        // Filtro por categoría
-        if (category && prod.category !== category) {
-          return false;
-        }
-
-        // Filtro por ubicación de la MYPE
-        if (location) {
-          const bizLoc = businessLocationMap.get(prod.businessId) || '';
-          if (!bizLoc.toLowerCase().includes(location.toLowerCase())) {
-            return false;
-          }
-        }
-
-        // Si es vista de ofertas, priorizar artículos clave o con stock activo
-        if (isOfertasView) {
-          return prod.status === 'published';
-        }
-
-        return true;
-      })
-      .sort((a, b) => {
-        if (sort === 'precio_asc') return a.priceCents - b.priceCents;
-        if (sort === 'precio_desc') return b.priceCents - a.priceCents;
-        if (sort === 'nombre_asc') return a.name.localeCompare(b.name);
-        // Por defecto: más recientes
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
-  }, [allProducts, query, category, location, sort, isOfertasView, businessLocationMap]);
-
+export function CatalogPage() {
+  const [params, setParams] = useSearchParams();
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const view = params.get('filtro') === 'tiendas' ? 'tiendas' : params.get('ofertas') === 'true' ? 'ofertas' : 'productos';
+  const query = params.get('q') || '';
+  const category = params.get('categoria') || '';
+  const location = params.get('ubicacion') || '';
+  const minimum = params.get('precio_min') || '';
+  const maximum = params.get('precio_max') || '';
+  const availableOnly = params.get('disponible') === 'true';
+  const sort = sortOptions.some(option => option.value === params.get('orden')) ? params.get('orden')! : 'nuevos';
+  const range = readPriceRange(minimum, maximum);
+  const catalog = getPublicCatalog(LocalStoreRepository.getProducts(), LocalStoreRepository.getBusinesses());
+  const filteredProducts = filterCatalogProducts(catalog.products, catalog.businesses, { query, category, location, sort, availableOnly, minimum: range.error ? null : range.min, maximum: range.error ? null : range.max });
+  const search = normalizeSearch(query);
+  const categoryName = (id: string) => CATEGORIES.find(item => item.id === id)?.name || id;
+  const filteredBusinesses = catalog.businesses.filter(business =>
+    (!search || normalizeSearch([business.name, business.description, business.location, categoryName(business.category)].join(' ')).includes(search))
+    && (!category || business.category === category)
+    && (!location || normalizeSearch(business.location).includes(normalizeSearch(location)))
+  ).sort((a, b) => a.name.localeCompare(b.name, 'es-PE'));
+  const stores = view === 'tiendas';
+  const count = stores ? filteredBusinesses.length : filteredProducts.length;
+  const locations = [...new Set([...LOCATIONS, ...catalog.businesses.map(business => business.location)])];
+  const productCount = (businessId: string) => catalog.products.filter(product => product.businessId === businessId).length;
+  const values = { category, location, minimum, maximum, available: availableOnly };
   const updateParam = (key: string, value: string) => {
-    const next = new URLSearchParams(searchParams);
-    if (value) {
-      next.set(key, value);
-    } else {
-      next.delete(key);
-    }
-    setSearchParams(next);
+    const next = new URLSearchParams(params);
+    if (value) next.set(key, value); else next.delete(key);
+    setParams(next, { replace: key === 'q' || key.startsWith('precio_') });
   };
-
-  const handleClearFilters = () => {
-    const next = new URLSearchParams();
-    if (isTiendasView) {
+  const clearFilters = () => {
+    const next = new URLSearchParams(params);
+    filterKeys.forEach(key => next.delete(key)); setParams(next);
+  };
+  const viewUrl = (nextView: typeof view) => {
+    const next = new URLSearchParams(params);
+    next.delete('filtro'); next.delete('ofertas');
+    if (nextView === 'tiendas') {
       next.set('filtro', 'tiendas');
+      ['precio_min', 'precio_max', 'disponible', 'orden'].forEach(key => next.delete(key));
     }
-    setSearchParams(next);
+    if (nextView === 'ofertas') next.set('ofertas', 'true');
+    return `${ROUTES.CATALOG}${next.size ? `?${next}` : ''}`;
   };
+  const activeFilters = [
+    ...(query ? [{ key: 'q', label: `Búsqueda: ${query}` }] : []),
+    ...(category ? [{ key: 'categoria', label: categoryName(category) }] : []),
+    ...(location ? [{ key: 'ubicacion', label: location }] : []),
+    ...(!stores && minimum ? [{ key: 'precio_min', label: range.min !== null && !Number.isNaN(range.min) ? `Desde ${formatMoney(range.min)}` : `Desde: ${minimum}` }] : []),
+    ...(!stores && maximum ? [{ key: 'precio_max', label: range.max !== null && !Number.isNaN(range.max) ? `Hasta ${formatMoney(range.max)}` : `Hasta: ${maximum}` }] : []),
+    ...(!stores && availableOnly ? [{ key: 'disponible', label: 'Con stock' }] : []),
+  ];
+  const quickCategories = CATEGORIES.filter(item => catalog.products.some(product => product.category === item.id));
+  const title = stores ? 'Tiendas y emprendimientos' : view === 'ofertas' ? 'Ofertas de la comunidad' : 'Catálogo de productos';
+  const noun = stores ? 'tiendas' : 'productos';
 
-  const hasActiveFilters = Boolean(query || category || location || sort !== 'nuevos');
-
-  return (
-    <div className={styles.page}>
-      <div className="container">
-        {/* Encabezado */}
-        <div className={styles.header}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              backgroundColor: 'var(--color-primary-100)',
-              color: 'var(--color-primary-800)',
-              padding: '4px 12px',
-              borderRadius: '999px',
-              fontSize: '12px',
-              fontWeight: 700,
-              marginBottom: '8px',
-            }}
-          >
-            <MapPin size={13} />
-            <span>Leoncio Prado, Huánuco • Selva Central</span>
-          </div>
-
-          <h1 className={styles.title}>
-            {isTiendasView
-              ? 'Tiendas & MYPES de Tingo María'
-              : isOfertasView
-              ? 'Ofertas y Precios Especiales de Tingo María'
-              : 'Catálogo de Tingo María y Alrededores'}
-          </h1>
-          <p className={styles.subtitle}>
-            {isTiendasView
-              ? 'Conoce directamente los productores, bodegas, cooperativas y emprendimientos locales de Leoncio Prado. Compra seguro o coordina por WhatsApp.'
-              : isOfertasView
-              ? 'Abarrotes de primera necesidad, canasta básica familiar, cafés de altura y chocolates finos a precios accesibles.'
-              : 'Productos representativos de Rupa-Rupa, Castillo Grande, Naranjillo, Valle del Monzón, Las Palmas y la Bella Durmiente directos de sus productores.'}
-          </p>
-
-          {/* Selector de Pestañas Superiores (Productos vs Tiendas vs Ofertas) */}
-          <div className={styles.sectionTabsContainer} role="tablist" aria-label="Secciones del catálogo">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={!isTiendasView && !isOfertasView}
-              className={`${styles.sectionTab} ${!isTiendasView && !isOfertasView ? styles.sectionTabActive : ''}`}
-              onClick={() => {
-                const next = new URLSearchParams(searchParams);
-                next.delete('filtro');
-                next.delete('ofertas');
-                setSearchParams(next);
-              }}
-            >
-              <Package size={16} />
-              <span>Productos</span>
-              <span className={styles.tabBadge}>{allProducts.length}</span>
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={isTiendasView}
-              className={`${styles.sectionTab} ${isTiendasView ? styles.sectionTabActive : ''}`}
-              onClick={() => {
-                const next = new URLSearchParams(searchParams);
-                next.set('filtro', 'tiendas');
-                next.delete('ofertas');
-                setSearchParams(next);
-              }}
-            >
-              <Store size={16} />
-              <span>Tiendas & MYPES</span>
-              <span className={styles.tabBadge}>{allBusinesses.length}</span>
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={isOfertasView}
-              className={`${styles.sectionTab} ${isOfertasView ? styles.sectionTabActive : ''}`}
-              onClick={() => {
-                const next = new URLSearchParams(searchParams);
-                next.set('ofertas', 'true');
-                next.delete('filtro');
-                setSearchParams(next);
-              }}
-            >
-              <Tag size={16} />
-              <span>Ofertas</span>
-            </button>
-          </div>
-
-          {/* Chips de Zonas Rápidas de Tingo María */}
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '14px' }}>
-            <button
-              type="button"
-              style={{
-                backgroundColor: !location ? 'var(--color-primary-800)' : 'var(--color-surface)',
-                color: !location ? '#ffffff' : 'var(--color-text-main)',
-                border: '1px solid var(--color-border)',
-                borderRadius: '999px',
-                padding: '5px 14px',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-              onClick={() => updateParam('ubicacion', '')}
-            >
-              📍 Todo Tingo María y aledaños
-            </button>
-            {LOCATIONS.slice(0, 6).map((loc) => (
-              <button
-                key={loc}
-                type="button"
-                style={{
-                  backgroundColor: location === loc ? 'var(--color-primary-800)' : 'var(--color-surface)',
-                  color: location === loc ? '#ffffff' : 'var(--color-text-main)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: '999px',
-                  padding: '5px 14px',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-                onClick={() => updateParam('ubicacion', loc)}
-              >
-                {loc}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.layout}>
-          {/* Barra Lateral de Filtros */}
-          <aside className={styles.sidebar} aria-label="Filtros del catálogo">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h2 className={styles.filterLabel}>
-                <Filter size={16} />
-                <span>{isTiendasView ? 'Filtros de Tiendas' : 'Filtros de Búsqueda'}</span>
-              </h2>
-              {hasActiveFilters && (
-                <Button size="sm" variant="ghost" onClick={handleClearFilters} leftIcon={<RotateCcw size={12} />}>
-                  Limpiar
-                </Button>
-              )}
-            </div>
-
-            {/* Búsqueda */}
-            <div className={styles.filterGroup}>
-              <label htmlFor="catalog-search" className={styles.filterLabel}>
-                {isTiendasView ? 'Buscar tienda o rubro' : 'Buscar producto'}
-              </label>
-              <Input
-                id="catalog-search"
-                placeholder={isTiendasView ? 'Ej. Café Monzón, Durmiente, Bodega...' : 'Ej. Cacao, café, chifles, arroz...'}
-                value={query}
-                onChange={(e) => updateParam('q', e.target.value)}
-                leftIcon={<Search size={16} />}
-              />
-            </div>
-
-            {/* Categoría */}
-            <div className={styles.filterGroup}>
-              <label htmlFor="catalog-category" className={styles.filterLabel}>
-                Rubro / Categoría
-              </label>
-              <Select
-                id="catalog-category"
-                value={category}
-                onChange={(e) => updateParam('categoria', e.target.value)}
-                options={[
-                  { value: '', label: 'Todas las categorías' },
-                  ...CATEGORIES.map((c) => ({ value: c.id, label: c.name })),
-                ]}
-              />
-            </div>
-
-            {/* Ubicación en Tingo María y aledaños */}
-            <div className={styles.filterGroup}>
-              <label htmlFor="catalog-location" className={styles.filterLabel}>
-                Zona / Distrito
-              </label>
-              <Select
-                id="catalog-location"
-                value={location}
-                onChange={(e) => updateParam('ubicacion', e.target.value)}
-                options={[
-                  { value: '', label: 'Todo Tingo María y aledaños' },
-                  ...LOCATIONS.map((loc) => ({ value: loc, label: loc })),
-                ]}
-              />
-            </div>
-          </aside>
-
-          {/* Contenido Principal y Listado */}
-          <main className={styles.mainContent}>
-            {/* Barra Superior con Contador y Ordenamiento */}
-            <div className={styles.topBar}>
-              <div className={styles.counter}>
-                {isTiendasView ? (
-                  <>
-                    Mostrando <strong className={styles.counterStrong}>{filteredBusinesses.length}</strong>{' '}
-                    {filteredBusinesses.length === 1 ? 'tienda o MYPE' : 'tiendas y MYPES de Tingo María'}
-                  </>
-                ) : (
-                  <>
-                    Mostrando <strong className={styles.counterStrong}>{filteredProducts.length}</strong>{' '}
-                    {filteredProducts.length === 1 ? 'producto de Tingo María' : 'productos de Tingo María y aledaños'}
-                  </>
-                )}
-              </div>
-
-              {!isTiendasView && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <label htmlFor="catalog-sort" style={{ fontSize: '13px', fontWeight: 600 }}>
-                    Ordenar por:
-                  </label>
-                  <Select
-                    id="catalog-sort"
-                    value={sort}
-                    onChange={(e) => updateParam('orden', e.target.value)}
-                    options={[
-                      { value: 'nuevos', label: 'Más recientes' },
-                      { value: 'precio_asc', label: 'Menor precio' },
-                      { value: 'precio_desc', label: 'Mayor precio' },
-                      { value: 'nombre_asc', label: 'Nombre A-Z' },
-                    ]}
-                    style={{ width: 'auto' }}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* VISTA 1: Directorio de Tiendas & MYPES */}
-            {isTiendasView ? (
-              filteredBusinesses.length > 0 ? (
-                <div className={styles.storesGrid}>
-                  {filteredBusinesses.map((biz) => {
-                    const prodCount = businessProductsCountMap.get(biz.id) || 0;
-                    const whatsAppMsg = `¡Hola ${biz.name}! 👋 Encontré su tienda en JUÁCIL (Tingo María) y me gustaría consultar sobre sus productos y envíos.`;
-                    const waLink = createWhatsAppLink(biz.whatsapp, whatsAppMsg);
-
-                    return (
-                      <article key={biz.id} className={styles.storeCard}>
-                        <div className={styles.storeCardBannerWrapper}>
-                          <img
-                            src={biz.bannerUrl}
-                            alt={`Portada de ${biz.name}`}
-                            className={styles.storeCardBanner}
-                            loading="lazy"
-                          />
-                          <div className={styles.storeCardLocationBadge}>
-                            <MapPin size={11} />
-                            <span>{biz.location}</span>
-                          </div>
-                        </div>
-
-                        <div className={styles.storeCardBody}>
-                          <div className={styles.storeCardLogoWrapper}>
-                            <img
-                              src={biz.logoUrl}
-                              alt={`Logo de ${biz.name}`}
-                              className={styles.storeCardLogo}
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src =
-                                  'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=200&q=80';
-                              }}
-                            />
-                            <span className={styles.storeCategoryPill}>{biz.category}</span>
-                          </div>
-
-                          <h3 className={styles.storeCardTitle}>
-                            <Link
-                              to={ROUTES.STORE_DETAIL(biz.id)}
-                              style={{ color: 'inherit', textDecoration: 'none' }}
-                            >
-                              {biz.name}
-                            </Link>
-                          </h3>
-
-                          <div
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              fontSize: '11px',
-                              color: '#166534',
-                              fontWeight: 700,
-                              marginBottom: '8px',
-                            }}
-                          >
-                            <ShieldCheck size={13} color="#16a34a" />
-                            <span>MYPE Verificada de Selva Central</span>
-                          </div>
-
-                          <p className={styles.storeCardDesc}>{biz.description}</p>
-
-                          <div className={styles.storeCardMeta}>
-                            <div className={styles.storeCardMetaRow}>
-                              <Clock size={13} color="#15803d" />
-                              <span>{biz.schedule || 'Lunes a Sábado: 8:00 am - 7:00 pm'}</span>
-                            </div>
-                            <div className={styles.storeCardMetaRow}>
-                              <Package size={13} color="#0b4526" />
-                              <span>
-                                <strong>{prodCount}</strong> {prodCount === 1 ? 'producto activo' : 'productos activos'} en catálogo
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className={styles.storeCardActions}>
-                            <a
-                              href={waLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={styles.storeCardWhatsAppBtn}
-                              title={`Contactar a ${biz.name} por WhatsApp`}
-                              aria-label={`Contactar por WhatsApp a ${biz.name}`}
-                            >
-                              <MessageCircle size={18} />
-                            </a>
-
-                            <Button
-                              fullWidth
-                              variant="primary"
-                              size="md"
-                              onClick={() => navigate(ROUTES.STORE_DETAIL(biz.id))}
-                              rightIcon={<ArrowRight size={14} />}
-                            >
-                              Ver Tienda y Catálogo
-                            </Button>
-                          </div>
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className={styles.emptyState}>
-                  <div className={styles.emptyIconBox}>
-                    <Store size={32} />
-                  </div>
-                  <h3 className={styles.emptyTitle}>No hay tiendas con estos criterios</h3>
-                  <p className={styles.emptyText}>
-                    Prueba cambiando el término de búsqueda o limpia los filtros de ubicación para ver todas las
-                    MYPES de Leoncio Prado.
-                  </p>
-                  <Button variant="primary" onClick={handleClearFilters} leftIcon={<RotateCcw size={16} />}>
-                    Ver todas las tiendas
-                  </Button>
-                </div>
-              )
-            ) : (
-              /* VISTA 2: Catálogo de Productos */
-              filteredProducts.length > 0 ? (
-                <div className={styles.grid}>
-                  {filteredProducts.map((prod) => (
-                    <ProductCard key={prod.id} product={prod} />
-                  ))}
-                </div>
-              ) : (
-                <div className={styles.emptyState}>
-                  <div className={styles.emptyIconBox}>
-                    <PackageX size={32} />
-                  </div>
-                  <h3 className={styles.emptyTitle}>No hay productos con estos filtros</h3>
-                  <p className={styles.emptyText}>
-                    Intenta cambiar el término de búsqueda o limpia los filtros para explorar otras zonas de Tingo
-                    María y Leoncio Prado.
-                  </p>
-                  <Button variant="primary" onClick={handleClearFilters} leftIcon={<RotateCcw size={16} />}>
-                    Limpiar filtros
-                  </Button>
-                </div>
-              )
-            )}
-          </main>
-        </div>
+  return <div className={styles.page}><div className="container">
+    <header className={styles.header}><p className={styles.eyebrow}>JUÁCIL / Catálogo</p><h1>{title}</h1><p className={styles.subtitle}>{stores ? 'Conoce los negocios, su ubicación y los productos que ofrecen.' : view === 'ofertas' ? 'Las promociones aparecerán aquí cuando estén registradas.' : 'Encuentra productos de las MYPES y elige con quién preparar tu pedido.'}</p></header>
+    <nav className={styles.views} aria-label="Secciones del catálogo">
+      {[{ id: 'productos', label: 'Productos', icon: Package }, { id: 'tiendas', label: 'Tiendas', icon: Store }, { id: 'ofertas', label: 'Ofertas', icon: Tag }].map(({ id, label, icon: Icon }) =>
+        <Link key={id} to={viewUrl(id as typeof view)} className={view === id ? styles.viewActive : styles.view} aria-current={view === id ? 'page' : undefined}><Icon size={18} aria-hidden="true" />{label}</Link>)}
+    </nav>
+    {view === 'ofertas' ? <section className={styles.empty}><Tag size={32} aria-hidden="true" /><h2>Aún no hay promociones registradas</h2><p>No hay descuentos publicados por las tiendas. Puedes explorar los precios de catálogo y consultar directamente a cada negocio.</p><Link className={styles.primaryLink} to={viewUrl('productos')}>Ver productos <ArrowRight size={18} aria-hidden="true" /></Link></section> : <>
+      <div className={styles.searchRow}>
+        <Input id="catalog-search" label={stores ? 'Buscar tienda' : 'Buscar productos o negocios'} leftIcon={<Search size={19} />} value={query} placeholder={stores ? 'Nombre del negocio, rubro o ubicación' : 'Nombre, características o tienda'} onChange={event => updateParam('q', event.target.value)} />
+        <Button className={styles.mobileFilters} variant="outline" leftIcon={<SlidersHorizontal size={18} />} onClick={() => setFiltersOpen(true)}>Filtros{activeFilters.filter(filter => filter.key !== 'q').length ? ` (${activeFilters.filter(filter => filter.key !== 'q').length})` : ''}</Button>
       </div>
-    </div>
-  );
-};
+      {!stores && <div className={styles.categories} role="group" aria-label="Categorías rápidas">
+        <button className={!category ? styles.categoryActive : styles.category} aria-pressed={!category} onClick={() => updateParam('categoria', '')}>Todas</button>
+        {quickCategories.map(item => <button key={item.id} className={category === item.id ? styles.categoryActive : styles.category} aria-pressed={category === item.id} onClick={() => updateParam('categoria', item.id)}>{item.name.split(' & ')[0]}</button>)}
+      </div>}
+      <div className={styles.layout}>
+        <aside className={styles.sidebar} aria-label="Filtros del catálogo">
+          <div className={styles.filterHeading}><h2>Filtrar {noun}</h2><SlidersHorizontal size={18} aria-hidden="true" /></div>
+          <CatalogFilters prefix="desktop" values={values} locations={locations} stores={stores} onChange={updateParam} priceError={range.error} />
+          {(activeFilters.length > 0 || sort !== 'nuevos') && <Button variant="ghost" leftIcon={<RotateCcw size={16} />} onClick={clearFilters}>Limpiar filtros</Button>}
+        </aside>
+        <section className={styles.results} aria-label={stores ? 'Directorio de tiendas' : 'Resultados del catálogo'}>
+          <div className={styles.resultsHeader}>
+            <p role="status"><strong>{count}</strong> {count === 1 ? stores ? 'tienda encontrada' : 'producto encontrado' : `${noun} encontrados`}</p>
+            {!stores && <Select id="catalog-sort" label="Ordenar por" value={sort} options={sortOptions} onChange={event => updateParam('orden', event.target.value)} />}
+          </div>
+          {activeFilters.length > 0 && <div className={styles.activeFilters} aria-label="Filtros aplicados">{activeFilters.map(filter => <button key={filter.key} onClick={() => updateParam(filter.key, '')} aria-label={`Quitar filtro ${filter.label}`}>{filter.label}<X size={14} aria-hidden="true" /></button>)}<button className={styles.clearAll} onClick={clearFilters}>Limpiar todo</button></div>}
+          {!stores && range.error && <p className={styles.priceNotice} role="status">El rango de precio no se aplicó. Corrígelo en los filtros; se mantienen los demás criterios.</p>}
+          {count ? <div className={stores ? styles.storesGrid : styles.grid}>{stores
+            ? filteredBusinesses.map(business => <BusinessCard key={business.id} business={business} productCount={productCount(business.id)} showContact />)
+            : filteredProducts.map(product => <ProductCard key={product.id} product={product} />)}</div>
+            : <div className={styles.empty}><Search size={30} aria-hidden="true" /><h2>{stores ? 'No encontramos tiendas con estos criterios' : 'No encontramos productos con estos filtros'}</h2><p>Prueba otra búsqueda o retira un filtro para ver más opciones.</p><Button variant="outline" onClick={clearFilters}>Limpiar filtros</Button></div>}
+        </section>
+      </div>
+      <Modal isOpen={filtersOpen} onClose={() => setFiltersOpen(false)} title={`Filtrar ${noun}`} variant="drawer"
+        footer={<div className={styles.filterFooter}><Button variant="outline" onClick={clearFilters}>Limpiar</Button><Button disabled={!stores && !!range.error} onClick={() => setFiltersOpen(false)}>Mostrar {count} {noun}</Button></div>}>
+        <CatalogFilters prefix="mobile" values={values} locations={locations} stores={stores} onChange={updateParam} priceError={range.error} />
+      </Modal>
+    </>}
+  </div></div>;
+}

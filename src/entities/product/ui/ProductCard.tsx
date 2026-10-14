@@ -1,133 +1,56 @@
-import React, { useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Product } from '../model/types';
+import type { Product } from '../model/types';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { formatMoney } from '@/shared/lib/money';
 import { ROUTES } from '@/shared/config/routes';
-import { Badge } from '@/shared/ui/Badge';
 import { useCart } from '@/app/providers/CartProvider';
-import { ShoppingBag, Check, Store, Heart } from 'lucide-react';
+import { Heart, Plus, Check, Package, MapPin } from 'lucide-react';
 import styles from './ProductCard.module.css';
 
-export interface ProductCardProps {
-  product: Product;
-}
-
-export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+export interface ProductCardProps { product: Product; }
+export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
-  const [isAddedRecently, setIsAddedRecently] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+  const titleId = useId();
+  const [favorite, setFavorite] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
+  const [added, setAdded] = useState(false);
+  const [message, setMessage] = useState({ text: '', error: false });
+  const timeout = useRef<number | null>(null);
+  useEffect(() => () => { if (timeout.current !== null) window.clearTimeout(timeout.current); }, []);
   const business = LocalStoreRepository.getBusinessById(product.businessId);
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setErrorMessage(null);
-
-    const result = addItem(product, 1);
-    if (result.success) {
-      setIsAddedRecently(true);
-      setTimeout(() => setIsAddedRecently(false), 1600);
-    } else if (result.error) {
-      setErrorMessage(result.error);
-      setTimeout(() => setErrorMessage(null), 3000);
+  const unavailable = product.stock <= 0 || product.status !== 'published' || !business || (business.status && business.status !== 'active');
+  const add = () => {
+    if (timeout.current !== null) window.clearTimeout(timeout.current);
+    const fresh = LocalStoreRepository.getProductById(product.id);
+    const freshBusiness = LocalStoreRepository.getBusinessById(product.businessId);
+    if (!fresh || fresh.status !== 'published' || !freshBusiness || (freshBusiness.status && freshBusiness.status !== 'active')) {
+      setMessage({ text: 'Este producto ya no está disponible para agregar.', error: true }); return;
     }
+    const result = addItem(fresh);
+    setAdded(!!result.success);
+    setMessage({ text: result.success ? 'Producto agregado al carrito.' : result.error || '', error: !result.success && !!result.error });
+    if (result.success) timeout.current = window.setTimeout(() => setAdded(false), 1600);
   };
-
-  const handleToggleFavorite = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsFavorite(!isFavorite);
-  };
-
-  const isOutOfStock = product.stock <= 0;
-  const isLowStock = product.stock > 0 && product.stock <= 3;
-
-  return (
-    <article className={styles.card} aria-labelledby={`product-title-${product.id}`}>
-      <Link to={ROUTES.PRODUCT_DETAIL(product.id)} className={styles.imageWrapper}>
-        <img
-          src={product.imageUrl}
-          alt={product.imageAlt || product.name}
-          className={styles.image}
-          loading="lazy"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src =
-              'https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=600&q=80';
-          }}
-        />
-
-        {/* Botón de Favorito Flotante */}
-        <button
-          type="button"
-          className={styles.favoriteButton}
-          onClick={handleToggleFavorite}
-          aria-label={isFavorite ? 'Quitar de favoritos' : 'Guardar en favoritos'}
-        >
-          <Heart
-            size={16}
-            color={isFavorite ? '#ef4444' : '#4b5563'}
-            fill={isFavorite ? '#ef4444' : 'none'}
-          />
-        </button>
-
-        {/* Badge de Stock si es necesario */}
-        {(isOutOfStock || isLowStock) && (
-          <div className={styles.badgeTopLeft}>
-            {isOutOfStock ? (
-              <Badge variant="danger">Agotado</Badge>
-            ) : (
-              <Badge variant="warning">¡Solo {product.stock}!</Badge>
-            )}
-          </div>
-        )}
+  return <article className={styles.card} aria-labelledby={titleId}>
+    <div className={styles.media}>
+      <Link to={ROUTES.PRODUCT_DETAIL(product.id)} className={styles.imageLink} aria-label={`Ver ${product.name}`}>
+        {product.imageUrl && !imageFailed ? <img src={product.imageUrl} alt={product.imageAlt || product.name} loading="lazy" onError={() => setImageFailed(true)} /> : <span className={styles.placeholder}><Package size={32} aria-hidden="true" /><span>Imagen no disponible</span></span>}
       </Link>
-
-      <div className={styles.body}>
-        <h3 id={`product-title-${product.id}`} className={styles.title}>
-          <Link to={ROUTES.PRODUCT_DETAIL(product.id)}>{product.name}</Link>
-        </h3>
-
-        {/* Tienda que publica el producto */}
-        <div className={styles.storeSubtitle} title={`Tienda: ${business ? business.name : 'Tienda JUÁCIL'}`}>
-          <Store size={13} className={styles.storeIcon} />
-          <span>{business ? business.name : 'Tienda JUÁCIL'}</span>
-        </div>
-
-        {errorMessage && (
-          <p style={{ color: 'var(--color-danger)', fontSize: '11px', margin: '0 0 6px 0' }}>
-            {errorMessage}
-          </p>
-        )}
-
-        {/* Fila inferior: Precio a la izquierda y Botón Agregar a la derecha */}
-        <div className={styles.footerRow}>
-          <span className={styles.price}>{formatMoney(product.priceCents)}</span>
-          <button
-            type="button"
-            className={`${styles.addButton} ${isOutOfStock ? styles.disabled : ''} ${isAddedRecently ? styles.added : ''}`}
-            disabled={isOutOfStock}
-            onClick={handleAddToCart}
-            aria-label={`Agregar ${product.name} al carrito`}
-          >
-            {isAddedRecently ? (
-              <>
-                <Check size={14} />
-                <span>¡Agregado!</span>
-              </>
-            ) : isOutOfStock ? (
-              <span>Agotado</span>
-            ) : (
-              <>
-                <ShoppingBag size={14} />
-                <span>Agregar</span>
-              </>
-            )}
-          </button>
-        </div>
+      <button className={favorite ? styles.favoriteActive : styles.favorite} aria-label={`${favorite ? 'Quitar' : 'Marcar'} ${product.name} ${favorite ? 'de favoritos' : 'como favorito'}`} aria-pressed={favorite} onClick={() => setFavorite(value => !value)}><Heart size={18} aria-hidden="true" /></button>
+      {product.stock <= 3 && <span className={product.stock <= 0 ? styles.soldOut : styles.lowStock}>{product.stock <= 0 ? 'Agotado' : `Quedan ${product.stock}`}</span>}
+    </div>
+    <div className={styles.body}>
+      {business && <Link className={styles.business} to={ROUTES.STORE_DETAIL(business.id)} title={business.name}>{business.name}</Link>}
+      <h3 id={titleId}><Link to={ROUTES.PRODUCT_DETAIL(product.id)} title={product.name}>{product.name}</Link></h3>
+      {business && <span className={styles.location}><MapPin size={13} aria-hidden="true" />{business.location}</span>}
+      <div className={styles.footer}>
+        <strong className={styles.price}>{formatMoney(product.priceCents)}</strong>
+        <button className={added ? styles.added : styles.add} disabled={!!unavailable} onClick={add} aria-label={`Agregar ${product.name} al carrito`}>
+          {added ? <Check size={17} aria-hidden="true" /> : <Plus size={17} aria-hidden="true" />}<span>{added ? 'Agregado' : product.stock <= 0 ? 'Agotado' : unavailable ? 'No disponible' : 'Agregar'}</span>
+        </button>
       </div>
-    </article>
-  );
-};
+      {message.text && <p className={message.error ? styles.error : styles.feedback} role={message.error ? 'alert' : 'status'}>{message.text}</p>}
+    </div>
+  </article>;
+}
