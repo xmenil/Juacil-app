@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSession } from '@/app/providers/SessionProvider';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { Business, BusinessStatus } from '@/entities/business/model/types';
@@ -34,9 +34,22 @@ import styles from './AdminDashboardPage.module.css';
 export const AdminDashboardPage: React.FC = () => {
   const { currentUser, isAdmin, loginAs } = useSession();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Tabs
+  // Tabs sincronizadas con la URL
   const [activeTab, setActiveTab] = useState<'tiendas' | 'usuarios' | 'pedidos'>('tiendas');
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'usuarios' || tabParam === 'tiendas' || tabParam === 'pedidos') {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (nextTab: 'tiendas' | 'usuarios' | 'pedidos') => {
+    setActiveTab(nextTab);
+    setSearchParams({ tab: nextTab });
+  };
 
   // Filtros y búsquedas
   const [storeSearch, setStoreSearch] = useState('');
@@ -270,9 +283,14 @@ export const AdminDashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Tarjetas de Métricas Globales */}
+        {/* Tarjetas de Métricas Globales Interactivos */}
         <div className={styles.statsGrid}>
-          <div className={styles.statCard}>
+          <div
+            className={styles.statCard}
+            onClick={() => handleTabChange('usuarios')}
+            style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+            title="Ir a Gestión de Usuarios"
+          >
             <div className={styles.statTop}>
               <span className={styles.statLabel}>Usuarios Totales</span>
               <div className={styles.statIconWrap} style={{ backgroundColor: '#e0f2fe', color: '#0284c7' }}>
@@ -281,11 +299,16 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
             <div className={styles.statNumber}>{users.length}</div>
             <span className={styles.statHint}>
-              {users.filter((u) => u.role === 'cliente').length} clientes • {users.filter((u) => u.role === 'merchant').length} tiendas
+              {users.filter((u) => u.role === 'cliente').length} clientes • {users.filter((u) => u.role === 'merchant').length} tiendas (clic para ver)
             </span>
           </div>
 
-          <div className={styles.statCard}>
+          <div
+            className={styles.statCard}
+            onClick={() => handleTabChange('tiendas')}
+            style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+            title="Ir a Gestión de Tiendas"
+          >
             <div className={styles.statTop}>
               <span className={styles.statLabel}>Tiendas & MYPES</span>
               <div className={styles.statIconWrap} style={{ backgroundColor: '#dcfce7', color: '#16a34a' }}>
@@ -298,7 +321,12 @@ export const AdminDashboardPage: React.FC = () => {
             </span>
           </div>
 
-          <div className={styles.statCard}>
+          <div
+            className={styles.statCard}
+            onClick={() => handleTabChange('pedidos')}
+            style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+            title="Ir a Pedidos Globales"
+          >
             <div className={styles.statTop}>
               <span className={styles.statLabel}>Pedidos Registrados</span>
               <div className={styles.statIconWrap} style={{ backgroundColor: '#fef3c7', color: '#d97706' }}>
@@ -307,11 +335,16 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
             <div className={styles.statNumber}>{orders.length}</div>
             <span className={styles.statHint}>
-              {orders.filter((o) => o.status === 'entregado').length} entregados con éxito
+              {orders.filter((o) => o.status === 'entregado').length} entregados con éxito (clic para ver)
             </span>
           </div>
 
-          <div className={styles.statCard}>
+          <div
+            className={styles.statCard}
+            onClick={() => handleTabChange('pedidos')}
+            style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+            title="Ir a Pedidos Globales"
+          >
             <div className={styles.statTop}>
               <span className={styles.statLabel}>Volumen Transaccionado</span>
               <div className={styles.statIconWrap} style={{ backgroundColor: '#f3e8ff', color: '#9333ea' }}>
@@ -330,7 +363,7 @@ export const AdminDashboardPage: React.FC = () => {
           <button
             type="button"
             className={`${styles.tabBtn} ${activeTab === 'tiendas' ? styles.tabBtnActive : ''}`}
-            onClick={() => setActiveTab('tiendas')}
+            onClick={() => handleTabChange('tiendas')}
           >
             <Store size={16} /> Gestión de Tiendas ({businesses.length})
           </button>
@@ -338,7 +371,7 @@ export const AdminDashboardPage: React.FC = () => {
           <button
             type="button"
             className={`${styles.tabBtn} ${activeTab === 'usuarios' ? styles.tabBtnActive : ''}`}
-            onClick={() => setActiveTab('usuarios')}
+            onClick={() => handleTabChange('usuarios')}
           >
             <Users size={16} /> Gestión de Usuarios ({users.length})
           </button>
@@ -346,7 +379,7 @@ export const AdminDashboardPage: React.FC = () => {
           <button
             type="button"
             className={`${styles.tabBtn} ${activeTab === 'pedidos' ? styles.tabBtnActive : ''}`}
-            onClick={() => setActiveTab('pedidos')}
+            onClick={() => handleTabChange('pedidos')}
           >
             <ShoppingBag size={16} /> Pedidos Globales ({orders.length})
           </button>

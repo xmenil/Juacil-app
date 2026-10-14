@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useSession } from '@/app/providers/SessionProvider';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { Product, ProductStatus } from '@/entities/product/model/types';
@@ -42,6 +42,7 @@ import styles from './MerchantDashboardPage.module.css';
 export const MerchantDashboardPage: React.FC = () => {
   const { currentUser, isMerchant, isAdmin, businessId } = useSession();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Si no es merchant ni admin, denegar acceso
   if (!isMerchant && !isAdmin) {
@@ -53,7 +54,7 @@ export const MerchantDashboardPage: React.FC = () => {
   const activeBusinessId = businessId || 'biz-cafe-aroma';
   const business = LocalStoreRepository.getBusinessById(activeBusinessId);
 
-  // Pestaña activa
+  // Pestaña activa sincronizada con la URL
   const [activeTab, setActiveTab] = useState<'reportes' | 'pedidos' | 'productos' | 'perfil'>('reportes');
 
   // Filtros de Productos y Pedidos
@@ -65,6 +66,40 @@ export const MerchantDashboardPage: React.FC = () => {
   const [createProductModalOpen, setCreateProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteProductCandidate, setDeleteProductCandidate] = useState<Product | null>(null);
+
+  // Escuchar y sincronizar parámetros de la URL (?tab=..., ?crear=true, ?filtro=...)
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'pedidos' || tabParam === 'productos' || tabParam === 'perfil' || tabParam === 'reportes') {
+      setActiveTab(tabParam);
+    }
+
+    if (searchParams.get('crear') === 'true') {
+      setCreateProductModalOpen(true);
+    }
+
+    const filtroParam = searchParams.get('filtro');
+    if (filtroParam) {
+      if (tabParam === 'pedidos') {
+        setOrderStatusFilter(filtroParam);
+      } else if (tabParam === 'productos') {
+        setProductFilter(filtroParam);
+      }
+    }
+
+    const editId = searchParams.get('editar');
+    if (editId) {
+      const found = LocalStoreRepository.getProductById(editId);
+      if (found) {
+        setEditingProduct(found);
+      }
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (nextTab: 'reportes' | 'pedidos' | 'productos' | 'perfil') => {
+    setActiveTab(nextTab);
+    setSearchParams({ tab: nextTab });
+  };
 
   // Formulario de Datos de la Tienda
   const [storeName, setStoreName] = useState(business?.name || '');
@@ -249,7 +284,7 @@ export const MerchantDashboardPage: React.FC = () => {
               size="sm"
               variant="primary"
               onClick={() => {
-                setActiveTab('pedidos');
+                handleTabChange('pedidos');
                 setOrderStatusFilter('pendiente');
               }}
             >
@@ -263,7 +298,7 @@ export const MerchantDashboardPage: React.FC = () => {
           <button
             type="button"
             className={`${styles.tabItem} ${activeTab === 'reportes' ? styles.tabItemActive : ''}`}
-            onClick={() => setActiveTab('reportes')}
+            onClick={() => handleTabChange('reportes')}
           >
             <TrendingUp size={16} /> Resumen & Reportes
           </button>
@@ -271,7 +306,7 @@ export const MerchantDashboardPage: React.FC = () => {
           <button
             type="button"
             className={`${styles.tabItem} ${activeTab === 'pedidos' ? styles.tabItemActive : ''}`}
-            onClick={() => setActiveTab('pedidos')}
+            onClick={() => handleTabChange('pedidos')}
           >
             <Bell size={16} /> Pedidos & Notificaciones
             {pendingOrders.length > 0 && (
@@ -282,7 +317,7 @@ export const MerchantDashboardPage: React.FC = () => {
           <button
             type="button"
             className={`${styles.tabItem} ${activeTab === 'productos' ? styles.tabItemActive : ''}`}
-            onClick={() => setActiveTab('productos')}
+            onClick={() => handleTabChange('productos')}
           >
             <Package size={16} /> Gestión de Productos ({products.length})
           </button>
@@ -290,7 +325,7 @@ export const MerchantDashboardPage: React.FC = () => {
           <button
             type="button"
             className={`${styles.tabItem} ${activeTab === 'perfil' ? styles.tabItemActive : ''}`}
-            onClick={() => setActiveTab('perfil')}
+            onClick={() => handleTabChange('perfil')}
           >
             <Store size={16} /> Perfil & Horario Tienda
           </button>
@@ -301,18 +336,31 @@ export const MerchantDashboardPage: React.FC = () => {
             ================================================================ */}
         {activeTab === 'reportes' && (
           <div>
-            {/* Tarjetas de Métricas Clave */}
+            {/* Tarjetas de Métricas Clave Interactivos */}
             <div className={styles.metricsGrid}>
-              <div className={styles.metricCard}>
+              <div
+                className={styles.metricCard}
+                onClick={() => handleTabChange('pedidos')}
+                style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+                title="Ver todos los pedidos de la tienda"
+              >
                 <div className={styles.metricHeader}>
                   <span>Ventas Brutas</span>
                   <TrendingUp size={18} color="#166534" />
                 </div>
                 <span className={styles.metricValue}>{formatMoney(totalSalesCents)}</span>
-                <span className={styles.metricHint}>De {orders.length} pedidos totales</span>
+                <span className={styles.metricHint}>De {orders.length} pedidos totales (clic para ver)</span>
               </div>
 
-              <div className={styles.metricCard}>
+              <div
+                className={styles.metricCard}
+                onClick={() => {
+                  handleTabChange('pedidos');
+                  setOrderStatusFilter('pendiente');
+                }}
+                style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+                title="Ver pedidos pendientes de confirmación"
+              >
                 <div className={styles.metricHeader}>
                   <span>Pedidos Pendientes</span>
                   <Clock size={18} color="#d97706" />
@@ -320,19 +368,35 @@ export const MerchantDashboardPage: React.FC = () => {
                 <span className={styles.metricValue} style={{ color: pendingOrders.length > 0 ? '#d97706' : undefined }}>
                   {pendingOrders.length}
                 </span>
-                <span className={styles.metricHint}>Requieren respuesta inmediata</span>
+                <span className={styles.metricHint}>Requieren respuesta inmediata (clic para ver)</span>
               </div>
 
-              <div className={styles.metricCard}>
+              <div
+                className={styles.metricCard}
+                onClick={() => {
+                  handleTabChange('pedidos');
+                  setOrderStatusFilter('confirmado');
+                }}
+                style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+                title="Ver pedidos confirmados y en ruta"
+              >
                 <div className={styles.metricHeader}>
                   <span>Confirmados & En Ruta</span>
                   <Truck size={18} color="#0284c7" />
                 </div>
                 <span className={styles.metricValue}>{confirmedOrders.length}</span>
-                <span className={styles.metricHint}>{deliveredOrders.length} ya entregados</span>
+                <span className={styles.metricHint}>{deliveredOrders.length} ya entregados (clic para ver)</span>
               </div>
 
-              <div className={styles.metricCard}>
+              <div
+                className={styles.metricCard}
+                onClick={() => {
+                  handleTabChange('productos');
+                  setProductFilter('outOfStock');
+                }}
+                style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+                title="Ver productos con alerta de inventario"
+              >
                 <div className={styles.metricHeader}>
                   <span>Alertas de Inventario</span>
                   <AlertTriangle size={18} color="#dc2626" />
@@ -341,7 +405,7 @@ export const MerchantDashboardPage: React.FC = () => {
                   {lowStockProducts.length + outOfStockProducts.length}
                 </span>
                 <span className={styles.metricHint}>
-                  {outOfStockProducts.length} agotados, {lowStockProducts.length} por terminar
+                  {outOfStockProducts.length} agotados, {lowStockProducts.length} por terminar (clic para ver)
                 </span>
               </div>
             </div>
@@ -354,7 +418,7 @@ export const MerchantDashboardPage: React.FC = () => {
                   <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0b4526', margin: 0 }}>
                     Últimas Órdenes Recibidas
                   </h3>
-                  <Button size="sm" variant="outline" onClick={() => setActiveTab('pedidos')}>
+                  <Button size="sm" variant="outline" onClick={() => handleTabChange('pedidos')}>
                     Ver Todas ({orders.length})
                   </Button>
                 </div>
@@ -394,7 +458,7 @@ export const MerchantDashboardPage: React.FC = () => {
                             size="sm"
                             variant="outline"
                             onClick={() => {
-                              setActiveTab('pedidos');
+                              handleTabChange('pedidos');
                               setOrderStatusFilter(order.status);
                             }}
                           >
@@ -457,7 +521,7 @@ export const MerchantDashboardPage: React.FC = () => {
                     variant="outline"
                     fullWidth
                     style={{ backgroundColor: '#ffffff', borderColor: '#86efac', color: '#166534' }}
-                    onClick={() => setActiveTab('perfil')}
+                    onClick={() => handleTabChange('perfil')}
                   >
                     Actualizar Datos de Contacto
                   </Button>

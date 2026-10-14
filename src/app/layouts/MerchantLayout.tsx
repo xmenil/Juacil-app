@@ -12,23 +12,18 @@ import {
   ShoppingBag,
   Bell,
   MessageCircle,
-  Clock,
   Sparkles,
   LogOut,
   X,
   Package,
-  TrendingUp,
-  AlertTriangle,
   Settings,
-  ChevronRight,
   ShieldCheck,
-  CheckCircle,
   Eye,
 } from 'lucide-react';
 import styles from './MerchantLayout.module.css';
 
 export const MerchantLayout: React.FC = () => {
-  const { currentUser, isMerchant, isAdmin, businessId, logout } = useSession();
+  const { currentUser, businessId, logout } = useSession();
   const navigate = useNavigate();
 
   // Mobile drawer state
@@ -103,39 +98,39 @@ export const MerchantLayout: React.FC = () => {
           </button>
         </div>
 
-        {/* Resumen Rápido / Mini KPIs */}
+        {/* Resumen Rápido / Mini KPIs Interactivos */}
         <div className={styles.kpiMiniGrid}>
-          <div className={styles.kpiCard}>
+          <Link to={`${ROUTES.MERCHANT_DASHBOARD}?tab=pedidos`} className={styles.kpiCard} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className={styles.kpiLabel}>Ventas acumuladas</div>
             <p className={styles.kpiValue}>{formatMoney(totalSalesCents || 48500)}</p>
-            <span className={styles.kpiSub}>+18% esta semana</span>
-          </div>
+            <span className={styles.kpiSub}>Ver pedidos ›</span>
+          </Link>
 
-          <div className={styles.kpiCard}>
+          <Link to={`${ROUTES.MERCHANT_DASHBOARD}?tab=pedidos&filtro=pendiente`} className={styles.kpiCard} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className={styles.kpiLabel}>Pedidos por atender</div>
             <p className={styles.kpiValue} style={{ color: pendingOrders.length > 0 ? '#ea580c' : '#0b4526' }}>
               {pendingOrders.length}
             </p>
             <span className={styles.kpiSub}>
-              {pendingOrders.length > 0 ? '⚠️ Acción requerida' : 'Al día'}
+              {pendingOrders.length > 0 ? '⚠️ Atender ahora ›' : 'Al día'}
             </span>
-          </div>
+          </Link>
 
-          <div className={styles.kpiCard}>
+          <Link to={`${ROUTES.MERCHANT_DASHBOARD}?tab=productos`} className={styles.kpiCard} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className={styles.kpiLabel}>Productos activos</div>
             <p className={styles.kpiValue}>{products.length}</p>
-            <span className={styles.kpiSub}>En catálogo</span>
-          </div>
+            <span className={styles.kpiSub}>Ver catálogo ›</span>
+          </Link>
 
-          <div className={styles.kpiCard}>
+          <Link to={`${ROUTES.MERCHANT_DASHBOARD}?tab=productos&filtro=outOfStock`} className={styles.kpiCard} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className={styles.kpiLabel}>Stock crítico</div>
             <p className={styles.kpiValue} style={{ color: (lowStockProducts.length + outOfStockProducts.length) > 0 ? '#dc2626' : '#15803d' }}>
               {lowStockProducts.length + outOfStockProducts.length}
             </p>
             <span className={styles.kpiSub}>
-              {lowStockProducts.length + outOfStockProducts.length > 0 ? 'Reponer' : 'Óptimo'}
+              {lowStockProducts.length + outOfStockProducts.length > 0 ? 'Reponer stock ›' : 'Óptimo'}
             </span>
-          </div>
+          </Link>
         </div>
       </div>
 
@@ -196,17 +191,25 @@ export const MerchantLayout: React.FC = () => {
         </h4>
         <div className={styles.alertList}>
           {pendingOrders.length > 0 ? (
-            <div className={`${styles.alertItem} ${styles.alertItemUrgent}`}>
+            <Link
+              to={`${ROUTES.MERCHANT_DASHBOARD}?tab=pedidos&filtro=pendiente`}
+              className={`${styles.alertItem} ${styles.alertItemUrgent}`}
+              style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+            >
               <div className={styles.alertHeader}>
                 <span className={styles.alertTitle}>🔔 {pendingOrders.length} Pedido(s) Nuevo(s)</span>
                 <span className={styles.alertTime}>Ahora</span>
               </div>
               <p className={styles.alertDesc}>
-                Cliente esperando confirmación de stock para entrega por WhatsApp.
+                Cliente esperando confirmación de stock para entrega por WhatsApp. (Clic para atender)
               </p>
-            </div>
+            </Link>
           ) : (
-            <div className={styles.alertItem}>
+            <Link
+              to={`${ROUTES.MERCHANT_DASHBOARD}?tab=pedidos`}
+              className={styles.alertItem}
+              style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+            >
               <div className={styles.alertHeader}>
                 <span className={styles.alertTitle}>✅ Pedidos al día</span>
                 <span className={styles.alertTime}>Hoy</span>
@@ -214,22 +217,30 @@ export const MerchantLayout: React.FC = () => {
               <p className={styles.alertDesc}>
                 Todos los pedidos recibidos han sido atendidos o despachados.
               </p>
-            </div>
+            </Link>
           )}
 
           {lowStockProducts.length > 0 && (
-            <div className={`${styles.alertItem} ${styles.alertItemUrgent}`}>
+            <Link
+              to={`${ROUTES.MERCHANT_DASHBOARD}?tab=productos&filtro=outOfStock`}
+              className={`${styles.alertItem} ${styles.alertItemUrgent}`}
+              style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+            >
               <div className={styles.alertHeader}>
                 <span className={styles.alertTitle}>⚠️ Stock Crítico</span>
                 <span className={styles.alertTime}>Aviso</span>
               </div>
               <p className={styles.alertDesc}>
-                {lowStockProducts[0]?.name} tiene {lowStockProducts[0]?.stock} unidad(es) restante(s).
+                {lowStockProducts[0]?.name} tiene {lowStockProducts[0]?.stock} unidad(es) restante(s). (Clic para editar)
               </p>
-            </div>
+            </Link>
           )}
 
-          <div className={styles.alertItem}>
+          <Link
+            to={`${ROUTES.MERCHANT_DASHBOARD}?tab=reportes`}
+            className={styles.alertItem}
+            style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+          >
             <div className={styles.alertHeader}>
               <span className={styles.alertTitle}>⭐ Calificación Excelente</span>
               <span className={styles.alertTime}>4.9/5</span>
@@ -237,7 +248,7 @@ export const MerchantLayout: React.FC = () => {
             <p className={styles.alertDesc}>
               Tu tienda mantiene 99% de satisfacción en Tingo María y la Selva.
             </p>
-          </div>
+          </Link>
         </div>
       </div>
 

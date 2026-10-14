@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   ShoppingBag,
@@ -18,6 +18,11 @@ import {
   Package,
   MapPin,
   ShieldCheck,
+  LogOut,
+  Settings,
+  ExternalLink,
+  UserPlus,
+  LogIn,
 } from 'lucide-react';
 import { useCart } from '@/app/providers/CartProvider';
 import { useSession } from '@/app/providers/SessionProvider';
@@ -35,8 +40,10 @@ export const Navbar: React.FC = () => {
   const [categoriesModalOpen, setCategoriesModalOpen] = useState(false);
   const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
   const [locationsDropdownOpen, setLocationsDropdownOpen] = useState(false);
-  const dropdownTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-  const locationsTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const dropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const locationsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const navigate = useNavigate();
 
@@ -68,8 +75,19 @@ export const Navbar: React.FC = () => {
     }, 120);
   };
 
+  // Cerrar menús al hacer clic fuera
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(event.target as Node)
+      ) {
+        setProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
       if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
       if (locationsTimeoutRef.current) clearTimeout(locationsTimeoutRef.current);
     };
@@ -192,36 +210,260 @@ export const Navbar: React.FC = () => {
 
           {/* Iconos de Acción del Usuario */}
           <div className={styles.userActions}>
-            {/* Usuario / Perfil */}
-            {currentUser ? (
+            {/* Menú Desplegable de Usuario / Perfil (Engloba todo: Perfil, Pedidos, Tienda, Admin y Cerrar Sesión) */}
+            <div className={styles.profileDropdownContainer} ref={profileDropdownRef}>
               <button
                 type="button"
-                className={styles.actionIconButton}
-                onClick={() => {
-                  if (currentUser.role === 'admin') {
-                    navigate(ROUTES.ADMIN_DASHBOARD);
-                  } else if (currentUser.role === 'merchant') {
-                    navigate(ROUTES.MERCHANT_DASHBOARD);
-                  } else {
-                    navigate(ROUTES.CUSTOMER_PROFILE);
-                  }
-                }}
-                title={`Mi Perfil: ${currentUser.name}`}
-                aria-label="Mi perfil o panel"
+                className={`${styles.actionIconButton} ${profileDropdownOpen ? styles.actionIconButtonActive : ''}`}
+                onClick={() => setProfileDropdownOpen((prev) => !prev)}
+                aria-expanded={profileDropdownOpen}
+                title={currentUser ? `Mi Cuenta: ${currentUser.name}` : 'Ingresar a mi cuenta'}
+                aria-label="Menú de perfil y cuenta"
               >
-                <User size={22} />
+                {currentUser?.avatarUrl ? (
+                  <img src={currentUser.avatarUrl} alt="" className={styles.userAvatarImg} />
+                ) : (
+                  <User size={22} />
+                )}
               </button>
-            ) : (
-              <button
-                type="button"
-                className={styles.actionIconButton}
-                onClick={() => navigate(`${ROUTES.LOGIN}?redirect=${encodeURIComponent(ROUTES.CUSTOMER_PROFILE)}`)}
-                title="Ingresar a mi cuenta"
-                aria-label="Ingresar"
-              >
-                <User size={22} />
-              </button>
-            )}
+
+              {profileDropdownOpen && (
+                <div className={styles.profileDropdownMenu} role="menu">
+                  {currentUser ? (
+                    <>
+                      {/* Cabecera del Usuario con su Nombre, Correo y Rol */}
+                      <div className={styles.profileMenuHeader}>
+                        <div className={styles.profileUserInfo}>
+                          <div className={styles.profileBigAvatar}>
+                            {currentUser.avatarUrl ? (
+                              <img src={currentUser.avatarUrl} alt={currentUser.name} />
+                            ) : (
+                              currentUser.name.charAt(0).toUpperCase()
+                            )}
+                          </div>
+                          <div className={styles.profileUserDetails}>
+                            <h4 className={styles.profileUserName}>{currentUser.name}</h4>
+                            <p className={styles.profileUserEmail}>{currentUser.email}</p>
+                            {currentUser.role === 'cliente' && (
+                              <span className={`${styles.profileRoleBadge} ${styles.profileRoleBadgeClient}`}>
+                                🛒 Cliente Comprador
+                              </span>
+                            )}
+                            {currentUser.role === 'merchant' && (
+                              <span className={`${styles.profileRoleBadge} ${styles.profileRoleBadgeMerchant}`}>
+                                🏪 Tienda MYPE
+                              </span>
+                            )}
+                            {currentUser.role === 'admin' && (
+                              <span className={`${styles.profileRoleBadge} ${styles.profileRoleBadgeAdmin}`}>
+                                🛡️ Super Admin
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Lista de Enlaces según el Rol (Totalmente Independientes) */}
+                      <div className={styles.profileMenuList}>
+                        {currentUser.role === 'cliente' && (
+                          <>
+                            <Link
+                              to={ROUTES.CUSTOMER_PROFILE}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><User size={16} /></span>
+                              <span>Mi Perfil & Datos</span>
+                            </Link>
+                            <Link
+                              to={ROUTES.CUSTOMER_ORDERS}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><Package size={16} /></span>
+                              <span>Mis Pedidos & Compras</span>
+                            </Link>
+                            <Link
+                              to={ROUTES.CATALOG}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><Heart size={16} /></span>
+                              <span>Mis Favoritos</span>
+                            </Link>
+                            <Link
+                              to={ROUTES.REGISTER_BUSINESS}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><Store size={16} /></span>
+                              <span>¿Tienes un negocio? Vender en JUÁCIL</span>
+                            </Link>
+                          </>
+                        )}
+
+                        {currentUser.role === 'merchant' && (
+                          <>
+                            <Link
+                              to={ROUTES.MERCHANT_DASHBOARD}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><Store size={16} /></span>
+                              <span>Panel Seller Center (Resumen)</span>
+                            </Link>
+                            <Link
+                              to={`${ROUTES.MERCHANT_DASHBOARD}?tab=productos`}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><Package size={16} /></span>
+                              <span>Gestión de Productos & Fotos</span>
+                            </Link>
+                            <Link
+                              to={`${ROUTES.MERCHANT_DASHBOARD}?tab=pedidos`}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><ShoppingBag size={16} /></span>
+                              <span>Bandeja de Pedidos de Clientes</span>
+                            </Link>
+                            <Link
+                              to={`${ROUTES.MERCHANT_DASHBOARD}?tab=perfil`}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><Settings size={16} /></span>
+                              <span>Datos & Horarios de Tienda</span>
+                            </Link>
+                            {currentUser.businessId && (
+                              <Link
+                                to={ROUTES.STORE_DETAIL(currentUser.businessId)}
+                                target="_blank"
+                                className={styles.profileMenuItem}
+                                onClick={() => setProfileDropdownOpen(false)}
+                              >
+                                <span className={styles.profileMenuItemIcon}><ExternalLink size={16} /></span>
+                                <span>Ver Mi Tienda Pública</span>
+                              </Link>
+                            )}
+                            <Link
+                              to={ROUTES.HOME}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><ShoppingBag size={16} /></span>
+                              <span>Ir al Marketplace de Compras</span>
+                            </Link>
+                          </>
+                        )}
+
+                        {currentUser.role === 'admin' && (
+                          <>
+                            <Link
+                              to={ROUTES.ADMIN_DASHBOARD}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><ShieldCheck size={16} /></span>
+                              <span>Panel Super Admin (General)</span>
+                            </Link>
+                            <Link
+                              to={`${ROUTES.ADMIN_DASHBOARD}?tab=usuarios`}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><User size={16} /></span>
+                              <span>Gestión de Todos los Usuarios</span>
+                            </Link>
+                            <Link
+                              to={`${ROUTES.ADMIN_DASHBOARD}?tab=tiendas`}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><Store size={16} /></span>
+                              <span>Gestión de Tiendas & MYPES</span>
+                            </Link>
+                            <Link
+                              to={`${ROUTES.ADMIN_DASHBOARD}?tab=pedidos`}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><Package size={16} /></span>
+                              <span>Pedidos & Métricas Globales</span>
+                            </Link>
+                            <Link
+                              to={ROUTES.HOME}
+                              className={styles.profileMenuItem}
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <span className={styles.profileMenuItemIcon}><ShoppingBag size={16} /></span>
+                              <span>Ir al Marketplace de Compras</span>
+                            </Link>
+                          </>
+                        )}
+
+                        <div className={styles.profileMenuDivider} />
+
+                        <button
+                          type="button"
+                          className={styles.profileLogoutButton}
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            handleLogout();
+                          }}
+                        >
+                          <LogOut size={16} />
+                          <span>Cerrar Sesión</span>
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className={styles.profileGuestBox}>
+                      <h4 className={styles.profileGuestTitle}>¡Bienvenido a JUÁCIL!</h4>
+                      <p className={styles.profileGuestSubtitle}>
+                        Inicia sesión para realizar tus pedidos, ver tu historial o administrar tu negocio MYPE.
+                      </p>
+                      <div className={styles.profileGuestButtons}>
+                        <button
+                          type="button"
+                          className={styles.profileMenuItem}
+                          style={{ justifyContent: 'center', backgroundColor: '#135d38', color: '#ffffff', fontWeight: 700 }}
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            navigate(ROUTES.LOGIN);
+                          }}
+                        >
+                          <LogIn size={15} style={{ marginRight: '6px' }} /> Iniciar Sesión
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.profileMenuItem}
+                          style={{ justifyContent: 'center', border: '1px solid #cbd5e1' }}
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            navigate(ROUTES.REGISTER_CUSTOMER);
+                          }}
+                        >
+                          <UserPlus size={15} style={{ marginRight: '6px' }} /> Crear Cuenta (Cliente)
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.profileMenuItem}
+                          style={{ justifyContent: 'center', color: '#166534', backgroundColor: '#f0fdf4' }}
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            navigate(ROUTES.REGISTER_BUSINESS);
+                          }}
+                        >
+                          <Store size={15} style={{ marginRight: '6px' }} /> Vender en JUÁCIL (Tienda)
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Favoritos */}
             <button
@@ -257,6 +499,7 @@ export const Navbar: React.FC = () => {
             </button>
           </div>
         </div>
+
 
         {/* 3. Sub-Barra de Categorías y Enlaces */}
         <div className={styles.subNavBar}>
@@ -406,31 +649,21 @@ export const Navbar: React.FC = () => {
             <div className={styles.subNavRightLinks}>
               {currentUser ? (
                 <>
-                  {currentUser.role === 'admin' ? (
+                  {currentUser.role === 'admin' && (
                     <Link to={ROUTES.ADMIN_DASHBOARD} className={styles.venderButtonHighlight}>
                       <ShieldCheck size={14} /> Panel Super Admin
                     </Link>
-                  ) : currentUser.role === 'merchant' ? (
-                    <Link to={ROUTES.MERCHANT_DASHBOARD} className={styles.venderButtonHighlight}>
-                      <Store size={14} /> Mi Negocio MYPE
-                    </Link>
-                  ) : (
-                    <>
-                      <Link to={ROUTES.CUSTOMER_ORDERS} className={styles.subNavLinkRight}>
-                        Mis Pedidos
-                      </Link>
-                      <Link to={ROUTES.CUSTOMER_PROFILE} className={styles.subNavLinkRight}>
-                        Mi Perfil
-                      </Link>
-                    </>
                   )}
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#6b7280', fontWeight: 600 }}
-                  >
-                    Salir
-                  </button>
+                  {currentUser.role === 'merchant' && (
+                    <Link to={ROUTES.MERCHANT_DASHBOARD} className={styles.venderButtonHighlight}>
+                      <Store size={14} /> Panel Seller Center
+                    </Link>
+                  )}
+                  {currentUser.role === 'cliente' && (
+                    <Link to={ROUTES.REGISTER_BUSINESS} className={styles.venderButtonHighlight}>
+                      <Store size={14} /> Vender en JUÁCIL
+                    </Link>
+                  )}
                 </>
               ) : (
                 <>
