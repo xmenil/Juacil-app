@@ -21,6 +21,7 @@ import { CartPage } from '@/pages/cart/CartPage';
 import { CheckoutPage } from '@/pages/checkout/CheckoutPage';
 import { CustomerOrdersPage } from '@/pages/customer-orders/CustomerOrdersPage';
 import { CustomerOrderDetailPage } from '@/pages/customer-orders/CustomerOrderDetailPage';
+import { CustomerProfilePage } from '@/pages/customer-account/CustomerProfilePage';
 
 // Páginas de Panel MYPE
 import { MerchantDashboardPage } from '@/pages/merchant-dashboard/MerchantDashboardPage';
@@ -30,6 +31,9 @@ import { MerchantProductNewPage } from '@/pages/merchant-products/MerchantProduc
 import { MerchantProductEditPage } from '@/pages/merchant-products/MerchantProductEditPage';
 import { MerchantOrdersPage } from '@/pages/merchant-orders/MerchantOrdersPage';
 import { MerchantOrderDetailPage } from '@/pages/merchant-orders/MerchantOrderDetailPage';
+
+// Páginas de Panel Super Administrador
+import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
 
 // Errores
 import { ForbiddenPage } from '@/pages/errors/ForbiddenPage';
@@ -60,7 +64,8 @@ export const router = createBrowserRouter([
       { path: 'pedido/confirmar', element: <CheckoutPage /> },
       { path: 'mis-pedidos', element: <CustomerOrdersPage /> },
       { path: 'mis-pedidos/:id', element: <CustomerOrderDetailPage /> },
-      { path: 'mi-cuenta', element: <CustomerOrdersPage /> },
+      { path: 'mi-cuenta', element: <CustomerProfilePage /> },
+      { path: 'perfil', element: <CustomerProfilePage /> },
 
       // Rutas Protegidas para Emprendedores MYPE
       {
@@ -75,6 +80,17 @@ export const router = createBrowserRouter([
           { path: 'pedidos', element: <MerchantOrdersPage /> },
           { path: 'pedidos/:id', element: <MerchantOrderDetailPage /> },
           { path: 'notificaciones', element: <MerchantDashboardPage /> },
+        ],
+      },
+
+      // Rutas Protegidas para Super Administrador JUÁCIL
+      {
+        path: 'admin',
+        element: <ProtectedRoute requiredRole="admin" />,
+        children: [
+          { index: true, element: <AdminDashboardPage /> },
+          { path: 'usuarios', element: <AdminDashboardPage /> },
+          { path: 'tiendas', element: <AdminDashboardPage /> },
         ],
       },
 

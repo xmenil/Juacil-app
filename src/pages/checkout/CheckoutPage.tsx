@@ -39,7 +39,7 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const { cart, clearCart } = useCart();
-  const { currentUser } = useSession();
+  const { currentUser, loginAs } = useSession();
   const { isOnline } = useConnectivity();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,6 +76,43 @@ export const CheckoutPage: React.FC = () => {
           <Button variant="primary" onClick={() => navigate(ROUTES.CATALOG)}>
             Ver Catálogo
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Si no ha iniciado sesión, requerir login antes de completar la orden
+  if (!currentUser && !completedOrder) {
+    return (
+      <div className={styles.page}>
+        <div className="container" style={{ maxWidth: '580px', padding: '48px 16px' }}>
+          <div className={styles.formCard} style={{ textAlign: 'center', padding: '40px 24px' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#f0fdf4', color: '#166534', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <Lock size={32} />
+            </div>
+            <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#0b4526', marginBottom: '8px' }}>
+              Inicia sesión para confirmar tu pedido
+            </h2>
+            <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px', lineHeight: 1.5 }}>
+              Para garantizar la entrega y permitir que la tienda <strong>{cart.businessName}</strong> se comunique contigo vía WhatsApp con el seguimiento de tu compra, por favor identifícate en JUÁCIL.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <Button
+                variant="accent"
+                size="lg"
+                onClick={() => navigate(`${ROUTES.LOGIN}?redirect=${encodeURIComponent(ROUTES.CHECKOUT)}`)}
+              >
+                Iniciar Sesión / Registrarme
+              </Button>
+              <Button
+                variant="outline"
+                size="md"
+                onClick={() => loginAs('user-client-01')}
+              >
+                Continuar con 1 Clic (Lucía Ramos - Cliente Demo)
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     );

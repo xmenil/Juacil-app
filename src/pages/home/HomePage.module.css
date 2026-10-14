@@ -417,6 +417,49 @@
   margin-top: 6px;
 }
 
+@media (max-width: 599px) {
+  .sectionCategoriesCard,
+  .sectionProductsCard,
+  .sectionBusinessesCard {
+    padding: 18px 12px;
+    border-radius: 16px;
+    margin-bottom: 18px;
+  }
+  .sectionHeading {
+    font-size: 18px;
+  }
+  .categoriesGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .categoryCard {
+    padding: 10px 10px !important;
+    gap: 8px !important;
+    border-radius: 12px !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  .categoryCardThumb {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 10px !important;
+  }
+  .categoryCardName {
+    font-size: 12.5px !important;
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .categoryCardCount {
+    display: none !important;
+  }
+  .categoryCardArrow {
+    display: none !important;
+  }
+}
+
 @media (min-width: 600px) {
   .categoriesGrid {
     grid-template-columns: repeat(2, 1fr);

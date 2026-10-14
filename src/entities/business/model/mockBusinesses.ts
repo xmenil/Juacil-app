@@ -14,6 +14,8 @@ export const MOCK_BUSINESSES: Business[] = [
     ownerId: 'user-merchant-02',
     onboardingStep: 4,
     createdAt: '2026-01-15T08:00:00.000Z',
+    status: 'active',
+    schedule: 'Lunes a Sábado: 8:00 am - 7:30 pm',
   },
   {
     id: 'biz-cafe-aroma',
@@ -28,6 +30,8 @@ export const MOCK_BUSINESSES: Business[] = [
     ownerId: 'user-merchant-01',
     onboardingStep: 4,
     createdAt: '2026-02-10T09:30:00.000Z',
+    status: 'active',
+    schedule: 'Lunes a Domingo: 7:00 am - 8:00 pm',
   },
   {
     id: 'biz-yanesha-arte',
@@ -42,6 +46,8 @@ export const MOCK_BUSINESSES: Business[] = [
     ownerId: 'user-merchant-03',
     onboardingStep: 3,
     createdAt: '2026-03-01T11:00:00.000Z',
+    status: 'pending', // Tienda en revisión por el Super Admin
+    schedule: 'Martes a Domingo: 9:00 am - 6:00 pm',
   },
   {
     id: 'biz-castillo-grande',
@@ -56,6 +62,8 @@ export const MOCK_BUSINESSES: Business[] = [
     ownerId: 'user-merchant-01',
     onboardingStep: 4,
     createdAt: '2026-03-10T14:00:00.000Z',
+    status: 'active',
+    schedule: 'Lunes a Sábado: 8:00 am - 6:00 pm',
   },
   {
     id: 'biz-distribuidora-tingo',
@@ -70,5 +78,7 @@ export const MOCK_BUSINESSES: Business[] = [
     ownerId: 'user-merchant-02',
     onboardingStep: 4,
     createdAt: '2026-03-12T10:00:00.000Z',
+    status: 'active',
+    schedule: 'Lunes a Domingo: 6:30 am - 9:00 pm',
   },
 ];

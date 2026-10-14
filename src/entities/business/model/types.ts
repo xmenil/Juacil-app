@@ -1,3 +1,5 @@
+export type BusinessStatus = 'active' | 'pending' | 'suspended';
+
 export interface Business {
   id: string;
   name: string;
@@ -11,4 +13,6 @@ export interface Business {
   ownerId: string;
   onboardingStep: 1 | 2 | 3 | 4; // 1: Datos, 2: Producto, 3: Órdenes, 4: Completado
   createdAt: string;
+  status?: BusinessStatus;
+  schedule?: string;
 }

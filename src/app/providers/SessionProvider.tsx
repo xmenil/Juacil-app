@@ -6,8 +6,9 @@ interface SessionContextType {
   currentUser: User | null;
   isClient: boolean;
   isMerchant: boolean;
+  isAdmin: boolean;
   businessId: string | null;
-  loginAs: (userId: string) => void;
+  loginAs: (userId: string) => boolean;
   logout: () => void;
   updateCurrentUser: (user: User) => void;
 }
@@ -22,7 +23,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const storedId = localStorage.getItem(SESSION_STORAGE_KEY);
       if (storedId) {
         const found = LocalStoreRepository.getUserById(storedId);
-        if (found) return found;
+        if (found && found.status !== 'suspended') return found;
       }
       // Por defecto iniciamos con Lucía Ramos (cliente regular) para facilidad de prueba
       return LocalStoreRepository.getUserById('user-client-01') || null;
@@ -39,11 +40,17 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [currentUser]);
 
-  const loginAs = (userId: string) => {
+  const loginAs = (userId: string): boolean => {
     const user = LocalStoreRepository.getUserById(userId);
     if (user) {
+      if (user.status === 'suspended') {
+        alert('Esta cuenta ha sido suspendida por el Administrador. Contacta a soporte.');
+        return false;
+      }
       setCurrentUser(user);
+      return true;
     }
+    return false;
   };
 
   const logout = () => {
@@ -57,6 +64,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const isClient = currentUser?.role === 'cliente';
   const isMerchant = currentUser?.role === 'merchant';
+  const isAdmin = currentUser?.role === 'admin';
   const businessId = isMerchant && currentUser?.businessId ? currentUser.businessId : null;
 
   return (
@@ -65,6 +73,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         currentUser,
         isClient,
         isMerchant,
+        isAdmin,
         businessId,
         loginAs,
         logout,

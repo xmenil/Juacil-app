@@ -17,6 +17,7 @@ export const ROUTES = {
   CUSTOMER_ORDERS: '/mis-pedidos',
   CUSTOMER_ORDER_DETAIL: (id: string = ':id') => `/mis-pedidos/${id}`,
   CUSTOMER_ACCOUNT: '/mi-cuenta',
+  CUSTOMER_PROFILE: '/perfil',
   
   // Emprendedor / MYPE
   MERCHANT_DASHBOARD: '/panel',
@@ -27,6 +28,11 @@ export const ROUTES = {
   MERCHANT_ORDERS: '/panel/pedidos',
   MERCHANT_ORDER_DETAIL: (id: string = ':id') => `/panel/pedidos/${id}`,
   MERCHANT_NOTIFICATIONS: '/panel/notificaciones',
+
+  // Super Administrador de Plataforma
+  ADMIN_DASHBOARD: '/admin',
+  ADMIN_USERS: '/admin/usuarios',
+  ADMIN_STORES: '/admin/tiendas',
   
   // Errores
   FORBIDDEN: '/403',

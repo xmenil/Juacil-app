@@ -1,14 +1,16 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/app/providers/CartProvider';
+import { useSession } from '@/app/providers/SessionProvider';
 import { formatMoney } from '@/shared/lib/money';
 import { ROUTES } from '@/shared/config/routes';
 import { Button } from '@/shared/ui/Button';
-import { ShoppingBag, Trash2, Minus, Plus, Store, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Trash2, Minus, Plus, Store, ArrowRight, Lock } from 'lucide-react';
 import styles from './CartPage.module.css';
 
 export const CartPage: React.FC = () => {
   const { cart, updateQuantity, removeItem, clearCart } = useCart();
+  const { currentUser } = useSession();
   const navigate = useNavigate();
 
   if (cart.items.length === 0) {
@@ -147,10 +149,16 @@ export const CartPage: React.FC = () => {
               fullWidth
               size="lg"
               variant="accent"
-              rightIcon={<ArrowRight size={16} />}
-              onClick={() => navigate(ROUTES.CHECKOUT)}
+              rightIcon={currentUser ? <ArrowRight size={16} /> : <Lock size={16} />}
+              onClick={() => {
+                if (!currentUser) {
+                  navigate(`${ROUTES.LOGIN}?redirect=${encodeURIComponent(ROUTES.CHECKOUT)}`);
+                } else {
+                  navigate(ROUTES.CHECKOUT);
+                }
+              }}
             >
-              Continuar con el Pedido
+              {currentUser ? 'Continuar con el Pedido' : 'Iniciar Sesión para Pedir'}
             </Button>
           </aside>
         </div>

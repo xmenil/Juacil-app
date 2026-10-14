@@ -9,7 +9,7 @@ import { MOCK_PRODUCTS } from '@/entities/product/model/mockProducts';
 import { MOCK_ORDERS } from '@/entities/order/model/mockOrders';
 import { generateId, generateOrderCode } from './id';
 
-const STORAGE_KEY = 'juacil_app_store_v2.3';
+const STORAGE_KEY = 'juacil_app_store_v2.4';
 
 export interface StorageSchema {
   version: string;
@@ -22,7 +22,7 @@ export interface StorageSchema {
 
 function getInitialData(): StorageSchema {
   return {
-    version: '2.3.0',
+    version: '2.4.0',
     users: [...MOCK_USERS],
     businesses: [...MOCK_BUSINESSES],
     products: [...MOCK_PRODUCTS],
@@ -41,7 +41,7 @@ export class LocalStoreRepository {
         return initial;
       }
       const parsed = JSON.parse(serialized) as StorageSchema;
-      if (!parsed || parsed.version !== '2.3.0' || !Array.isArray(parsed.products)) {
+      if (!parsed || parsed.version !== '2.4.0' || !Array.isArray(parsed.products)) {
         console.warn('Almacenamiento local incompatible o corrupto. Restaurando estado seguro.');
         const initial = getInitialData();
         this.save(initial);
@@ -97,6 +97,28 @@ export class LocalStoreRepository {
     return user;
   }
 
+  public static deleteUser(id: string): boolean {
+    const data = this.load();
+    const initialLen = data.users.length;
+    data.users = data.users.filter((u) => u.id !== id);
+    if (data.users.length !== initialLen) {
+      this.save(data);
+      return true;
+    }
+    return false;
+  }
+
+  public static updateUserStatus(id: string, status: 'active' | 'suspended'): boolean {
+    const data = this.load();
+    const user = data.users.find((u) => u.id === id);
+    if (user) {
+      user.status = status;
+      this.save(data);
+      return true;
+    }
+    return false;
+  }
+
   // --- Negocios (MYPES) ---
   public static getBusinesses(): Business[] {
     return this.load().businesses;
@@ -116,6 +138,31 @@ export class LocalStoreRepository {
     }
     this.save(data);
     return business;
+  }
+
+  public static deleteBusiness(id: string): boolean {
+    const data = this.load();
+    const initialLen = data.businesses.length;
+    data.businesses = data.businesses.filter((b) => b.id !== id);
+    if (data.businesses.length !== initialLen) {
+      this.save(data);
+      return true;
+    }
+    return false;
+  }
+
+  public static updateBusinessStatus(
+    id: string,
+    status: 'active' | 'pending' | 'suspended'
+  ): boolean {
+    const data = this.load();
+    const business = data.businesses.find((b) => b.id === id);
+    if (business) {
+      business.status = status;
+      this.save(data);
+      return true;
+    }
+    return false;
   }
 
   // --- Productos ---

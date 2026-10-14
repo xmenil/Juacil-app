@@ -25,7 +25,7 @@ export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addItem } = useCart();
-  const { isMerchant, businessId } = useSession();
+  const { isMerchant, businessId, currentUser } = useSession();
 
   const [quantity, setQuantity] = useState(1);
   const [isSuccessFeedback, setIsSuccessFeedback] = useState(false);
@@ -112,6 +112,20 @@ export const ProductDetailPage: React.FC = () => {
     if (result.success) {
       setIsSuccessFeedback(true);
       setTimeout(() => setIsSuccessFeedback(false), 2000);
+    } else if (result.error) {
+      setErrorMessage(result.error);
+    }
+  };
+
+  const handleBuyNow = () => {
+    setErrorMessage(null);
+    const result = addItem(product, quantity);
+    if (result.success) {
+      if (!currentUser) {
+        navigate(`${ROUTES.LOGIN}?redirect=${encodeURIComponent(ROUTES.CHECKOUT)}`);
+      } else {
+        navigate(ROUTES.CHECKOUT);
+      }
     } else if (result.error) {
       setErrorMessage(result.error);
     }
@@ -221,15 +235,24 @@ export const ProductDetailPage: React.FC = () => {
                     </div>
                   )}
 
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                  <div style={{ display: 'flex', gap: '10px', marginTop: '10px', flexWrap: 'wrap' }}>
                     <Button
-                      fullWidth
+                      style={{ flex: 1, minWidth: '150px' }}
                       size="lg"
-                      variant={isSuccessFeedback ? 'accent' : 'primary'}
+                      variant={isSuccessFeedback ? 'accent' : 'outline'}
                       leftIcon={<ShoppingBag size={18} />}
                       onClick={handleAddToCart}
                     >
-                      {isSuccessFeedback ? '¡Agregado al carrito!' : 'Agregar al Carrito'}
+                      {isSuccessFeedback ? '¡Agregado!' : 'Al Carrito'}
+                    </Button>
+
+                    <Button
+                      style={{ flex: 1, minWidth: '150px' }}
+                      size="lg"
+                      variant="accent"
+                      onClick={handleBuyNow}
+                    >
+                      Comprar Ahora
                     </Button>
                   </div>
                 </>

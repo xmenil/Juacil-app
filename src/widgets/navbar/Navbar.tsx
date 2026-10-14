@@ -17,6 +17,7 @@ import {
   Tag,
   Package,
   MapPin,
+  ShieldCheck,
 } from 'lucide-react';
 import { useCart } from '@/app/providers/CartProvider';
 import { useSession } from '@/app/providers/SessionProvider';
@@ -28,7 +29,7 @@ import styles from './Navbar.module.css';
 
 export const Navbar: React.FC = () => {
   const { itemCount } = useCart();
-  const { currentUser, isMerchant, logout } = useSession();
+  const { currentUser, logout } = useSession();
   const { isOnline } = useConnectivity();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesModalOpen, setCategoriesModalOpen] = useState(false);
@@ -196,10 +197,16 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 className={styles.actionIconButton}
-                onClick={() =>
-                  navigate(isMerchant ? ROUTES.MERCHANT_DASHBOARD : ROUTES.CUSTOMER_ORDERS)
-                }
-                title={`Sesión iniciada: ${currentUser.name}`}
+                onClick={() => {
+                  if (currentUser.role === 'admin') {
+                    navigate(ROUTES.ADMIN_DASHBOARD);
+                  } else if (currentUser.role === 'merchant') {
+                    navigate(ROUTES.MERCHANT_DASHBOARD);
+                  } else {
+                    navigate(ROUTES.CUSTOMER_PROFILE);
+                  }
+                }}
+                title={`Mi Perfil: ${currentUser.name}`}
                 aria-label="Mi perfil o panel"
               >
                 <User size={22} />
@@ -208,7 +215,7 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 className={styles.actionIconButton}
-                onClick={() => navigate(ROUTES.LOGIN)}
+                onClick={() => navigate(`${ROUTES.LOGIN}?redirect=${encodeURIComponent(ROUTES.CUSTOMER_PROFILE)}`)}
                 title="Ingresar a mi cuenta"
                 aria-label="Ingresar"
               >
@@ -398,14 +405,23 @@ export const Navbar: React.FC = () => {
             <div className={styles.subNavRightLinks}>
               {currentUser ? (
                 <>
-                  {isMerchant ? (
+                  {currentUser.role === 'admin' ? (
+                    <Link to={ROUTES.ADMIN_DASHBOARD} className={styles.venderButtonHighlight}>
+                      <ShieldCheck size={14} /> Panel Super Admin
+                    </Link>
+                  ) : currentUser.role === 'merchant' ? (
                     <Link to={ROUTES.MERCHANT_DASHBOARD} className={styles.venderButtonHighlight}>
                       <Store size={14} /> Mi Negocio MYPE
                     </Link>
                   ) : (
-                    <Link to={ROUTES.CUSTOMER_ORDERS} className={styles.subNavLinkRight}>
-                      Mis Pedidos
-                    </Link>
+                    <>
+                      <Link to={ROUTES.CUSTOMER_ORDERS} className={styles.subNavLinkRight}>
+                        Mis Pedidos
+                      </Link>
+                      <Link to={ROUTES.CUSTOMER_PROFILE} className={styles.subNavLinkRight}>
+                        Mi Perfil
+                      </Link>
+                    </>
                   )}
                   <button
                     type="button"
@@ -416,9 +432,14 @@ export const Navbar: React.FC = () => {
                   </button>
                 </>
               ) : (
-                <Link to={ROUTES.REGISTER_BUSINESS} className={styles.venderButtonHighlight}>
-                  <Store size={14} /> Vender en JUÁCIL
-                </Link>
+                <>
+                  <Link to={ROUTES.LOGIN} className={styles.subNavLinkRight}>
+                    Ingresar
+                  </Link>
+                  <Link to={ROUTES.REGISTER_BUSINESS} className={styles.venderButtonHighlight}>
+                    <Store size={14} /> Vender en JUÁCIL
+                  </Link>
+                </>
               )}
 
               <Link to={ROUTES.HELP} className={styles.subNavLinkRight}>
@@ -448,6 +469,28 @@ export const Navbar: React.FC = () => {
               <Link to={ROUTES.HOME} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
                 Inicio
               </Link>
+
+              {currentUser && (
+                <>
+                  {currentUser.role === 'admin' && (
+                    <Link to={ROUTES.ADMIN_DASHBOARD} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)} style={{ color: '#0b4526', fontWeight: 700 }}>
+                      <ShieldCheck size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Panel Super Admin
+                    </Link>
+                  )}
+                  {currentUser.role === 'merchant' && (
+                    <Link to={ROUTES.MERCHANT_DASHBOARD} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)} style={{ color: '#166534', fontWeight: 700 }}>
+                      <Store size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Mi Negocio MYPE
+                    </Link>
+                  )}
+                  <Link to={ROUTES.CUSTOMER_PROFILE} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)} style={{ color: '#0b4526', fontWeight: 700 }}>
+                    <User size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Mi Perfil ({currentUser.name})
+                  </Link>
+                  <Link to={ROUTES.CUSTOMER_ORDERS} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                    <Package size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Mis Pedidos
+                  </Link>
+                </>
+              )}
+
               <button
                 type="button"
                 className={styles.mobileNavLink}
@@ -474,10 +517,24 @@ export const Navbar: React.FC = () => {
               <Link to={ROUTES.HELP} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
                 Ayuda & Validación
               </Link>
-              {!currentUser && (
-                <Link to={ROUTES.REGISTER_BUSINESS} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--color-primary-700)', fontWeight: 700 }}>
-                  Registrar mi Negocio (Vender)
-                </Link>
+              {!currentUser ? (
+                <>
+                  <Link to={ROUTES.LOGIN} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--color-primary-700)', fontWeight: 700 }}>
+                    Iniciar Sesión
+                  </Link>
+                  <Link to={ROUTES.REGISTER_BUSINESS} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--color-primary-700)', fontWeight: 700 }}>
+                    Registrar mi Negocio (Vender)
+                  </Link>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className={styles.mobileNavLink}
+                  onClick={handleLogout}
+                  style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', fontWeight: 600 }}
+                >
+                  Cerrar Sesión
+                </button>
               )}
             </div>
           </div>

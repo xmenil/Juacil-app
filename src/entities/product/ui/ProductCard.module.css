@@ -172,3 +172,25 @@
   cursor: not-allowed;
 }
 
+@media (max-width: 480px) {
+  .body {
+    padding: 10px 12px 12px;
+  }
+  .title {
+    font-size: 13px;
+    min-height: 34px;
+    margin-bottom: 4px;
+  }
+  .storeSubtitle {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+  .price {
+    font-size: 15px;
+  }
+  .addButton {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+
