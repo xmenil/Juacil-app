@@ -1,3 +1,5 @@
+import { AuthLayout } from './AuthLayout';
+import styles from './Auth.module.css';
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -12,7 +14,7 @@ import { Input } from '@/shared/ui/Input';
 import { Select } from '@/shared/ui/Select';
 import { Textarea } from '@/shared/ui/Textarea';
 import { Button } from '@/shared/ui/Button';
-import { Alert } from '@/shared/ui/Alert';
+
 import { ArrowRight } from 'lucide-react';
 
 const registerBusinessSchema = z.object({
@@ -98,118 +100,31 @@ export const RegisterBusinessPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '48px 0 64px' }}>
-      <div className="container" style={{ maxWidth: '680px' }}>
-        <div style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '20px', padding: '36px', boxShadow: 'var(--shadow-md)' }}>
-          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-primary-700)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              REGISTRO DE MYPE AMAZÓNICA
-            </span>
-            <h1 style={{ fontSize: '26px', fontWeight: 800, color: 'var(--color-primary-950)', marginTop: '4px' }}>
-              Vende tus productos en JUÁCIL
-            </h1>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '14px', marginTop: '6px' }}>
-              Paso 1 del onboarding: Cuéntanos sobre tu negocio para habilitar tu catálogo digital.
-            </p>
+    <AuthLayout business title="Cuéntanos sobre tu negocio." description="Completa los datos de tu emprendimiento. Después podrás agregar tu primer producto al catálogo.">
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form} noValidate>
+        <fieldset className={styles.fieldset}>
+          <legend>Tu negocio</legend>
+          <Input label="Nombre del emprendimiento" isRequired autoComplete="organization" placeholder="Ej. Café Finca Bellavista" error={errors.businessName?.message} {...register('businessName')} />
+          <div className={styles.row}>
+            <Select label="¿Qué vendes?" isRequired options={CATEGORIES.map(c => ({ value: c.id, label: c.name }))} error={errors.category?.message} {...register('category')} />
+            <Select label="Ciudad o distrito" isRequired options={LOCATIONS.map(location => ({ value: location, label: location }))} error={errors.location?.message} {...register('location')} />
           </div>
-
-          <Alert variant="info">
-            💡 <strong>Asistencia RUC:</strong> Si no cuentas con RUC, puedes dejar el campo vacío.
-            En JUÁCIL te ayudaremos a formalizarte sin costo para potenciar tus ventas regionales.
-          </Alert>
-
-          <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '24px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
-              <Input
-                label="Nombre del Responsable"
-                isRequired
-                placeholder="Ej. Juan Pérez Santos"
-                error={errors.ownerName?.message}
-                {...register('ownerName')}
-              />
-
-              <Input
-                label="Correo Electrónico"
-                isRequired
-                type="email"
-                placeholder="juan@ejemplo.pe"
-                error={errors.email?.message}
-                {...register('email')}
-              />
-            </div>
-
-            <Input
-              label="Nombre del Emprendimiento / Marca"
-              isRequired
-              placeholder="Ej. Café Finca Bellavista"
-              error={errors.businessName?.message}
-              {...register('businessName')}
-            />
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <Select
-                label="¿Qué vendes? (Rubro)"
-                isRequired
-                options={CATEGORIES.map((c) => ({ value: c.id, label: c.name }))}
-                error={errors.category?.message}
-                {...register('category')}
-              />
-
-              <Select
-                label="Ciudad / Distrito"
-                isRequired
-                options={LOCATIONS.map((loc) => ({ value: loc, label: loc }))}
-                error={errors.location?.message}
-                {...register('location')}
-              />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <Input
-                label="WhatsApp para Ventas"
-                isRequired
-                placeholder="Ej. 987654321"
-                error={errors.whatsapp?.message}
-                {...register('whatsapp')}
-              />
-
-              <Input
-                label="RUC (Opcional)"
-                placeholder="11 dígitos (si tienes)"
-                helperText="Déjalo en blanco si aún no tienes."
-                error={errors.ruc?.message}
-                {...register('ruc')}
-              />
-            </div>
-
-            <Textarea
-              label="Breve descripción de lo que ofreces"
-              isRequired
-              rows={3}
-              placeholder="Ej. Producimos café orgánico bajo sombra en Villa Rica desde hace 15 años..."
-              error={errors.description?.message}
-              {...register('description')}
-            />
-
-            <Button
-              type="submit"
-              size="lg"
-              variant="accent"
-              isLoading={isSubmitting}
-              rightIcon={<ArrowRight size={18} />}
-            >
-              Registrar Emprendimiento y Continuar
-            </Button>
-          </form>
-
-          <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px' }}>
-            <span style={{ color: 'var(--color-text-muted)' }}>¿Ya tienes cuenta? </span>
-            <Link to={ROUTES.LOGIN} style={{ color: 'var(--color-primary-800)', fontWeight: 700 }}>
-              Inicia sesión aquí
-            </Link>
+          <Textarea label="Cuéntanos qué ofreces" isRequired rows={3} placeholder="Ej. Producimos café tostado y molido en Villa Rica." error={errors.description?.message} {...register('description')} />
+        </fieldset>
+        <fieldset className={styles.fieldset}>
+          <legend>Responsable y contacto</legend>
+          <Input label="Nombre del responsable" isRequired autoComplete="name" placeholder="Ej. Juan Pérez Santos" error={errors.ownerName?.message} {...register('ownerName')} />
+          <Input label="Correo electrónico" isRequired type="email" autoComplete="email" placeholder="juan@ejemplo.pe" error={errors.email?.message} {...register('email')} />
+          <div className={styles.row}>
+            <Input label="WhatsApp de contacto" isRequired type="tel" inputMode="tel" autoComplete="tel-national" maxLength={9} placeholder="Ej. 987654321" error={errors.whatsapp?.message} {...register('whatsapp')} />
+            <Input label="RUC (opcional)" inputMode="numeric" maxLength={11} placeholder="11 dígitos" helperText="Puedes registrarte sin RUC. No se valida con SUNAT." error={errors.ruc?.message} {...register('ruc')} />
           </div>
-        </div>
-      </div>
-    </div>
+        </fieldset>
+        <p className={styles.note}>Este registro crea un negocio de demostración en tu navegador. No envía mensajes de WhatsApp ni realiza trámites de formalización.</p>
+        <Button type="submit" size="lg" variant="primary" fullWidth isLoading={isSubmitting} rightIcon={<ArrowRight size={18} />}>Registrar mi negocio</Button>
+      </form>
+      <div className={styles.switch}><p>¿Tu negocio ya está registrado? <Link to={ROUTES.LOGIN} className={styles.link}>Iniciar sesión</Link></p></div>
+    </AuthLayout>
   );
 };
+

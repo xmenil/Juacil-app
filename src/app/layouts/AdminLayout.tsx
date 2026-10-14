@@ -12,20 +12,16 @@ import {
   ExternalLink,
   LogOut,
   X,
-  Plus,
   Activity,
-  HardDrive,
   Database,
   Key,
-  TrendingUp,
   FileText,
   CheckCircle,
-  AlertTriangle,
 } from 'lucide-react';
 import styles from './AdminLayout.module.css';
 
 export const AdminLayout: React.FC = () => {
-  const { currentUser, isAdmin, logout } = useSession();
+  const { currentUser, logout } = useSession();
   const navigate = useNavigate();
 
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
