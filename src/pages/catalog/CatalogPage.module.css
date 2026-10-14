@@ -57,8 +57,12 @@
   .page { padding-top: var(--space-4); }
   .views { gap: var(--space-4); } .view, .viewActive { font-size: var(--text-sm); gap: var(--space-1); }
   .searchRow { flex-wrap: wrap; } .searchRow > div { flex-basis: 100%; } .mobileFilters { margin-left: auto; }
-  .grid, .storesGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+  .grid, .storesGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .resultsHeader { align-items: flex-end; } .resultsHeader > div { display: grid; gap: var(--space-1); } .resultsHeader select { width: 150px; }
   .categories { margin-bottom: var(--space-3); }
+}
+
+@media (max-width: 380px) {
+  .grid, .storesGrid { gap: 8px; }
 }
 

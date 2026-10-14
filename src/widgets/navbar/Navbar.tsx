@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
-  ShoppingBag,
+  ShoppingCart,
   Search,
   MessageCircle,
   Truck,
@@ -33,7 +33,7 @@ import { CategoryMegaOverlay } from './CategoryMegaOverlay';
 import styles from './Navbar.module.css';
 
 export const Navbar: React.FC = () => {
-  const { itemCount, openDrawer } = useCart();
+  const { itemCount } = useCart();
   const { currentUser, logout } = useSession();
   const { isOnline } = useConnectivity();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -335,7 +335,7 @@ export const Navbar: React.FC = () => {
                               className={styles.profileMenuItem}
                               onClick={() => setProfileDropdownOpen(false)}
                             >
-                              <span className={styles.profileMenuItemIcon}><ShoppingBag size={16} /></span>
+                              <span className={styles.profileMenuItemIcon}><Package size={16} /></span>
                               <span>Bandeja de Pedidos de Clientes</span>
                             </Link>
                             <Link
@@ -362,7 +362,7 @@ export const Navbar: React.FC = () => {
                               className={styles.profileMenuItem}
                               onClick={() => setProfileDropdownOpen(false)}
                             >
-                              <span className={styles.profileMenuItemIcon}><ShoppingBag size={16} /></span>
+                              <span className={styles.profileMenuItemIcon}><ShoppingCart size={16} /></span>
                               <span>Ir al Marketplace de Compras</span>
                             </Link>
                           </>
@@ -407,7 +407,7 @@ export const Navbar: React.FC = () => {
                               className={styles.profileMenuItem}
                               onClick={() => setProfileDropdownOpen(false)}
                             >
-                              <span className={styles.profileMenuItemIcon}><ShoppingBag size={16} /></span>
+                              <span className={styles.profileMenuItemIcon}><ShoppingCart size={16} /></span>
                               <span>Ir al Marketplace de Compras</span>
                             </Link>
                           </>
@@ -486,17 +486,16 @@ export const Navbar: React.FC = () => {
               <Heart size={22} />
             </button>
 
-            {/* Carrito de Compras - Abre la Bandeja Deslizante */}
-            <button
-              type="button"
+            {/* Carrito de Compras - Lleva directo al Carrito */}
+            <Link
+              to={ROUTES.CART}
               className={styles.actionIconButton}
-              onClick={openDrawer}
-              title={`Bandeja de carrito (${itemCount} productos)`}
-              aria-label="Abrir bandeja de compras"
+              title={`Ver carrito (${itemCount} productos)`}
+              aria-label="Ver carrito de compras"
             >
-              <ShoppingBag size={22} />
+              <ShoppingCart size={22} />
               {itemCount > 0 && <span className={styles.actionBadge}>{itemCount}</span>}
-            </button>
+            </Link>
 
             {/* Botón de Menú Móvil */}
             <button
@@ -706,6 +705,9 @@ export const Navbar: React.FC = () => {
             <div className={styles.mobileNavLinks}>
               <Link to={ROUTES.HOME} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
                 Inicio
+              </Link>
+              <Link to={ROUTES.CART} className={styles.mobileNavLink} onClick={() => setMobileMenuOpen(false)}>
+                <ShoppingCart size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Mi Carrito ({itemCount})
               </Link>
 
               {currentUser && (

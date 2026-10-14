@@ -155,7 +155,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       itemCount,
     });
 
-    setIsDrawerOpen(true);
     return { success: true };
   };
 
@@ -184,7 +183,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setPendingItem(null);
     setIsReplaceModalOpen(false);
-    setIsDrawerOpen(true);
   };
 
   const cancelReplaceCart = () => {

@@ -12,9 +12,9 @@
 .lowStock { color: var(--color-warning-text); background: var(--color-warning-bg); }
 .soldOut { color: var(--color-danger-text); background: var(--color-danger-bg); }
 .body { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); flex: 1; }
-.business { font-size: var(--text-xs); color: var(--color-primary-700); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.business { font-size: var(--text-xs); color: var(--color-primary-700); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .business:hover { text-decoration: underline; }
-.body h3 { font-size: var(--text-base); font-weight: 600; line-height: 1.45; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.body h3 { font-size: var(--text-base); font-weight: 600; line-height: 1.45; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .body h3 a:hover { text-decoration: underline; }
 .location { display: flex; align-items: flex-start; gap: var(--space-1); color: var(--color-text-muted); font-size: var(--text-xs); }
 .location svg { flex-shrink: 0; margin-top: 2px; }
@@ -27,10 +27,26 @@
 .add:disabled { background: var(--color-surface-subtle); color: var(--color-text-muted); border-color: var(--color-border); cursor: not-allowed; }
 .feedback, .error { font-size: var(--text-xs); line-height: 1.5; }
 .feedback { color: var(--color-success-text); } .error { color: var(--color-danger); }
-@media (max-width: 600px) {
-  .body { padding: var(--space-3); }
-  .body h3 { font-size: var(--text-sm); }
-  .price { font-size: var(--text-base); }
-  .add, .added { width: 100%; }
+@media (max-width: 640px) {
+  .card { border-radius: var(--radius-sm); }
+  .favorite, .favoriteActive { width: 32px; height: 32px; top: 6px; right: 6px; }
+  .favorite svg, .favoriteActive svg { width: 14px; height: 14px; }
+  .lowStock, .soldOut { font-size: 10px; padding: 2px 6px; bottom: 6px; left: 6px; border-radius: 4px; }
+  .body { padding: 8px 10px 10px; gap: 3px; }
+  .business { font-size: 11px; -webkit-line-clamp: 1; line-clamp: 1; }
+  .body h3 { font-size: 13px; line-height: 1.3; -webkit-line-clamp: 2; line-clamp: 2; min-height: 34px; }
+  .location { font-size: 10.5px; }
+  .location svg { width: 11px; height: 11px; }
+  .footer { padding-top: 6px; gap: 4px; flex-direction: column; align-items: stretch; }
+  .price { font-size: 15px; line-height: 1.2; }
+  .add, .added { width: 100%; min-height: 34px; height: 34px; font-size: 12px; padding: 4px 8px; border-radius: 6px; gap: 4px; font-weight: 600; }
+  .add svg, .added svg { width: 14px; height: 14px; }
+}
+
+@media (max-width: 380px) {
+  .body { padding: 6px 8px 8px; }
+  .body h3 { font-size: 12px; min-height: 30px; }
+  .price { font-size: 14px; }
+  .add, .added { min-height: 32px; height: 32px; font-size: 11px; }
 }
 

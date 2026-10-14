@@ -13,7 +13,7 @@ import {
   ArrowLeft,
   Store,
   CheckCircle2,
-  ShoppingBag,
+  ShoppingCart,
   MessageCircle,
   AlertTriangle,
   Minus,
@@ -28,7 +28,6 @@ export const ProductDetailPage: React.FC = () => {
   const { isMerchant, businessId, currentUser } = useSession();
 
   const [quantity, setQuantity] = useState(1);
-  const [isSuccessFeedback, setIsSuccessFeedback] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Subir el scroll automáticamente cuando cambia el producto visto
@@ -110,8 +109,7 @@ export const ProductDetailPage: React.FC = () => {
     setErrorMessage(null);
     const result = addItem(product, quantity);
     if (result.success) {
-      setIsSuccessFeedback(true);
-      setTimeout(() => setIsSuccessFeedback(false), 2000);
+      navigate(ROUTES.CART);
     } else if (result.error) {
       setErrorMessage(result.error);
     }
@@ -239,11 +237,11 @@ export const ProductDetailPage: React.FC = () => {
                     <Button
                       style={{ flex: 1, minWidth: '150px' }}
                       size="lg"
-                      variant={isSuccessFeedback ? 'accent' : 'outline'}
-                      leftIcon={<ShoppingBag size={18} />}
+                      variant="outline"
+                      leftIcon={<ShoppingCart size={18} />}
                       onClick={handleAddToCart}
                     >
-                      {isSuccessFeedback ? '¡Agregado!' : 'Al Carrito'}
+                      Al Carrito
                     </Button>
 
                     <Button

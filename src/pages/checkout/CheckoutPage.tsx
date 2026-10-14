@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ShoppingBag, UserRound } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, UserRound } from 'lucide-react';
 import { useCart } from '@/app/providers/CartProvider';
 import { useSession } from '@/app/providers/SessionProvider';
 import type { Order } from '@/entities/order/model/types';
@@ -17,7 +17,7 @@ export function CheckoutPage() {
   return <div className={styles.page}><div className="container">
     {completedOrder && completedOrder.customerId === currentUser?.id ? <CheckoutConfirmation order={completedOrder} />
       : !cart.items.length ? <section className={styles.gate}>
-        <ShoppingBag size={36} aria-hidden="true" /><h1>No hay productos para confirmar</h1><p>Agrega productos a tu carrito para preparar un pedido.</p><Link className={styles.primaryLink} to={ROUTES.CATALOG}>Explorar productos</Link>
+        <ShoppingCart size={36} aria-hidden="true" /><h1>No hay productos para confirmar</h1><p>Agrega productos a tu carrito para preparar un pedido.</p><Link className={styles.primaryLink} to={ROUTES.CATALOG}>Explorar productos</Link>
       </section>
       : !currentUser || currentUser.role !== 'cliente' ? <section className={styles.gate}>
         <UserRound size={36} aria-hidden="true" /><h1>{currentUser ? 'Usa un perfil de cliente para comprar' : 'Inicia sesión para registrar tu pedido'}</h1>

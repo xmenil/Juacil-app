@@ -4,7 +4,6 @@ import { useSession } from '@/app/providers/SessionProvider';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { ROUTES } from '@/shared/config/routes';
 import { formatMoney } from '@/shared/lib/money';
-import { CartDrawer } from '@/features/cart/CartDrawer';
 import {
   Store,
   ExternalLink,
@@ -422,8 +421,7 @@ export const MerchantLayout: React.FC = () => {
         </>
       )}
 
-      {/* Bandeja de carrito disponible por si realiza acciones de compra */}
-      <CartDrawer />
+      {/* Fin layout vendedor */}
     </div>
   );
 };
