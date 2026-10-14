@@ -33,6 +33,7 @@ export const ROUTES = {
   ADMIN_DASHBOARD: '/admin',
   ADMIN_USERS: '/admin/usuarios',
   ADMIN_STORES: '/admin/tiendas',
+  ADMIN_ORDERS: '/admin/pedidos',
   
   // Errores
   FORBIDDEN: '/403',
