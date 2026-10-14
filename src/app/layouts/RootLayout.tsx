@@ -4,7 +4,6 @@ import { DemoUserSwitcher } from '@/features/auth/DemoUserSwitcher';
 import { Navbar } from '@/widgets/navbar/Navbar';
 import { Footer } from '@/widgets/footer/Footer';
 import { ReplaceCartModal } from '@/features/cart/ReplaceCartModal';
-import { CartDrawer } from '@/features/cart/CartDrawer';
 import { MobileBottomNav } from '@/widgets/navbar/MobileBottomNav';
 
 export const RootLayout: React.FC = () => {
@@ -25,7 +24,6 @@ export const RootLayout: React.FC = () => {
       </main>
       <Footer />
       <ReplaceCartModal />
-      <CartDrawer />
       <MobileBottomNav onOpenCategories={handleOpenCategories} />
     </>
   );

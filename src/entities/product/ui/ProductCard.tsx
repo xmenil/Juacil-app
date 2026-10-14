@@ -1,16 +1,17 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import type { Product } from '../model/types';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { formatMoney } from '@/shared/lib/money';
 import { ROUTES } from '@/shared/config/routes';
 import { useCart } from '@/app/providers/CartProvider';
-import { Heart, Plus, Check, Package, MapPin } from 'lucide-react';
+import { Heart, ShoppingCart, Check, Package, MapPin } from 'lucide-react';
 import styles from './ProductCard.module.css';
 
 export interface ProductCardProps { product: Product; }
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
+  const navigate = useNavigate();
   const titleId = useId();
   const [favorite, setFavorite] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
@@ -28,9 +29,12 @@ export function ProductCard({ product }: ProductCardProps) {
       setMessage({ text: 'Este producto ya no está disponible para agregar.', error: true }); return;
     }
     const result = addItem(fresh);
-    setAdded(!!result.success);
-    setMessage({ text: result.success ? 'Producto agregado al carrito.' : result.error || '', error: !result.success && !!result.error });
-    if (result.success) timeout.current = window.setTimeout(() => setAdded(false), 1600);
+    if (result.success) {
+      navigate(ROUTES.CART);
+    } else {
+      setAdded(false);
+      setMessage({ text: result.error || '', error: true });
+    }
   };
   return <article className={styles.card} aria-labelledby={titleId}>
     <div className={styles.media}>
@@ -47,7 +51,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className={styles.footer}>
         <strong className={styles.price}>{formatMoney(product.priceCents)}</strong>
         <button className={added ? styles.added : styles.add} disabled={!!unavailable} onClick={add} aria-label={`Agregar ${product.name} al carrito`}>
-          {added ? <Check size={17} aria-hidden="true" /> : <Plus size={17} aria-hidden="true" />}<span>{added ? 'Agregado' : product.stock <= 0 ? 'Agotado' : unavailable ? 'No disponible' : 'Agregar'}</span>
+          {added ? <Check size={16} aria-hidden="true" /> : <ShoppingCart size={15} aria-hidden="true" />}<span>{added ? 'Agregado' : product.stock <= 0 ? 'Agotado' : unavailable ? 'No disponible' : 'Agregar'}</span>
         </button>
       </div>
       {message.text && <p className={message.error ? styles.error : styles.feedback} role={message.error ? 'alert' : 'status'}>{message.text}</p>}

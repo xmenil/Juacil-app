@@ -878,6 +878,23 @@
   }
 }
 
+@media (max-width: 640px) {
+  .productsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .businessesGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .productsGrid {
+    gap: 8px;
+  }
+}
+
 /* 5. Emprendimientos y secciones complementarias */
 .businessesGrid {
   display: grid;

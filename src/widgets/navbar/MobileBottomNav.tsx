@@ -5,7 +5,7 @@ import {
   LayoutGrid,
   Store,
   Tag,
-  ShoppingBag,
+  ShoppingCart,
   User,
 } from 'lucide-react';
 import { useCart } from '@/app/providers/CartProvider';
@@ -18,7 +18,7 @@ interface MobileBottomNavProps {
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenCategories }) => {
-  const { itemCount, openDrawer } = useCart();
+  const { itemCount } = useCart();
   const { currentUser, isMerchant } = useSession();
   const location = useLocation();
   const navigate = useNavigate();
@@ -93,19 +93,20 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenCategori
         <span>Ofertas</span>
       </NavLink>
 
-      {/* 5. Carrito - Abre Bandeja Deslizante */}
-      <button
-        type="button"
-        className={styles.navItem}
-        onClick={openDrawer}
-        aria-label="Abrir bandeja de compras"
+      {/* 5. Carrito - Lleva directo a /carrito */}
+      <NavLink
+        to={ROUTES.CART}
+        className={({ isActive }) =>
+          [styles.navItem, isActive ? styles.navItemActive : ''].join(' ')
+        }
+        aria-label="Ver carrito de compras"
       >
         <div className={styles.iconWrapper}>
-          <ShoppingBag size={20} />
+          <ShoppingCart size={20} />
           {itemCount > 0 && <span className={styles.badge}>{itemCount}</span>}
         </div>
         <span>Carrito</span>
-      </button>
+      </NavLink>
 
       {/* 6. Mi Cuenta / Panel */}
       <button
