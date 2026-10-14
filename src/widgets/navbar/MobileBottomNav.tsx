@@ -18,7 +18,7 @@ interface MobileBottomNavProps {
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenCategories }) => {
-  const { itemCount } = useCart();
+  const { itemCount, openDrawer } = useCart();
   const { currentUser, isMerchant } = useSession();
   const location = useLocation();
   const navigate = useNavigate();
@@ -93,19 +93,19 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenCategori
         <span>Ofertas</span>
       </NavLink>
 
-      {/* 5. Carrito */}
-      <NavLink
-        to={ROUTES.CART}
-        className={({ isActive }) =>
-          [styles.navItem, isActive ? styles.navItemActive : ''].join(' ')
-        }
+      {/* 5. Carrito - Abre Bandeja Deslizante */}
+      <button
+        type="button"
+        className={styles.navItem}
+        onClick={openDrawer}
+        aria-label="Abrir bandeja de compras"
       >
         <div className={styles.iconWrapper}>
           <ShoppingBag size={20} />
           {itemCount > 0 && <span className={styles.badge}>{itemCount}</span>}
         </div>
         <span>Carrito</span>
-      </NavLink>
+      </button>
 
       {/* 6. Mi Cuenta / Panel */}
       <button

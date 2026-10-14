@@ -1,6 +1,8 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { RootLayout } from '@/app/layouts/RootLayout';
+import { MerchantLayout } from '@/app/layouts/MerchantLayout';
+import { AdminLayout } from '@/app/layouts/AdminLayout';
 import { ProtectedRoute } from './ProtectedRoute';
 
 // Páginas Públicas
@@ -40,6 +42,44 @@ import { ForbiddenPage } from '@/pages/errors/ForbiddenPage';
 import { NotFoundPage } from '@/pages/errors/NotFoundPage';
 
 export const router = createBrowserRouter([
+  // 1. Portal de Tienda / Emprendedores MYPE (Sección Completa Dedicada con Barra a la Derecha)
+  {
+    path: '/panel',
+    element: <ProtectedRoute requiredRole="merchant" />,
+    children: [
+      {
+        element: <MerchantLayout />,
+        children: [
+          { index: true, element: <MerchantDashboardPage /> },
+          { path: 'negocio', element: <MerchantBusinessPage /> },
+          { path: 'productos', element: <MerchantProductsPage /> },
+          { path: 'productos/nuevo', element: <MerchantProductNewPage /> },
+          { path: 'productos/:id/editar', element: <MerchantProductEditPage /> },
+          { path: 'pedidos', element: <MerchantOrdersPage /> },
+          { path: 'pedidos/:id', element: <MerchantOrderDetailPage /> },
+          { path: 'notificaciones', element: <MerchantDashboardPage /> },
+        ],
+      },
+    ],
+  },
+
+  // 2. Portal de Super Administrador JUÁCIL (Interfaz Dedicada de Control Maestro)
+  {
+    path: '/admin',
+    element: <ProtectedRoute requiredRole="admin" />,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <AdminDashboardPage /> },
+          { path: 'usuarios', element: <AdminDashboardPage /> },
+          { path: 'tiendas', element: <AdminDashboardPage /> },
+        ],
+      },
+    ],
+  },
+
+  // 3. Marketplace Público & Clientes (Cabecera, Navegación de Compras, Bandeja Carrito, Footer)
   {
     path: '/',
     element: <RootLayout />,
@@ -66,33 +106,6 @@ export const router = createBrowserRouter([
       { path: 'mis-pedidos/:id', element: <CustomerOrderDetailPage /> },
       { path: 'mi-cuenta', element: <CustomerProfilePage /> },
       { path: 'perfil', element: <CustomerProfilePage /> },
-
-      // Rutas Protegidas para Emprendedores MYPE
-      {
-        path: 'panel',
-        element: <ProtectedRoute requiredRole="merchant" />,
-        children: [
-          { index: true, element: <MerchantDashboardPage /> },
-          { path: 'negocio', element: <MerchantBusinessPage /> },
-          { path: 'productos', element: <MerchantProductsPage /> },
-          { path: 'productos/nuevo', element: <MerchantProductNewPage /> },
-          { path: 'productos/:id/editar', element: <MerchantProductEditPage /> },
-          { path: 'pedidos', element: <MerchantOrdersPage /> },
-          { path: 'pedidos/:id', element: <MerchantOrderDetailPage /> },
-          { path: 'notificaciones', element: <MerchantDashboardPage /> },
-        ],
-      },
-
-      // Rutas Protegidas para Super Administrador JUÁCIL
-      {
-        path: 'admin',
-        element: <ProtectedRoute requiredRole="admin" />,
-        children: [
-          { index: true, element: <AdminDashboardPage /> },
-          { path: 'usuarios', element: <AdminDashboardPage /> },
-          { path: 'tiendas', element: <AdminDashboardPage /> },
-        ],
-      },
 
       // Páginas de Error
       { path: '403', element: <ForbiddenPage /> },

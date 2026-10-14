@@ -24,6 +24,11 @@ interface CartContextType {
   isReplaceModalOpen: boolean;
   pendingItem: { product: Product; quantity: number } | null;
   currentBusinessName: string;
+  // Estado para la bandeja deslizante del carrito
+  isDrawerOpen: boolean;
+  openDrawer: () => void;
+  closeDrawer: () => void;
+  toggleDrawer: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -64,6 +69,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [pendingItem, setPendingItem] = useState<{ product: Product; quantity: number } | null>(null);
   const [isReplaceModalOpen, setIsReplaceModalOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const openDrawer = () => setIsDrawerOpen(true);
+  const closeDrawer = () => setIsDrawerOpen(false);
+  const toggleDrawer = () => setIsDrawerOpen((prev) => !prev);
 
   useEffect(() => {
     try {
@@ -145,6 +155,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       itemCount,
     });
 
+    setIsDrawerOpen(true);
     return { success: true };
   };
 
@@ -173,6 +184,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setPendingItem(null);
     setIsReplaceModalOpen(false);
+    setIsDrawerOpen(true);
   };
 
   const cancelReplaceCart = () => {
@@ -255,6 +267,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isReplaceModalOpen,
         pendingItem,
         currentBusinessName: cart.businessName || 'la tienda actual',
+        isDrawerOpen,
+        openDrawer,
+        closeDrawer,
+        toggleDrawer,
       }}
     >
       {children}

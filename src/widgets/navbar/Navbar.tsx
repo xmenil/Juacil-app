@@ -28,7 +28,7 @@ import { CategoryMegaOverlay } from './CategoryMegaOverlay';
 import styles from './Navbar.module.css';
 
 export const Navbar: React.FC = () => {
-  const { itemCount } = useCart();
+  const { itemCount, openDrawer } = useCart();
   const { currentUser, logout } = useSession();
   const { isOnline } = useConnectivity();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -234,16 +234,17 @@ export const Navbar: React.FC = () => {
               <Heart size={22} />
             </button>
 
-            {/* Carrito de Compras */}
-            <Link
-              to={ROUTES.CART}
+            {/* Carrito de Compras - Abre la Bandeja Deslizante */}
+            <button
+              type="button"
               className={styles.actionIconButton}
-              title={`Ver carrito con ${itemCount} productos`}
-              aria-label="Ver carrito"
+              onClick={openDrawer}
+              title={`Bandeja de carrito (${itemCount} productos)`}
+              aria-label="Abrir bandeja de compras"
             >
               <ShoppingBag size={22} />
               {itemCount > 0 && <span className={styles.actionBadge}>{itemCount}</span>}
-            </Link>
+            </button>
 
             {/* Botón de Menú Móvil */}
             <button
