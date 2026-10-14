@@ -260,26 +260,32 @@
 .categoryLinksList {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 8px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .categoryLink {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   color: #374151;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  transition: color 0.15s ease;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
 }
 
 .categoryLink:hover {
   color: #135d38;
+  background-color: #f0fdf4;
+  border-color: #dcfce7;
+  transform: translateY(-1px);
 }
 
 /* Contenedor del Dropdown de Categorías estilo Mercado Libre */
@@ -290,18 +296,18 @@
 }
 
 .categoriesNavButton {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   color: #374151;
   background: transparent;
-  border: none;
-  padding: 7px 12px;
-  border-radius: 6px;
+  border: 1px solid transparent;
+  padding: 6px 14px;
+  border-radius: 9999px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  transition: all 0.15s ease;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
 }
 
@@ -309,6 +315,14 @@
 .categoriesNavButtonActive {
   color: #135d38;
   background-color: #f0fdf4;
+  border-color: #dcfce7;
+}
+
+.categoriesNavButtonHighlighted {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  border-color: #a7f3d0 !important;
+  font-weight: 700;
 }
 
 .chevronIcon {
@@ -439,8 +453,23 @@
 }
 
 .categoryLinkActive {
-  color: #135d38;
-  font-weight: 700;
+  background: linear-gradient(135deg, #135d38 0%, #166534 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 3px 10px rgba(19, 93, 56, 0.28);
+  border-color: #135d38 !important;
+  transform: translateY(-1px);
+}
+
+.categoryLinkActive svg {
+  stroke: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.categoryLinkActive:hover {
+  background: linear-gradient(135deg, #0e482b 0%, #135d38 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(19, 93, 56, 0.35);
 }
 
 .promotionsBadge {
@@ -466,21 +495,32 @@
 .subNavRightLinks {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
 }
 
 .subNavLinkRight {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   color: #4b5563;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  transition: color 0.15s ease;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
 }
 
 .subNavLinkRight:hover {
   color: #135d38;
+  background-color: #f0fdf4;
+  border-color: #dcfce7;
+}
+
+.subNavLinkRightActive {
+  background-color: #f0fdf4 !important;
+  color: #135d38 !important;
+  border-color: #86efac !important;
 }
 
 .venderButtonHighlight {
