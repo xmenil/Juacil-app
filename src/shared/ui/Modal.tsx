@@ -9,6 +9,7 @@ export interface ModalProps {
   children: React.ReactNode;
   footer?: React.ReactNode;
   size?: 'md' | 'lg';
+  variant?: 'center' | 'drawer';
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -18,6 +19,7 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   footer,
   size = 'md',
+  variant = 'center',
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
@@ -66,7 +68,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className={styles.backdrop}
+      className={[styles.backdrop, variant === 'drawer' ? styles.drawerBackdrop : ''].filter(Boolean).join(' ')}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -77,7 +79,7 @@ export const Modal: React.FC<ModalProps> = ({
         tabIndex={-1}
         aria-modal="true"
         aria-labelledby={titleId}
-        className={[styles.modal, size === 'lg' ? styles.modalLg : ''].filter(Boolean).join(' ')}
+        className={[styles.modal, size === 'lg' ? styles.modalLg : '', variant === 'drawer' ? styles.drawer : ''].filter(Boolean).join(' ')}
       >
         <div className={styles.header}>
           <h2 id={titleId} className={styles.title}>

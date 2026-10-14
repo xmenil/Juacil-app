@@ -1,0 +1,14 @@
+.summary, .compact { display: grid; gap: var(--space-4); min-width: 0; }
+.summary h2 { font-size: var(--text-lg); font-weight: 600; padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border); }
+.total { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-3); }
+.total span { font-size: var(--text-sm); color: var(--color-text-main); }
+.total small { display: block; font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-1); }
+.total strong { font-family: var(--font-display); font-size: var(--text-2xl); color: var(--color-primary-900); font-weight: 600; font-variant-numeric: tabular-nums; }
+.delivery, .payment, .account { font-size: var(--text-sm); line-height: 1.6; color: var(--color-text-muted); }
+.payment { padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+.account { color: var(--color-primary-700); font-size: var(--text-xs); }
+.issue { font-size: var(--text-sm); padding: var(--space-3); background: var(--color-warning-bg); color: var(--color-warning-text); border-radius: var(--radius-sm); }
+.continue { white-space: normal; padding: var(--space-3) var(--space-4); }
+.compact { gap: var(--space-3); }
+.compact .delivery { font-size: var(--text-xs); }
+.summary :focus-visible, .compact :focus-visible { outline-color: var(--color-primary-700); }

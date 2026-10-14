@@ -1,168 +1,52 @@
-import React from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, ArrowUpRight, Store, Trash2 } from 'lucide-react';
 import { useCart } from '@/app/providers/CartProvider';
 import { useSession } from '@/app/providers/SessionProvider';
-import { formatMoney } from '@/shared/lib/money';
+import { CartItems } from '@/features/cart/CartItems';
+import { CartSummary } from '@/features/cart/CartSummary';
+import { CartEmptyState } from '@/features/cart/CartEmptyState';
+import { getCartIssue } from '@/features/cart/cartAvailability';
+import { LocalStoreRepository } from '@/shared/lib/storage';
 import { ROUTES } from '@/shared/config/routes';
 import { Button } from '@/shared/ui/Button';
-import { ShoppingBag, Trash2, Minus, Plus, Store, ArrowRight, Lock } from 'lucide-react';
+import { Modal } from '@/shared/ui/Modal';
 import styles from './CartPage.module.css';
 
-export const CartPage: React.FC = () => {
-  const { cart, updateQuantity, removeItem, clearCart } = useCart();
+export function CartPage() {
+  const { cart, clearCart } = useCart();
   const { currentUser } = useSession();
   const navigate = useNavigate();
-
-  if (cart.items.length === 0) {
-    return (
-      <div className={styles.page}>
-        <div className="container">
-          <div className={styles.emptyBox}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'var(--color-surface-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-subtle)' }}>
-              <ShoppingBag size={32} />
-            </div>
-            <h2 style={{ fontSize: '22px', fontWeight: 700 }}>Tu carrito está vacío</h2>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '14px' }}>
-              Aún no has agregado productos de la Selva Central. Explora cafés, mieles, chocolates o
-              artesanías disponibles.
-            </p>
-            <Button variant="primary" size="lg" onClick={() => navigate(ROUTES.CATALOG)}>
-              Ir al Catálogo de Productos
-            </Button>
+  const [confirmClear, setConfirmClear] = useState(false);
+  const [, refreshAvailability] = useState(0);
+  const business = cart.businessId ? LocalStoreRepository.getBusinessById(cart.businessId) : undefined;
+  const issue = getCartIssue(cart);
+  const proceed = () => {
+    const freshIssue = getCartIssue(cart);
+    if (freshIssue) refreshAvailability(value => value + 1);
+    if (!freshIssue) navigate(currentUser ? ROUTES.CHECKOUT : `${ROUTES.LOGIN}?redirect=${encodeURIComponent(ROUTES.CHECKOUT)}`);
+  };
+  return <div className={styles.page}><div className="container">
+    <Link className={styles.backLink} to={ROUTES.CATALOG}><ArrowLeft size={17} aria-hidden="true" />Seguir explorando</Link>
+    {!cart.items.length ? <CartEmptyState onBrowse={() => navigate(ROUTES.CATALOG)} /> : <>
+      <header className={styles.header}><div><h1>Tu carrito</h1><p>Revisa tus productos antes de preparar el pedido.</p></div><span>{cart.itemCount} {cart.itemCount === 1 ? 'unidad' : 'unidades'}</span></header>
+      <div className={styles.layout}>
+        <section className={styles.products} aria-label="Productos seleccionados">
+          <div className={styles.storeHeader}>
+            <span className={styles.storeIcon}><Store size={22} aria-hidden="true" /></span>
+            <div><span>Tu pedido es de</span><Link to={ROUTES.STORE_DETAIL(cart.businessId!)}>{cart.businessName}<ArrowUpRight size={16} aria-hidden="true" /></Link>{business?.location && <p>{business.location}</p>}</div>
+            <button className={styles.clear} aria-label="Vaciar carrito" onClick={() => setConfirmClear(true)}><Trash2 size={17} aria-hidden="true" /><span>Vaciar carrito</span></button>
           </div>
-        </div>
+          <CartItems />
+          <p className={styles.note}>Un negocio por pedido. Si eliges productos de otra tienda, te pediremos confirmar el cambio.</p>
+        </section>
+        <aside className={styles.summary} aria-label="Resumen de compra"><CartSummary onContinue={proceed} issue={issue} /><Link className={styles.storeLink} to={ROUTES.STORE_DETAIL(cart.businessId!)}>Agregar más de esta tienda <ArrowUpRight size={16} aria-hidden="true" /></Link></aside>
       </div>
-    );
-  }
-
-  return (
-    <div className={styles.page}>
-      <div className="container">
-        <h1 className={styles.title}>Carrito de Compras</h1>
-
-        <div className={styles.layout}>
-          {/* Listado de Artículos */}
-          <div className={styles.itemsList}>
-            <div className={styles.storeNotice}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Store size={18} color="var(--color-primary-700)" />
-                <span>
-                  Pedido para: <strong>{cart.businessName}</strong>
-                </span>
-              </div>
-              <Button size="sm" variant="ghost" onClick={clearCart}>
-                Vaciar carrito
-              </Button>
-            </div>
-
-            {cart.items.map((item) => (
-              <div key={item.productId} className={styles.cartItem}>
-                <img
-                  src={item.product.imageUrl}
-                  alt={item.product.name}
-                  className={styles.itemImage}
-                />
-
-                <div className={styles.itemInfo}>
-                  <Link
-                    to={ROUTES.PRODUCT_DETAIL(item.productId)}
-                    className={styles.itemName}
-                  >
-                    {item.product.name}
-                  </Link>
-                  <span className={styles.itemPrice}>
-                    {formatMoney(item.unitPriceCents)} c/u
-                  </span>
-                  <span style={{ fontSize: '12px', color: 'var(--color-text-subtle)' }}>
-                    Disponibles: {item.product.stock} unids.
-                  </span>
-                </div>
-
-                <div className={styles.itemActions}>
-                  <span className={styles.subtotal}>{formatMoney(item.subtotalCents)}</span>
-
-                  <div className={styles.qtyControl}>
-                    <button
-                      type="button"
-                      className={styles.qtyBtn}
-                      onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                      disabled={item.quantity <= 1}
-                      aria-label="Disminuir"
-                    >
-                      <Minus size={12} />
-                    </button>
-                    <span style={{ fontSize: '14px', fontWeight: 700, minWidth: '24px', textAlign: 'center' }}>
-                      {item.quantity}
-                    </span>
-                    <button
-                      type="button"
-                      className={styles.qtyBtn}
-                      onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                      disabled={item.quantity >= item.product.stock}
-                      aria-label="Aumentar"
-                    >
-                      <Plus size={12} />
-                    </button>
-
-                    <button
-                      type="button"
-                      className={styles.qtyBtn}
-                      onClick={() => removeItem(item.productId)}
-                      style={{ color: 'var(--color-danger)', marginLeft: '4px' }}
-                      title="Eliminar producto"
-                      aria-label={`Eliminar ${item.product.name}`}
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Resumen del Pedido */}
-          <aside className={styles.summaryCard} aria-label="Resumen de compra">
-            <h2 className={styles.summaryTitle}>Resumen del Pedido</h2>
-
-            <div className={styles.summaryRow}>
-              <span>Subtotal ({cart.itemCount} productos):</span>
-              <strong>{formatMoney(cart.totalCents)}</strong>
-            </div>
-
-            <div className={styles.summaryRow}>
-              <span>Costo de envío:</span>
-              <span style={{ color: 'var(--color-primary-700)', fontWeight: 600 }}>
-                Por coordinar con la MYPE
-              </span>
-            </div>
-
-            <div className={styles.summaryTotalRow}>
-              <span>Total Estimado:</span>
-              <span>{formatMoney(cart.totalCents)}</span>
-            </div>
-
-            <div style={{ fontSize: '12px', color: 'var(--color-text-subtle)', lineHeight: 1.4 }}>
-              📌 El pago se coordina directamente con el vendedor por Yape, Plin o contraentrega.
-            </div>
-
-            <Button
-              fullWidth
-              size="lg"
-              variant="accent"
-              rightIcon={currentUser ? <ArrowRight size={16} /> : <Lock size={16} />}
-              onClick={() => {
-                if (!currentUser) {
-                  navigate(`${ROUTES.LOGIN}?redirect=${encodeURIComponent(ROUTES.CHECKOUT)}`);
-                } else {
-                  navigate(ROUTES.CHECKOUT);
-                }
-              }}
-            >
-              {currentUser ? 'Continuar con el Pedido' : 'Iniciar Sesión para Pedir'}
-            </Button>
-          </aside>
-        </div>
-      </div>
-    </div>
-  );
-};
+    </>}
+    <Modal isOpen={confirmClear && !!cart.items.length} onClose={() => setConfirmClear(false)} title="¿Vaciar tu carrito?"
+      footer={<><Button variant="outline" onClick={() => setConfirmClear(false)}>Conservar productos</Button><Button variant="danger" onClick={() => { clearCart(); setConfirmClear(false); }}>Vaciar carrito</Button></>}>
+      <p>Se retirarán las {cart.itemCount} unidades de <strong>{cart.businessName}</strong>. No se cancelarán pedidos ya registrados.</p>
+      <p className={styles.confirmNote}>Puedes volver a agregar productos desde el catálogo.</p>
+    </Modal>
+  </div></div>;
+}

@@ -1,68 +1,11 @@
-.container {
-  display: flex;
-  gap: var(--space-4);
-  align-items: flex-start;
-}
-
-.iconBox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-warning-bg);
-  flex-shrink: 0;
-}
-
-.icon {
-  color: var(--color-warning);
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.lead {
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--color-primary-950);
-}
-
-.detail {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-}
-
-.replacementBox {
-  margin-top: var(--space-2);
-  padding: var(--space-3);
-  background-color: var(--color-surface-subtle);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.sublabel {
-  font-size: var(--text-xs);
-  color: var(--color-text-subtle);
-  text-transform: uppercase;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
-
-.newProdName {
-  font-weight: 600;
-  color: var(--color-primary-800);
-}
-
-.warningNote {
-  font-size: var(--text-xs);
-  color: var(--color-danger);
-  font-weight: 500;
-  margin-top: var(--space-1);
-}
+.content { display: grid; gap: var(--space-4); line-height: 1.6; }
+.content > p:first-child { color: var(--color-text-muted); }
+.current { border-left: 3px solid var(--color-border); padding-left: var(--space-4); }
+.current > span, .next span { display: block; color: var(--color-text-muted); font-size: var(--text-xs); }
+.current strong, .next strong { display: block; color: var(--color-primary-900); font-size: var(--text-base); overflow-wrap: anywhere; }
+.current p, .next p { font-size: var(--text-sm); color: var(--color-text-muted); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.arrow { margin-left: var(--space-4); color: var(--color-text-muted); }
+.next { display: flex; gap: var(--space-3); padding: var(--space-4); background: var(--color-primary-50); border-radius: var(--radius-md); }
+.next > svg { flex-shrink: 0; margin-top: var(--space-1); color: var(--color-primary-700); }
+.warning { color: var(--color-warning-text); font-size: var(--text-sm); }
+.error { background: var(--color-danger-bg); color: var(--color-danger-text); border-radius: var(--radius-sm); padding: var(--space-3); font-size: var(--text-sm); }
