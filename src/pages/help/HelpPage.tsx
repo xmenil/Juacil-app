@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/shared/ui/Button';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
+import styles from './HelpPage.module.css';
+import { Link, useLocation } from 'react-router-dom';
+import { Alert } from '@/shared/ui/Alert';
+import { ROUTES } from '@/shared/config/routes';
 
 interface SurveyAnswers {
   q1: string;
@@ -15,21 +19,141 @@ interface SurveyAnswers {
   q10: string;
 }
 
+const surveyQuestions: { key: keyof SurveyAnswers; title: string; options: string[] }[] = [
+  {
+    "key": "q1",
+    "title": "¿Qué tan útil considera JUÁCIL para las MYPES?",
+    "options": [
+      "Muy útil",
+      "Útil",
+      "Regular",
+      "Poco útil",
+      "Nada útil"
+    ]
+  },
+  {
+    "key": "q2",
+    "title": "¿Qué tan clara le parece la presentación de los productos?",
+    "options": [
+      "Muy clara",
+      "Clara",
+      "Regular",
+      "Poco clara",
+      "Nada clara"
+    ]
+  },
+  {
+    "key": "q3",
+    "title": "¿Qué tan fácil considera encontrar información como precio, fotografía y características?",
+    "options": [
+      "Muy fácil",
+      "Fácil",
+      "Regular",
+      "Difícil",
+      "Muy difícil"
+    ]
+  },
+  {
+    "key": "q4",
+    "title": "¿Considera que JUÁCIL facilitaría la comunicación entre el cliente y la MYPE?",
+    "options": [
+      "Sí, bastante",
+      "Sí, un poco",
+      "No estoy seguro(a)",
+      "Poco",
+      "No"
+    ]
+  },
+  {
+    "key": "q5",
+    "title": "¿Qué tan sencillo considera el proceso para realizar un pedido?",
+    "options": [
+      "Muy sencillo",
+      "Sencillo",
+      "Regular",
+      "Difícil",
+      "Muy difícil"
+    ]
+  },
+  {
+    "key": "q6",
+    "title": "¿Considera que JUÁCIL ayudaría a una MYPE a llegar a más clientes?",
+    "options": [
+      "Sí, bastante",
+      "Sí, en cierta medida",
+      "No estoy seguro(a)",
+      "Poco",
+      "No"
+    ]
+  },
+  {
+    "key": "q7",
+    "title": "¿Qué tan fácil considera utilizar JUÁCIL desde un celular?",
+    "options": [
+      "Muy fácil",
+      "Fácil",
+      "Regular",
+      "Difícil",
+      "Muy difícil"
+    ]
+  },
+  {
+    "key": "q8",
+    "title": "¿Considera que JUÁCIL facilitaría la digitalización de las ventas de las MYPES?",
+    "options": [
+      "Totalmente de acuerdo",
+      "De acuerdo",
+      "Ni de acuerdo ni en desacuerdo",
+      "En desacuerdo",
+      "Totalmente en desacuerdo"
+    ]
+  },
+  {
+    "key": "q9",
+    "title": "Después de conocer JUÁCIL, ¿qué tan dispuesto(a) estaría a utilizarlo?",
+    "options": [
+      "Muy dispuesto(a)",
+      "Dispuesto(a)",
+      "Indeciso(a)",
+      "Poco dispuesto(a)",
+      "Nada dispuesto(a)"
+    ]
+  },
+  {
+    "key": "q10",
+    "title": "¿Qué aspecto considera que debería mejorarse principalmente?",
+    "options": [
+      "Diseño y presentación",
+      "Facilidad de uso",
+      "Información de los productos",
+      "Proceso de pedidos",
+      "Comunicación con el vendedor"
+    ]
+  }
+];
+
 export const HelpPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'faq' | 'survey'>('faq');
+  const { hash } = useLocation();
+  const formRef = useRef<HTMLFormElement>(null);
+  const resultRef = useRef<HTMLHeadingElement>(null);
+  const [showErrors, setShowErrors] = useState(false);
+  const [activeTab, setActiveTab] = useState<'faq' | 'survey'>(() => hash === '#encuesta' ? 'survey' : 'faq');
   const [answers, setAnswers] = useState<SurveyAnswers>({
-    q1: 'Muy útil',
-    q2: 'Muy clara',
-    q3: 'Muy fácil',
-    q4: 'Sí, bastante',
-    q5: 'Muy sencillo',
-    q6: 'Sí, bastante',
-    q7: 'Muy fácil',
-    q8: 'Totalmente de acuerdo',
-    q9: 'Muy dispuesto(a)',
-    q10: 'Comunicación con el vendedor',
+    q1: '',
+    q2: '',
+    q3: '',
+    q4: '',
+    q5: '',
+    q6: '',
+    q7: '',
+    q8: '',
+    q9: '',
+    q10: '',
   });
   const [isSurveySubmitted, setIsSurveySubmitted] = useState(false);
+
+  useEffect(() => { if (isSurveySubmitted && activeTab === 'survey') resultRef.current?.focus(); }, [isSurveySubmitted, activeTab]);
+  const missingQuestions = surveyQuestions.filter(({ key }) => !answers[key]);
 
   const handleSelect = (key: keyof SurveyAnswers, val: string) => {
     setAnswers((prev) => ({ ...prev, [key]: val }));
@@ -37,321 +161,137 @@ export const HelpPage: React.FC = () => {
 
   const handleSurveySubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (missingQuestions.length > 0) {
+      setShowErrors(true);
+      formRef.current?.querySelector<HTMLInputElement>('input[name="' + missingQuestions[0].key + '"]')?.focus();
+      return;
+    }
+    setShowErrors(false);
     setIsSurveySubmitted(true);
   };
 
   return (
-    <div style={{ padding: '32px 0 64px' }}>
-      <div className="container" style={{ maxWidth: '820px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h1 style={{ fontSize: '30px', fontWeight: 800, color: 'var(--color-primary-950)' }}>
-            Centro de Ayuda y Validación
+    <div className={styles.page}>
+      <div className={`container ${styles.container}`}>
+        <header className={styles.header}>
+          <h1 className={styles.title}>
+            Ayuda
           </h1>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '15px', marginTop: '6px' }}>
-            Respuestas a preguntas frecuentes sobre la plataforma y cuestionario de evaluación de usabilidad.
+          <p className={styles.intro}>
+            Resuelve tus dudas sobre compras y negocios en JUÁCIL.
           </p>
 
-          <div style={{ display: 'inline-flex', gap: '8px', marginTop: '20px', backgroundColor: 'var(--color-surface-subtle)', padding: '4px', borderRadius: '12px' }}>
+          <div className={styles.sectionSelector} role="group" aria-label="Secciones de ayuda">
             <Button
-              size="sm"
+              type="button"
+              className={styles.sectionButton}
+              aria-pressed={activeTab === 'faq'}
+              aria-controls="help-content"
               variant={activeTab === 'faq' ? 'primary' : 'ghost'}
               onClick={() => setActiveTab('faq')}
             >
-              Preguntas Frecuentes
+              Preguntas frecuentes
             </Button>
             <Button
-              size="sm"
+              type="button"
+              className={styles.sectionButton}
+              aria-pressed={activeTab === 'survey'}
+              aria-controls="help-content"
               variant={activeTab === 'survey' ? 'primary' : 'ghost'}
               onClick={() => setActiveTab('survey')}
             >
-              Cuestionario de Validación (10 Preguntas)
+              Evalúa JUÁCIL
             </Button>
           </div>
-        </div>
+        </header>
 
+        <section id="help-content" aria-label={activeTab === 'faq' ? 'Preguntas frecuentes' : 'Evalúa JUÁCIL'}>
         {activeTab === 'faq' ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', padding: '24px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--color-primary-950)', marginBottom: '8px' }}>
-                ¿Cómo se coordina el pago de los productos?
-              </h3>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-main)', lineHeight: 1.5 }}>
-                En JUÁCIL no retenemos pagos ni cobramos comisiones abusivas. Al confirmar tu pedido,
-                se genera un mensaje preformateado a WhatsApp con el código de orden (JUA-XXXX) para
-                que acuerdes con la MYPE el abono mediante <strong>Yape, Plin, transferencia bancaria</strong> o pago contraentrega.
-              </p>
-            </div>
-
-            <div style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', padding: '24px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--color-primary-950)', marginBottom: '8px' }}>
-                ¿Cómo se realizan los envíos desde la Selva?
-              </h3>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-main)', lineHeight: 1.5 }}>
-                Para entregas dentro de la localidad (La Merced, Villa Rica, Oxapampa), puedes coordinar
-                recojo en el local de la MYPE o entrega motorizada. Para envíos hacia Lima u otras regiones
-                del Perú, la MYPE despacha mediante agencias confiables como Olva Courier o Shalom.
-              </p>
-            </div>
-
-            <div style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', padding: '24px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--color-primary-950)', marginBottom: '8px' }}>
-                ¿Qué necesito para registrar mi emprendimiento?
-              </h3>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-main)', lineHeight: 1.5 }}>
-                Solo necesitas un número de WhatsApp activo, el nombre de tu marca y fotos de tus productos.
-                Si aún no cuentas con RUC, el equipo del proyecto formativo ofrece orientación gratuita
-                para formalizar tu negocio en la Selva.
-              </p>
-            </div>
-
-            <div style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', padding: '24px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--color-primary-950)', marginBottom: '8px' }}>
-                ¿Por qué los pedidos en carrito son de una sola tienda a la vez?
-              </h3>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-main)', lineHeight: 1.5 }}>
-                Debido a las distancias geográficas entre distritos de la Selva Central, cada pedido se
-                atiende directamente por un solo productor. Si agregas productos de otra tienda, la plataforma
-                te consultará amablemente si deseas sustituir el carrito antes de proceder.
-              </p>
-            </div>
+          <div className={styles.faq}>
+            <section aria-labelledby="help-purchases">
+              <h2 id="help-purchases" className={styles.groupTitle}>Compras y pedidos</h2>
+              <details className={styles.question}>
+                <summary>¿Cómo coordino el pago?</summary>
+                <p>JUÁCIL no procesa pagos reales en este prototipo. El enlace de WhatsApp prepara un mensaje con los datos del pedido; tú decides cuándo enviarlo. Coordina el medio de pago directamente con la tienda.</p>
+              </details>
+              <details className={styles.question}>
+                <summary>¿Cómo coordino la entrega o el recojo?</summary>
+                <p>Consulta la modalidad de tu pedido y coordina con la tienda la disponibilidad, el horario y cualquier costo de entrega. JUÁCIL no gestiona el transporte.</p>
+              </details>
+              <details className={styles.question}>
+                <summary>¿Por qué el carrito reúne productos de una sola tienda?</summary>
+                <p>Cada pedido corresponde a una tienda. Si agregas productos de otra, JUÁCIL te pedirá confirmar el reemplazo del carrito.</p>
+              </details>
+              <details className={styles.question}>
+                <summary>¿Dónde consulto mi pedido?</summary>
+                <p>En “Mis pedidos” puedes consultar el estado, los productos y los datos de coordinación de cada compra.</p>
+                <Link className={styles.contextLink} to={ROUTES.CUSTOMER_ORDERS}>Ver mis pedidos <ArrowRight size={16} aria-hidden="true" /></Link>
+              </details>
+            </section>
+            <section aria-labelledby="help-business">
+              <h2 id="help-business" className={styles.groupTitle}>Tu negocio</h2>
+              <details className={styles.question}>
+                <summary>¿Qué necesito para registrar mi negocio?</summary>
+                <p>Completa el nombre, rubro, ubicación y descripción del negocio, junto con el nombre del responsable, su correo y WhatsApp de contacto. El RUC es opcional. Después podrás agregar tus productos desde el panel.</p>
+                <p>El registro crea un negocio demo en tu navegador; no realiza trámites de formalización.</p>
+                <Link className={styles.contextLink} to={ROUTES.REGISTER_BUSINESS}>Registrar mi negocio <ArrowRight size={16} aria-hidden="true" /></Link>
+              </details>
+            </section>
           </div>
         ) : (
-          <div style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', padding: '32px', boxShadow: 'var(--shadow-sm)' }}>
-            <div style={{ marginBottom: '24px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--color-primary-700)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                INSTRUMENTO OFICIAL DEL INFORME (CAPÍTULO III)
-              </span>
-              <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-primary-950)', marginTop: '4px' }}>
-                Encuesta de Validación de Usabilidad y Utilidad
-              </h2>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '13px', marginTop: '4px' }}>
-                Alineado con el instrumento de recojo de información del informe de avance del proyecto JUÁCIL.
-              </p>
+          <div className={styles.survey} id="encuesta">
+            <div className={styles.surveyIntro}>
+              <h2 className={styles.groupTitle}>Cuéntanos cómo te fue</h2>
+              <p>Responde estas 10 preguntas después de probar JUÁCIL.</p>
+              <p className={styles.demoNote}>Esta encuesta es demostrativa. Las respuestas permanecen mientras esta página siga abierta; no se envían a un equipo ni se guardan al recargar.</p>
+              <p className={styles.sourceNote}>Cuestionario de evaluación del proyecto JUÁCIL.</p>
             </div>
-
             {isSurveySubmitted ? (
-              <div style={{ textAlign: 'center', padding: '32px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                <CheckCircle2 size={48} color="var(--color-success)" />
-                <h3 style={{ fontSize: '20px', fontWeight: 800 }}>¡Gracias por validar JUÁCIL!</h3>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '14px', maxWidth: '480px' }}>
-                  Tus respuestas han sido procesadas en la evaluación de calidad en uso (ISO/IEC 25019).
-                  La puntuación media estimada de satisfacción es de <strong>4.8 / 5.0</strong>.
-                </p>
-                <Button variant="outline" onClick={() => setIsSurveySubmitted(false)}>
-                  Modificar Respuestas
-                </Button>
+              <div className={styles.result}>
+                <CheckCircle2 size={32} className={styles.successIcon} aria-hidden="true" />
+                <h3 ref={resultRef} tabIndex={-1} className={styles.resultTitle}>Terminaste la encuesta demo</h3>
+                <p>Puedes revisar tus respuestas mientras esta página siga abierta. No se enviaron ni se guardan al recargar.</p>
+                <div className={styles.resultActions}>
+                  <Button type="button" onClick={() => {
+                    setIsSurveySubmitted(false);
+                    requestAnimationFrame(() => formRef.current?.querySelector<HTMLInputElement>('input')?.focus());
+                  }}>Revisar mis respuestas</Button>
+                  <Button type="button" variant="outline" onClick={() => setActiveTab('faq')}>Volver a preguntas frecuentes</Button>
+                </div>
               </div>
             ) : (
-              <form onSubmit={handleSurveySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                {/* Pregunta 1 */}
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
-                    1. ¿Qué tan útil considera JUÁCIL para las MYPES?
-                  </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {['Muy útil', 'Útil', 'Regular', 'Poco útil', 'Nada útil'].map((opt) => (
-                      <Button
-                        key={opt}
-                        type="button"
-                        size="sm"
-                        variant={answers.q1 === opt ? 'primary' : 'outline'}
-                        onClick={() => handleSelect('q1', opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pregunta 2 */}
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
-                    2. ¿Qué tan clara le parece la presentación de los productos?
-                  </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {['Muy clara', 'Clara', 'Regular', 'Poco clara', 'Nada clara'].map((opt) => (
-                      <Button
-                        key={opt}
-                        type="button"
-                        size="sm"
-                        variant={answers.q2 === opt ? 'primary' : 'outline'}
-                        onClick={() => handleSelect('q2', opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pregunta 3 */}
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
-                    3. ¿Qué tan fácil considera encontrar información como precio, fotografía y características?
-                  </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {['Muy fácil', 'Fácil', 'Regular', 'Difícil', 'Muy difícil'].map((opt) => (
-                      <Button
-                        key={opt}
-                        type="button"
-                        size="sm"
-                        variant={answers.q3 === opt ? 'primary' : 'outline'}
-                        onClick={() => handleSelect('q3', opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pregunta 4 */}
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
-                    4. ¿Considera que JUÁCIL facilitaría la comunicación entre el cliente y la MYPE?
-                  </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {['Sí, bastante', 'Sí, un poco', 'No estoy seguro(a)', 'Poco', 'No'].map((opt) => (
-                      <Button
-                        key={opt}
-                        type="button"
-                        size="sm"
-                        variant={answers.q4 === opt ? 'primary' : 'outline'}
-                        onClick={() => handleSelect('q4', opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pregunta 5 */}
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
-                    5. ¿Qué tan sencillo considera el proceso para realizar un pedido?
-                  </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {['Muy sencillo', 'Sencillo', 'Regular', 'Difícil', 'Muy difícil'].map((opt) => (
-                      <Button
-                        key={opt}
-                        type="button"
-                        size="sm"
-                        variant={answers.q5 === opt ? 'primary' : 'outline'}
-                        onClick={() => handleSelect('q5', opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pregunta 6 */}
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
-                    6. ¿Considera que JUÁCIL ayudaría a una MYPE a llegar a más clientes?
-                  </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {['Sí, bastante', 'Sí, en cierta medida', 'No estoy seguro(a)', 'Poco', 'No'].map((opt) => (
-                      <Button
-                        key={opt}
-                        type="button"
-                        size="sm"
-                        variant={answers.q6 === opt ? 'primary' : 'outline'}
-                        onClick={() => handleSelect('q6', opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pregunta 7 */}
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
-                    7. ¿Qué tan fácil considera utilizar JUÁCIL desde un celular?
-                  </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {['Muy fácil', 'Fácil', 'Regular', 'Difícil', 'Muy difícil'].map((opt) => (
-                      <Button
-                        key={opt}
-                        type="button"
-                        size="sm"
-                        variant={answers.q7 === opt ? 'primary' : 'outline'}
-                        onClick={() => handleSelect('q7', opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pregunta 8 */}
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
-                    8. ¿Considera que JUÁCIL facilitaría la digitalización de las ventas de las MYPES?
-                  </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {['Totalmente de acuerdo', 'De acuerdo', 'Ni de acuerdo ni en desacuerdo', 'En desacuerdo', 'Totalmente en desacuerdo'].map((opt) => (
-                      <Button
-                        key={opt}
-                        type="button"
-                        size="sm"
-                        variant={answers.q8 === opt ? 'primary' : 'outline'}
-                        onClick={() => handleSelect('q8', opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pregunta 9 */}
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
-                    9. Después de conocer JUÁCIL, ¿qué tan dispuesto(a) estaría a utilizarlo?
-                  </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {['Muy dispuesto(a)', 'Dispuesto(a)', 'Indeciso(a)', 'Poco dispuesto(a)', 'Nada dispuesto(a)'].map((opt) => (
-                      <Button
-                        key={opt}
-                        type="button"
-                        size="sm"
-                        variant={answers.q9 === opt ? 'primary' : 'outline'}
-                        onClick={() => handleSelect('q9', opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pregunta 10 */}
-                <div>
-                  <label style={{ fontSize: '14px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>
-                    10. ¿Qué aspecto considera que debería mejorarse principalmente?
-                  </label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {['Diseño y presentación', 'Facilidad de uso', 'Información de los productos', 'Proceso de pedidos', 'Comunicación con el vendedor'].map((opt) => (
-                      <Button
-                        key={opt}
-                        type="button"
-                        size="sm"
-                        variant={answers.q10 === opt ? 'accent' : 'outline'}
-                        onClick={() => handleSelect('q10', opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                <div style={{ borderTop: '1px solid var(--color-border-subtle)', paddingTop: '20px' }}>
-                  <Button type="submit" size="lg" variant="accent" rightIcon={<ArrowRight size={18} />}>
-                    Enviar Evaluación de Validación
-                  </Button>
+              <form ref={formRef} onSubmit={handleSurveySubmit} noValidate className={styles.surveyForm}>
+                <p className={styles.progress}>{surveyQuestions.length - missingQuestions.length} de 10 preguntas respondidas</p>
+                {surveyQuestions.map((question, index) => (
+                  <fieldset key={question.key} className={styles.surveyQuestion}>
+                    <legend>{index + 1}. {question.title}</legend>
+                    <div className={styles.options}>
+                      {question.options.map((option) => (
+                        <label key={option} className={styles.option}>
+                          <input type="radio" name={question.key} value={option}
+                            checked={answers[question.key] === option}
+                            onChange={() => handleSelect(question.key, option)}
+                            required
+                            aria-invalid={showErrors && !answers[question.key]}
+                            aria-describedby={showErrors && !answers[question.key] ? question.key + '-error' : undefined} />
+                          <span>{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {showErrors && !answers[question.key] && <p id={question.key + '-error'} className={styles.fieldError}>Selecciona una respuesta.</p>}
+                  </fieldset>
+                ))}
+                <div className={styles.submitArea}>
+                  {showErrors && missingQuestions.length > 0 && (
+                    <Alert variant="danger">Te {missingQuestions.length === 1 ? 'falta 1 pregunta' : 'faltan ' + missingQuestions.length + ' preguntas'} por responder.</Alert>
+                  )}
+                  <Button type="submit" size="lg" variant="accent" className={styles.submitButton} rightIcon={<ArrowRight size={18} />}>Finalizar encuesta demo</Button>
                 </div>
               </form>
             )}
           </div>
         )}
+        </section>
       </div>
     </div>
   );

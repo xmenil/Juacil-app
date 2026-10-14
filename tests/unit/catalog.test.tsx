@@ -6,20 +6,22 @@ import { AppProviders } from '@/app/providers/AppProviders';
 import { CatalogPage } from '@/pages/catalog/CatalogPage';
 import { getPublicCatalog, readPriceRange } from '@/pages/catalog/catalogModel';
 import { LocalStoreRepository } from '@/shared/lib/storage';
-import { CartDrawer } from '@/features/cart/CartDrawer';
+import { useCart } from '@/app/providers/CartProvider';
 import { ReplaceCartModal } from '@/features/cart/ReplaceCartModal';
 import { CATEGORIES } from '@/shared/config/constants';
 
 function RouteObserver() {
   const location = useLocation(); const navigate = useNavigate();
-  return <><output aria-label="Ruta actual">{location.pathname}{location.search}</output><button onClick={() => navigate(-1)}>Volver en historial</button></>;
+  const { itemCount } = useCart();
+  return <><output aria-label="Ruta actual">{location.pathname}{location.search}</output><output aria-label="Unidades en carrito">{itemCount}</output><button onClick={() => navigate(-1)}>Volver en historial</button></>;
 }
 function mount(path = '/catalogo') {
   render(<MemoryRouter initialEntries={[path]}><AppProviders><RouteObserver /><Routes>
     <Route path="/catalogo" element={<CatalogPage />} />
     <Route path="/productos/:id" element={<h1>Detalle de producto</h1>} />
     <Route path="/tiendas/:id" element={<h1>Detalle de tienda</h1>} />
-  </Routes><CartDrawer /><ReplaceCartModal /></AppProviders></MemoryRouter>);
+    <Route path="/carrito" element={<h1>Tu carrito</h1>} />
+  </Routes><ReplaceCartModal /></AppProviders></MemoryRouter>);
   return userEvent.setup();
 }
 function publicData() { return getPublicCatalog(LocalStoreRepository.getProducts(true), LocalStoreRepository.getBusinesses()); }
@@ -114,12 +116,21 @@ describe('Catálogo de JUÁCIL', () => {
     expect(screen.getByRole('heading', { name: 'Catálogo de productos' })).toBeInTheDocument();
   });
 
-  it('la tarjeta agrega al carrito y abre la bandeja sin navegar al producto', async () => {
-    const product = publicData().products.find(product => product.stock > 0)!;
+  it('confirma el agregado y actualiza unidades sin navegar ni expandir la tarjeta', async () => {
+    const product = publicData().products.find(product => product.stock >= 2)!;
     const user = mount(); await user.click(screen.getByRole('button', { name: `Agregar ${product.name} al carrito` }));
-    expect(screen.getByRole('dialog', { name: 'Tu carrito' })).toBeInTheDocument();
+    const card = screen.getByRole('heading', { name: product.name }).closest('article')!;
+    expect(within(card).getByRole('status')).toHaveTextContent(`${product.name} agregado al carrito.`);
+    expect(within(card).getByRole('status')).toHaveClass('sr-only');
+    expect(within(card).queryByRole('link', { name: 'Ver carrito' })).not.toBeInTheDocument();
+    expect(within(card).getByText('Agregado')).toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Unidades en carrito')).toHaveTextContent('1');
     expect(screen.getByLabelText('Ruta actual')).toHaveTextContent('/catalogo');
     expect(JSON.parse(localStorage.getItem('juacil_cart_store_v1.0')!).items[0].productId).toBe(product.id);
+    await user.click(within(card).getByRole('button', { name: `Agregar ${product.name} al carrito` }));
+    expect(screen.getByLabelText('Unidades en carrito')).toHaveTextContent('2');
+    expect(screen.getByLabelText('Ruta actual')).toHaveTextContent('/catalogo');
   });
 
   it('comprueba disponibilidad vigente antes de agregar y usa un fallback local de imagen', async () => {

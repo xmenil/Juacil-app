@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { formatMoney } from '@/shared/lib/money';
@@ -29,12 +29,18 @@ export const ProductDetailPage: React.FC = () => {
 
   const [quantity, setQuantity] = useState(1);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [cartMessage, setCartMessage] = useState('');
+  const [added, setAdded] = useState(false);
+  const addedTimeout = useRef<number | null>(null);
 
   // Subir el scroll automáticamente cuando cambia el producto visto
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setQuantity(1);
     setErrorMessage(null);
+    setCartMessage('');
+    setAdded(false);
+    return () => { if (addedTimeout.current !== null) window.clearTimeout(addedTimeout.current); };
   }, [id]);
 
   const product = id ? LocalStoreRepository.getProductById(id) : undefined;
@@ -106,16 +112,22 @@ export const ProductDetailPage: React.FC = () => {
   };
 
   const handleAddToCart = () => {
+    if (addedTimeout.current !== null) window.clearTimeout(addedTimeout.current);
+    setAdded(false);
+    setCartMessage('');
     setErrorMessage(null);
     const result = addItem(product, quantity);
     if (result.success) {
-      navigate(ROUTES.CART);
+      setAdded(true);
+      setCartMessage(`${quantity} ${quantity === 1 ? 'unidad agregada' : 'unidades agregadas'} al carrito: ${product.name}.`);
+      addedTimeout.current = window.setTimeout(() => setAdded(false), 2500);
     } else if (result.error) {
       setErrorMessage(result.error);
     }
   };
 
   const handleBuyNow = () => {
+    setCartMessage('');
     setErrorMessage(null);
     const result = addItem(product, quantity);
     if (result.success) {
@@ -238,10 +250,10 @@ export const ProductDetailPage: React.FC = () => {
                       style={{ flex: 1, minWidth: '150px' }}
                       size="lg"
                       variant="outline"
-                      leftIcon={<ShoppingCart size={18} />}
+                      leftIcon={added ? <CheckCircle2 size={18} /> : <ShoppingCart size={18} />}
                       onClick={handleAddToCart}
                     >
-                      Al Carrito
+                      {added ? 'Agregado' : 'Agregar al carrito'}
                     </Button>
 
                     <Button
@@ -253,6 +265,8 @@ export const ProductDetailPage: React.FC = () => {
                       Comprar Ahora
                     </Button>
                   </div>
+                  <p className={styles.cartFeedback} role="status" aria-atomic="true">{cartMessage}</p>
+                  {cartMessage && <Link className={styles.cartFeedbackLink} to={ROUTES.CART}>Ver carrito</Link>}
                 </>
               ) : (
                 <div style={{ padding: '8px 0', color: 'var(--color-text-muted)', fontSize: '14px' }}>

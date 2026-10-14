@@ -25,8 +25,7 @@
 .add svg, .added svg { flex-shrink: 0; }
 .added { background: var(--color-success-bg); color: var(--color-success-text); border-color: var(--color-success); }
 .add:disabled { background: var(--color-surface-subtle); color: var(--color-text-muted); border-color: var(--color-border); cursor: not-allowed; }
-.feedback, .error { font-size: var(--text-xs); line-height: 1.5; }
-.feedback { color: var(--color-success-text); } .error { color: var(--color-danger); }
+.error { font-size: var(--text-xs); line-height: 1.5; color: var(--color-danger); }
 @media (max-width: 640px) {
   .card { border-radius: var(--radius-sm); }
   .favorite, .favoriteActive { width: 32px; height: 32px; top: 6px; right: 6px; }

@@ -7,7 +7,6 @@ import { useCart } from '@/app/providers/CartProvider';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useConnectivity } from '@/app/providers/ConnectivityProvider';
 import { CartPage } from '@/pages/cart/CartPage';
-import { CartDrawer } from '@/features/cart/CartDrawer';
 import { ReplaceCartModal } from '@/features/cart/ReplaceCartModal';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { formatMoney } from '@/shared/lib/money';
@@ -24,11 +23,11 @@ function seedCart(quantity = 2) {
   localStorage.setItem(cartKey, JSON.stringify(cart));
 }
 function Controls() {
-  const { openDrawer, addItem } = useCart();
+  const { addItem } = useCart();
   const { logout } = useSession();
   const { toggleSimulatedOffline } = useConnectivity();
   const location = useLocation();
-  return <><button onClick={openDrawer}>Abrir carrito</button><button onClick={logout}>Salir del perfil</button><button onClick={toggleSimulatedOffline}>Simular offline</button>
+  return <><button onClick={logout}>Salir del perfil</button><button onClick={toggleSimulatedOffline}>Simular offline</button>
     <button onClick={() => addItem(LocalStoreRepository.getProducts().find(p => p.businessId !== product.businessId && p.stock > 0)!)}>Agregar otra tienda</button>
     <output aria-label="Ruta actual">{location.pathname}{location.search}</output></>;
 }
@@ -40,7 +39,7 @@ function mount(path = '/carrito') {
     <Route path="/catalogo" element={<h1>Catálogo</h1>} />
     <Route path="/productos/:id" element={<h1>Detalle de producto</h1>} />
     <Route path="/tiendas/:id" element={<h1>Detalle de tienda</h1>} />
-  </Routes><CartDrawer /><ReplaceCartModal /></AppProviders></MemoryRouter>);
+  </Routes><ReplaceCartModal /></AppProviders></MemoryRouter>);
   return userEvent.setup();
 }
 function storedCart(): Cart { return JSON.parse(localStorage.getItem(cartKey)!); }
@@ -116,24 +115,23 @@ describe('Recorridos del carrito', () => {
     expect(screen.getByRole('heading', { name: 'Confirmar pedido' })).toBeInTheDocument();
   });
 
-  it('la bandeja gestiona foco y Escape sin perder el carrito', async () => {
-    seedCart(); const user = mount(); const trigger = screen.getByRole('button', { name: 'Abrir carrito' });
+  it('la confirmación de vaciado gestiona foco y Escape sin perder el carrito', async () => {
+    seedCart(); const user = mount(); const trigger = screen.getByRole('button', { name: 'Vaciar carrito' });
     await user.click(trigger);
-    const dialog = screen.getByRole('dialog', { name: 'Tu carrito' });
+    const dialog = screen.getByRole('dialog');
     expect(within(dialog).getByRole('button', { name: 'Cerrar ventana emergente' })).toHaveFocus();
-    within(dialog).getByRole('button', { name: 'Ver carrito completo' }).focus();
+    within(dialog).getByRole('button', { name: 'Vaciar carrito' }).focus();
     await user.tab(); expect(within(dialog).getByRole('button', { name: 'Cerrar ventana emergente' })).toHaveFocus();
     await user.keyboard('{Escape}'); expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(trigger).toHaveFocus(); expect(storedCart().items).toHaveLength(1);
   });
 
-  it('la bandeja vacía solo después de confirmar y sigue abierta para explorar', async () => {
-    seedCart(); const user = mount(); await user.click(screen.getByRole('button', { name: 'Abrir carrito' }));
-    await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Vaciar carrito' }));
+  it('vacía solo después de confirmar y permite explorar desde la página vacía', async () => {
+    seedCart(); const user = mount(); await user.click(screen.getByRole('button', { name: 'Vaciar carrito' }));
     expect(storedCart().items).toHaveLength(1);
     await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Vaciar carrito' }));
-    expect(within(screen.getByRole('dialog')).getByRole('heading', { name: 'Tu carrito está vacío' })).toBeInTheDocument();
-    await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Explorar productos' }));
+    expect(screen.getByRole('heading', { name: 'Tu carrito está vacío' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Explorar productos' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Catálogo' })).toBeInTheDocument();
   });
@@ -148,7 +146,8 @@ describe('Recorridos del carrito', () => {
     await user.click(screen.getByRole('button', { name: 'Cambiar de tienda' }));
     expect(storedCart().businessId).not.toBe(originalBusiness);
     expect(storedCart().items).toHaveLength(1);
-    expect(screen.getByRole('dialog', { name: 'Tu carrito' })).toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Ruta actual')).toHaveTextContent('/carrito');
   });
 
   it('no reemplaza el carrito si el producto nuevo se agota antes de confirmar', async () => {

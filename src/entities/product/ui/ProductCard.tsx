@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import type { Product } from '../model/types';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { formatMoney } from '@/shared/lib/money';
@@ -11,7 +11,6 @@ import styles from './ProductCard.module.css';
 export interface ProductCardProps { product: Product; }
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
-  const navigate = useNavigate();
   const titleId = useId();
   const [favorite, setFavorite] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
@@ -23,6 +22,8 @@ export function ProductCard({ product }: ProductCardProps) {
   const unavailable = product.stock <= 0 || product.status !== 'published' || !business || (business.status && business.status !== 'active');
   const add = () => {
     if (timeout.current !== null) window.clearTimeout(timeout.current);
+    setAdded(false);
+    setMessage({ text: '', error: false });
     const fresh = LocalStoreRepository.getProductById(product.id);
     const freshBusiness = LocalStoreRepository.getBusinessById(product.businessId);
     if (!fresh || fresh.status !== 'published' || !freshBusiness || (freshBusiness.status && freshBusiness.status !== 'active')) {
@@ -30,7 +31,9 @@ export function ProductCard({ product }: ProductCardProps) {
     }
     const result = addItem(fresh);
     if (result.success) {
-      navigate(ROUTES.CART);
+      setAdded(true);
+      setMessage({ text: `${product.name} agregado al carrito.`, error: false });
+      timeout.current = window.setTimeout(() => setAdded(false), 2500);
     } else {
       setAdded(false);
       setMessage({ text: result.error || '', error: true });
@@ -54,7 +57,8 @@ export function ProductCard({ product }: ProductCardProps) {
           {added ? <Check size={16} aria-hidden="true" /> : <ShoppingCart size={15} aria-hidden="true" />}<span>{added ? 'Agregado' : product.stock <= 0 ? 'Agotado' : unavailable ? 'No disponible' : 'Agregar'}</span>
         </button>
       </div>
-      {message.text && <p className={message.error ? styles.error : styles.feedback} role={message.error ? 'alert' : 'status'}>{message.text}</p>}
+      <p className="sr-only" role="status" aria-atomic="true">{message.error ? '' : message.text}</p>
+      {message.error && message.text && <p className={styles.error} role="alert">{message.text}</p>}
     </div>
   </article>;
 }
