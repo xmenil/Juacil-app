@@ -203,6 +203,12 @@ export const CheckoutPage: React.FC = () => {
       return;
     }
 
+    if (!currentUser) {
+      setSubmissionError('Debes iniciar sesión con tu cuenta de JUÁCIL para poder confirmar y realizar una compra.');
+      navigate(`${ROUTES.LOGIN}?redirect=${encodeURIComponent(ROUTES.CHECKOUT)}`);
+      return;
+    }
+
     if (!cart.businessId) return;
 
     // Prevención de doble clic y reserva única (P05)
@@ -213,7 +219,7 @@ export const CheckoutPage: React.FC = () => {
     setTimeout(() => {
       const result = LocalStoreRepository.createOrder({
         businessId: cart.businessId!,
-        customerId: currentUser ? currentUser.id : 'guest-client',
+        customerId: currentUser.id,
         customerName: values.customerName,
         customerPhone: values.customerPhone,
         deliveryType: values.deliveryType,

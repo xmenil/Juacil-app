@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   ShoppingBag,
   Search,
@@ -46,6 +46,16 @@ export const Navbar: React.FC = () => {
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const searchParams = new URLSearchParams(location.search);
+  const isInicioActive = location.pathname === ROUTES.HOME;
+  const isOfertasActive = location.pathname === ROUTES.CATALOG && searchParams.get('ofertas') === 'true';
+  const isTiendasActive = (location.pathname === ROUTES.CATALOG && searchParams.get('filtro') === 'tiendas') || location.pathname.startsWith('/tiendas');
+  const isProductosActive = location.pathname === ROUTES.CATALOG && !isOfertasActive && !isTiendasActive;
+  const isCategoriasActive = Boolean(searchParams.get('categoria'));
+  const isLugaresActive = Boolean(searchParams.get('ubicacion'));
+  const isAyudaActive = location.pathname === ROUTES.HELP;
 
   const handleCategoriesMouseEnter = () => {
     if (dropdownTimeoutRef.current) {
@@ -505,15 +515,12 @@ export const Navbar: React.FC = () => {
         <div className={styles.subNavBar}>
           <div className={`container ${styles.subNavInner}`}>
             <nav className={styles.categoryLinksList} aria-label="Categorías principales">
-              <NavLink
+              <Link
                 to={ROUTES.HOME}
-                className={({ isActive }) =>
-                  [styles.categoryLink, isActive ? styles.categoryLinkActive : ''].join(' ')
-                }
-                end
+                className={`${styles.categoryLink} ${isInicioActive ? styles.categoryLinkActive : ''}`}
               >
                 Inicio
-              </NavLink>
+              </Link>
 
               {/* Menú Desplegable de Categorías estilo Mercado Libre (hover dropdown vertical) */}
               <div
@@ -523,7 +530,7 @@ export const Navbar: React.FC = () => {
               >
                 <button
                   type="button"
-                  className={`${styles.categoriesNavButton} ${categoriesDropdownOpen ? styles.categoriesNavButtonActive : ''}`}
+                  className={`${styles.categoriesNavButton} ${categoriesDropdownOpen ? styles.categoriesNavButtonActive : ''} ${isCategoriasActive ? styles.categoriesNavButtonHighlighted : ''}`}
                   onClick={() => setCategoriesDropdownOpen((prev) => !prev)}
                   aria-expanded={categoriesDropdownOpen}
                   aria-haspopup="true"
@@ -568,29 +575,26 @@ export const Navbar: React.FC = () => {
                 )}
               </div>
 
-              <NavLink
+              <Link
                 to={`${ROUTES.CATALOG}?ofertas=true`}
-                className={styles.categoryLink}
+                className={`${styles.categoryLink} ${isOfertasActive ? styles.categoryLinkActive : ''}`}
               >
                 <Tag size={14} /> Ofertas
-              </NavLink>
+              </Link>
 
-              <NavLink
+              <Link
                 to={ROUTES.CATALOG}
-                className={({ isActive }) =>
-                  [styles.categoryLink, isActive ? styles.categoryLinkActive : ''].join(' ')
-                }
-                end
+                className={`${styles.categoryLink} ${isProductosActive ? styles.categoryLinkActive : ''}`}
               >
                 <Package size={14} /> Productos
-              </NavLink>
+              </Link>
 
-              <NavLink
+              <Link
                 to={`${ROUTES.CATALOG}?filtro=tiendas`}
-                className={styles.categoryLink}
+                className={`${styles.categoryLink} ${isTiendasActive ? styles.categoryLinkActive : ''}`}
               >
                 <Store size={14} /> Tiendas & MYPES
-              </NavLink>
+              </Link>
 
               {/* Menú Desplegable de Lugares / Zonas estilo Mercado Libre (hover dropdown vertical de fondo negro) */}
               <div
@@ -600,13 +604,13 @@ export const Navbar: React.FC = () => {
               >
                 <button
                   type="button"
-                  className={`${styles.categoriesNavButton} ${locationsDropdownOpen ? styles.categoriesNavButtonActive : ''}`}
+                  className={`${styles.categoriesNavButton} ${locationsDropdownOpen ? styles.categoriesNavButtonActive : ''} ${isLugaresActive ? styles.categoriesNavButtonHighlighted : ''}`}
                   onClick={() => setLocationsDropdownOpen((prev) => !prev)}
                   aria-expanded={locationsDropdownOpen}
                   aria-haspopup="true"
                   aria-label="Lugares y Zonas"
                 >
-                  <MapPin size={14} style={{ color: '#16a34a' }} /> Lugares <ChevronDown size={14} className={`${styles.chevronIcon} ${locationsDropdownOpen ? styles.chevronIconRotated : ''}`} />
+                  <MapPin size={14} style={{ color: isLugaresActive ? '#065f46' : '#16a34a' }} /> Lugares <ChevronDown size={14} className={`${styles.chevronIcon} ${locationsDropdownOpen ? styles.chevronIconRotated : ''}`} />
                 </button>
 
                 {locationsDropdownOpen && (
@@ -676,7 +680,7 @@ export const Navbar: React.FC = () => {
                 </>
               )}
 
-              <Link to={ROUTES.HELP} className={styles.subNavLinkRight}>
+              <Link to={ROUTES.HELP} className={`${styles.subNavLinkRight} ${isAyudaActive ? styles.subNavLinkRightActive : ''}`}>
                 Ayuda & Validación
               </Link>
             </div>

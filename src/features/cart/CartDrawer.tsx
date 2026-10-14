@@ -200,6 +200,29 @@ export const CartDrawer: React.FC = () => {
               🛵 El flete o recojo se coordina directamente con el vendedor por WhatsApp.
             </p>
 
+            {!currentUser && (
+              <div
+                style={{
+                  backgroundColor: '#f0fdf4',
+                  border: '1px solid #bbf7d0',
+                  borderRadius: '10px',
+                  padding: '10px 12px',
+                  fontSize: '12px',
+                  color: '#166534',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '8px',
+                  marginBottom: '12px',
+                  lineHeight: 1.4,
+                }}
+              >
+                <Lock size={15} style={{ flexShrink: 0, marginTop: '2px' }} />
+                <span>
+                  <strong>Exploración libre:</strong> Puedes ver todo el catálogo y agregar artículos sin cuenta. Para completar tu orden te pediremos iniciar sesión.
+                </span>
+              </div>
+            )}
+
             <div className={styles.btnGroup}>
               <Button
                 fullWidth
@@ -208,7 +231,7 @@ export const CartDrawer: React.FC = () => {
                 rightIcon={currentUser ? <ArrowRight size={16} /> : <Lock size={16} />}
                 onClick={handleProceedToCheckout}
               >
-                {currentUser ? 'Continuar con el Pedido' : 'Iniciar Sesión para Pedir'}
+                {currentUser ? 'Continuar con el Pedido' : 'Iniciar Sesión y Comprar'}
               </Button>
 
               <Button

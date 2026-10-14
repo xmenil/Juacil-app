@@ -131,3 +131,225 @@
   font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
+
+/* Selector de Vistas / Pestañas Superiores (Productos vs Tiendas & MYPES) */
+.sectionTabsContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.sectionTab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  border: 1.5px solid #d1d5db;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sectionTab:hover {
+  border-color: #135d38;
+  color: #135d38;
+  background-color: #f0fdf4;
+  transform: translateY(-1px);
+}
+
+.sectionTabActive {
+  background: linear-gradient(135deg, #135d38 0%, #166534 100%) !important;
+  color: #ffffff !important;
+  border-color: #135d38 !important;
+  box-shadow: 0 4px 12px rgba(19, 93, 56, 0.28);
+  transform: translateY(-1px);
+}
+
+.sectionTabActive svg {
+  stroke: #ffffff;
+}
+
+.tabBadge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.sectionTabActive .tabBadge {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Grilla y Tarjetas de Tiendas / Directorio MYPE */
+.storesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: var(--space-6);
+}
+
+.storeCard {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.22s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.storeCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  border-color: #86efac;
+}
+
+.storeCardBannerWrapper {
+  position: relative;
+  height: 120px;
+  background-color: #1e293b;
+  overflow: hidden;
+}
+
+.storeCardBanner {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.92;
+  transition: transform 0.3s ease;
+}
+
+.storeCard:hover .storeCardBanner {
+  transform: scale(1.04);
+}
+
+.storeCardLocationBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.storeCardBody {
+  padding: 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.storeCardLogoWrapper {
+  margin-top: -32px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.storeCardLogo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  background-color: #ffffff;
+  object-fit: cover;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.storeCategoryPill {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.storeCardTitle {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+
+.storeCardDesc {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0 0 14px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.storeCardMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: #475569;
+  background-color: #f8fafc;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.storeCardMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.storeCardActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.storeCardWhatsAppBtn {
+  width: 42px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: #25d366;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+.storeCardWhatsAppBtn:hover {
+  background-color: #1ebd5a;
+  transform: scale(1.05);
+}
+
