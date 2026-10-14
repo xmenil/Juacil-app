@@ -1,3 +1,5 @@
+import { AuthLayout } from './AuthLayout';
+import styles from './Auth.module.css';
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -52,63 +54,20 @@ export const RegisterCustomerPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '48px 0 64px' }}>
-      <div className="container" style={{ maxWidth: '540px' }}>
-        <div style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '20px', padding: '36px', boxShadow: 'var(--shadow-md)' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, textAlign: 'center', marginBottom: '8px' }}>
-            Registro de Comprador
-          </h1>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '14px', textAlign: 'center', marginBottom: '24px' }}>
-            Crea tu cuenta para comprar y dar seguimiento a tus pedidos de la Selva Central.
-          </p>
-
-          <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <Input
-              label="Nombre Completo"
-              isRequired
-              placeholder="Ej. Ana Belén Flores"
-              error={errors.name?.message}
-              {...register('name')}
-            />
-
-            <Input
-              label="Correo Electrónico"
-              isRequired
-              type="email"
-              placeholder="ana@ejemplo.pe"
-              error={errors.email?.message}
-              {...register('email')}
-            />
-
-            <Input
-              label="Celular de Contacto"
-              isRequired
-              placeholder="Ej. 987123456"
-              error={errors.phone?.message}
-              {...register('phone')}
-            />
-
-            <Input
-              label="Dirección o Ciudad de Entrega"
-              isRequired
-              placeholder="Ej. Jr. Las Orquídeas 120, Chanchamayo"
-              error={errors.address?.message}
-              {...register('address')}
-            />
-
-            <Button type="submit" size="lg" variant="primary" isLoading={isSubmitting} style={{ marginTop: '8px' }}>
-              Crear Cuenta de Comprador
-            </Button>
-          </form>
-
-          <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px' }}>
-            <span style={{ color: 'var(--color-text-muted)' }}>¿Ya tienes cuenta? </span>
-            <Link to={ROUTES.LOGIN} style={{ color: 'var(--color-primary-800)', fontWeight: 700 }}>
-              Ingresa aquí
-            </Link>
-          </div>
-        </div>
+    <AuthLayout title="Tu próxima compra empieza aquí." description="Crea tu cuenta para comprar a negocios de la Selva y consultar tus pedidos.">
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form} noValidate>
+        <Input label="Nombre completo" isRequired autoComplete="name" placeholder="Ej. Ana Belén Flores" error={errors.name?.message} {...register('name')} />
+        <Input label="Correo electrónico" isRequired type="email" autoComplete="email" placeholder="ana@ejemplo.pe" error={errors.email?.message} {...register('email')} />
+        <Input label="Celular de contacto" isRequired type="tel" inputMode="tel" autoComplete="tel-national" maxLength={9} placeholder="Ej. 987123456" helperText="Un celular peruano de 9 dígitos." error={errors.phone?.message} {...register('phone')} />
+        <Input label="Dirección o ciudad de entrega" isRequired autoComplete="street-address" placeholder="Ej. Jr. Las Orquídeas 120, Chanchamayo" error={errors.address?.message} {...register('address')} />
+        <p className={styles.note}>Tu cuenta se crea en esta demostración y se guarda en este navegador. No necesitas configurar una contraseña.</p>
+        <Button type="submit" size="lg" fullWidth isLoading={isSubmitting}>Crear mi cuenta</Button>
+      </form>
+      <div className={styles.switch}>
+        <p>¿Ya tienes cuenta? <Link to={ROUTES.LOGIN} className={styles.link}>Iniciar sesión</Link></p>
+        <p>¿Quieres vender tus productos? <Link to={ROUTES.REGISTER_BUSINESS} className={styles.link}>Registrar mi negocio</Link></p>
       </div>
-    </div>
+    </AuthLayout>
   );
 };
+

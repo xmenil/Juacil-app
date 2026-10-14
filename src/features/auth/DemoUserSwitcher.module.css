@@ -17,6 +17,8 @@
   align-items: center;
   gap: var(--space-3);
   flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .tag {
@@ -31,18 +33,30 @@
 }
 
 .userSelect {
-  background-color: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color-scheme: light;
+  background-color: #ffffff;
+  color: #143d2b;
+  border: 1px solid #bbd8c7;
   border-radius: var(--radius-sm);
-  padding: 2px var(--space-2);
-  font-size: var(--text-xs);
+  padding: 6px var(--space-2);
+  font-size: 13px;
+  min-height: 34px;
+  width: 360px;
+  max-width: 100%;
   cursor: pointer;
   outline: none;
 }
 
-.userSelect:focus {
+.userSelect option,
+.userSelect optgroup {
+  background-color: #ffffff;
+  color: #143d2b;
+}
+
+.userSelect:focus-visible {
   border-color: var(--color-accent-lime);
+  outline: 2px solid var(--color-accent-lime);
+  outline-offset: 2px;
 }
 
 .rightGroup {
