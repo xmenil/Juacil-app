@@ -11,7 +11,7 @@ export const MOCK_BUSINESSES: Business[] = [
     ruc: '20608912345',
     logoUrl: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=200&q=80',
     bannerUrl: 'https://images.unsplash.com/photo-1614088685112-0a760b71a3c8?auto=format&fit=crop&w=1200&q=80',
-    ownerId: 'user-merchant-02',
+    ownerId: 'user-merchant-01',
     onboardingStep: 4,
     createdAt: '2026-01-15T08:00:00.000Z',
     status: 'active',
@@ -43,7 +43,7 @@ export const MOCK_BUSINESSES: Business[] = [
     ruc: '', // Emprendimiento local en formalización asistida
     logoUrl: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=200&q=80',
     bannerUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80',
-    ownerId: 'user-merchant-03',
+    ownerId: 'user-merchant-01',
     onboardingStep: 3,
     createdAt: '2026-03-01T11:00:00.000Z',
     status: 'pending', // Tienda en revisión por el Super Admin
@@ -75,7 +75,7 @@ export const MOCK_BUSINESSES: Business[] = [
     ruc: '20609876543',
     logoUrl: '/images/hero-cart-groceries.jpg',
     bannerUrl: '/images/hero-stacked-goods.jpg',
-    ownerId: 'user-merchant-02',
+    ownerId: 'user-merchant-01',
     onboardingStep: 4,
     createdAt: '2026-03-12T10:00:00.000Z',
     status: 'active',

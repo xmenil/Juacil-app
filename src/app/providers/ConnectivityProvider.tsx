@@ -49,7 +49,11 @@ export const ConnectivityProvider: React.FC<{ children: React.ReactNode }> = ({ 
 export function useConnectivity(): ConnectivityContextType {
   const context = useContext(ConnectivityContext);
   if (!context) {
-    throw new Error('useConnectivity debe usarse dentro de ConnectivityProvider');
+    return {
+      isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
+      isSimulatedOffline: false,
+      toggleSimulatedOffline: () => {},
+    };
   }
   return context;
 }

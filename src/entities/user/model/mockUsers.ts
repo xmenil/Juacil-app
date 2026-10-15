@@ -1,7 +1,7 @@
 import { User } from './types';
 
 export const MOCK_USERS: User[] = [
-  // Super Administrador JUÁCIL
+  // 1. Super Administrador JUÁCIL
   {
     id: 'user-admin-01',
     name: 'Admin General JUÁCIL',
@@ -16,35 +16,7 @@ export const MOCK_USERS: User[] = [
     createdAt: '2026-01-01T08:00:00.000Z',
   },
 
-  // Clientes Demo
-  {
-    id: 'user-client-01',
-    name: 'Lucía Ramos Córdova',
-    email: 'lucia.ramos@ejemplo.pe',
-    role: 'cliente',
-    phone: '984512301',
-    address: 'Av. Tito Jaime 320, Tingo María (Centro)',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-    status: 'active',
-    dni: '72391048',
-    zone: 'Tingo María (Centro)',
-    createdAt: '2026-01-10T09:15:00.000Z',
-  },
-  {
-    id: 'user-client-02',
-    name: 'Carlos Mendoza Silva',
-    email: 'carlos.mendoza@ejemplo.pe',
-    role: 'cliente',
-    phone: '992345678',
-    address: 'Jr. Los Cedros 145, Castillo Grande, Tingo María',
-    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-    status: 'active',
-    dni: '48901234',
-    zone: 'Castillo Grande',
-    createdAt: '2026-01-20T11:30:00.000Z',
-  },
-
-  // Emprendedores MYPE Demo de Tingo María y Alrededores
+  // 2. Emprendedor MYPE Demo
   {
     id: 'user-merchant-01',
     name: 'Don Faustino Alania',
@@ -59,32 +31,19 @@ export const MOCK_USERS: User[] = [
     zone: 'Valle del Monzón',
     createdAt: '2026-02-01T10:00:00.000Z',
   },
+
+  // 3. Cliente Comprador Demo
   {
-    id: 'user-merchant-02',
-    name: 'María Inés Huamán',
-    email: 'mariaines@belladurmiente.pe',
-    role: 'merchant',
-    phone: '962881234',
-    businessId: 'biz-cacao-miel',
-    address: 'Jr. José Pratto 210, Rupa Rupa, Tingo María',
-    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80',
+    id: 'user-client-01',
+    name: 'Lucía Ramos Córdova',
+    email: 'lucia.ramos@ejemplo.pe',
+    role: 'cliente',
+    phone: '984512301',
+    address: 'Av. Tito Jaime 320, Tingo María (Centro)',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
     status: 'active',
-    dni: '40981276',
+    dni: '72391048',
     zone: 'Tingo María (Centro)',
-    createdAt: '2026-02-05T14:20:00.000Z',
-  },
-  {
-    id: 'user-merchant-03',
-    name: 'Wilson Shimbo',
-    email: 'wilson@artesaniasnaranjillo.pe',
-    role: 'merchant',
-    phone: '989012345',
-    businessId: 'biz-yanesha-arte',
-    address: 'Carretera Central km 3, Naranjillo / Luyando',
-    avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80',
-    status: 'active',
-    dni: '47629014',
-    zone: 'Naranjillo / Luyando',
-    createdAt: '2026-02-12T16:45:00.000Z',
+    createdAt: '2026-01-10T09:15:00.000Z',
   },
 ];

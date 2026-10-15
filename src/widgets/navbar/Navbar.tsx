@@ -415,6 +415,63 @@ export const Navbar: React.FC = () => {
 
                         <div className={styles.profileMenuDivider} />
 
+                        {/* Cambio directo de perfil entre los 3 perfiles */}
+                        <div className={styles.profileSwitchSection}>
+                          <span className={styles.profileSwitchLabel}>Cambiar perfil demo:</span>
+                          <div className={styles.profileSwitchButtons}>
+                            {currentUser.role !== 'admin' && (
+                              <button
+                                type="button"
+                                className={styles.profileSwitchButton}
+                                onClick={() => {
+                                  setProfileDropdownOpen(false);
+                                  try {
+                                    sessionStorage.setItem('juacil_switching_to', ROUTES.ADMIN_DASHBOARD);
+                                  } catch {}
+                                  loginAs('user-admin-01');
+                                  navigate(ROUTES.ADMIN_DASHBOARD);
+                                }}
+                              >
+                                <ShieldCheck size={14} /> Administrador
+                              </button>
+                            )}
+                            {currentUser.role !== 'merchant' && (
+                              <button
+                                type="button"
+                                className={styles.profileSwitchButton}
+                                onClick={() => {
+                                  setProfileDropdownOpen(false);
+                                  try {
+                                    sessionStorage.setItem('juacil_switching_to', ROUTES.MERCHANT_DASHBOARD);
+                                  } catch {}
+                                  loginAs('user-merchant-01');
+                                  navigate(ROUTES.MERCHANT_DASHBOARD);
+                                }}
+                              >
+                                <Store size={14} /> Emprendedor
+                              </button>
+                            )}
+                            {currentUser.role !== 'cliente' && (
+                              <button
+                                type="button"
+                                className={styles.profileSwitchButton}
+                                onClick={() => {
+                                  setProfileDropdownOpen(false);
+                                  try {
+                                    sessionStorage.setItem('juacil_switching_to', ROUTES.HOME);
+                                  } catch {}
+                                  loginAs('user-client-01');
+                                  navigate(ROUTES.HOME);
+                                }}
+                              >
+                                <User size={14} /> Cliente
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className={styles.profileMenuDivider} />
+
                         <button
                           type="button"
                           className={styles.profileLogoutButton}

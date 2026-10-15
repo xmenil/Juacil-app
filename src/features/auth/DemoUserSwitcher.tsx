@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useConnectivity } from '@/app/providers/ConnectivityProvider';
 import { LocalStoreRepository } from '@/shared/lib/storage';
-import { MOCK_USERS } from '@/entities/user/model/mockUsers';
+import { ROUTES } from '@/shared/config/routes';
 import { Wifi, WifiOff, RotateCcw } from 'lucide-react';
 import { Modal } from '@/shared/ui/Modal';
 import { Button } from '@/shared/ui/Button';
@@ -12,19 +13,40 @@ export const DemoUserSwitcher: React.FC = () => {
   const { currentUser, loginAs, logout } = useSession();
   const { isOnline, isSimulatedOffline, toggleSimulatedOffline } = useConnectivity();
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleUserChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
     if (val === 'guest') {
+      try {
+        sessionStorage.setItem('juacil_switching_to', ROUTES.HOME);
+      } catch {}
       logout();
+      navigate(ROUTES.HOME);
     } else {
-      loginAs(val);
+      const user = LocalStoreRepository.getUserById(val);
+      if (user) {
+        const destination =
+          user.role === 'admin'
+            ? ROUTES.ADMIN_DASHBOARD
+            : user.role === 'merchant'
+            ? ROUTES.MERCHANT_DASHBOARD
+            : ROUTES.HOME;
+
+        try {
+          sessionStorage.setItem('juacil_switching_to', destination);
+        } catch {}
+        loginAs(user.id);
+        navigate(destination);
+      }
     }
   };
 
   const handleConfirmReset = () => {
     LocalStoreRepository.resetToFactoryDefaults();
+    loginAs('user-client-01');
     setIsResetModalOpen(false);
+    navigate(ROUTES.HOME);
     window.location.reload();
   };
 
@@ -43,21 +65,10 @@ export const DemoUserSwitcher: React.FC = () => {
             value={currentUser ? currentUser.id : 'guest'}
             onChange={handleUserChange}
           >
-            <optgroup label="Clientes Compradores">
-              {MOCK_USERS.filter((u) => u.role === 'cliente').map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.name} (Cliente)
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="Emprendedores de la Selva (MYPES)">
-              {MOCK_USERS.filter((u) => u.role === 'merchant').map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.name} ({u.businessId === 'biz-cafe-aroma' ? 'Café Aroma' : u.businessId === 'biz-cacao-miel' ? 'Cacao & Miel' : 'Artesanías Yánesha'})
-                </option>
-              ))}
-            </optgroup>
-            <option value="guest">Visitante no autenticado</option>
+            <option value="user-admin-01">🛡️ Administrador: Admin General JUÁCIL</option>
+            <option value="user-merchant-01">🏪 Emprendedor: Don Faustino Alania (Café Aroma)</option>
+            <option value="user-client-01">🛒 Cliente: Lucía Ramos Córdova</option>
+            <option value="guest">👤 Visitante no autenticado (Sin sesión)</option>
           </select>
         </div>
 

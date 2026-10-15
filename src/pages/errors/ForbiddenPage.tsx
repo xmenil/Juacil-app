@@ -1,11 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/shared/config/routes';
+import { useSession } from '@/app/providers/SessionProvider';
 import { Button } from '@/shared/ui/Button';
-import { ShieldAlert, ArrowLeft, Home } from 'lucide-react';
+import { ShieldAlert, ArrowLeft, Home, Store, ShieldCheck } from 'lucide-react';
 
 export const ForbiddenPage: React.FC = () => {
   const navigate = useNavigate();
+  const { isMerchant, isAdmin } = useSession();
 
   return (
     <div style={{ padding: '64px 16px', textAlign: 'center', minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -28,11 +30,21 @@ export const ForbiddenPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Button variant="outline" leftIcon={<ArrowLeft size={16} />} onClick={() => navigate(-1)}>
-            Regresar a la página anterior
-          </Button>
-          <Button variant="primary" leftIcon={<Home size={16} />} onClick={() => navigate(ROUTES.HOME)}>
+          {isMerchant && (
+            <Button variant="primary" leftIcon={<Store size={16} />} onClick={() => navigate(ROUTES.MERCHANT_DASHBOARD)}>
+              Ir al Panel de mi Tienda MYPE
+            </Button>
+          )}
+          {isAdmin && (
+            <Button variant="primary" leftIcon={<ShieldCheck size={16} />} onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)}>
+              Ir al Panel de Administrador
+            </Button>
+          )}
+          <Button variant={isMerchant || isAdmin ? 'outline' : 'primary'} leftIcon={<Home size={16} />} onClick={() => navigate(ROUTES.HOME)}>
             Ir al Inicio de JUÁCIL
+          </Button>
+          <Button variant="ghost" leftIcon={<ArrowLeft size={16} />} onClick={() => navigate(-1)}>
+            Regresar a la página anterior
           </Button>
         </div>
       </div>

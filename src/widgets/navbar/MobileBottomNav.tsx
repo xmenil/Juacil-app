@@ -19,22 +19,27 @@ interface MobileBottomNavProps {
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenCategories }) => {
   const { itemCount } = useCart();
-  const { currentUser, isMerchant } = useSession();
+  const { currentUser, isMerchant, isAdmin } = useSession();
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleAccountClick = () => {
     if (!currentUser) {
       navigate(ROUTES.LOGIN);
+    } else if (isAdmin) {
+      navigate(ROUTES.ADMIN_DASHBOARD);
     } else if (isMerchant) {
       navigate(ROUTES.MERCHANT_DASHBOARD);
     } else {
-      navigate(ROUTES.CUSTOMER_ORDERS);
+      navigate(ROUTES.CUSTOMER_PROFILE);
     }
   };
 
   const isAccountActive =
+    location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/panel') ||
+    location.pathname.startsWith('/mi-cuenta') ||
+    location.pathname.startsWith('/perfil') ||
     location.pathname.startsWith('/mis-pedidos') ||
     location.pathname === '/acceso';
 
@@ -118,7 +123,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenCategori
         <div className={styles.iconWrapper}>
           <User size={20} />
         </div>
-        <span>{currentUser ? (isMerchant ? 'Panel' : 'Cuenta') : 'Ingresar'}</span>
+        <span>{currentUser ? (isAdmin ? 'Admin' : isMerchant ? 'Panel' : 'Cuenta') : 'Ingresar'}</span>
       </button>
     </nav>
   );

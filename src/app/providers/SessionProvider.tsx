@@ -9,6 +9,7 @@ interface SessionContextType {
   isAdmin: boolean;
   businessId: string | null;
   loginAs: (userId: string) => boolean;
+  loginAsRole: (role: 'admin' | 'merchant' | 'cliente') => User | null;
   logout: () => void;
   updateCurrentUser: (user: User) => void;
 }
@@ -53,6 +54,16 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return false;
   };
 
+  const loginAsRole = (role: 'admin' | 'merchant' | 'cliente'): User | null => {
+    const users = LocalStoreRepository.getUsers();
+    const user = users.find((u) => u.role === role && u.status !== 'suspended');
+    if (user) {
+      setCurrentUser(user);
+      return user;
+    }
+    return null;
+  };
+
   const logout = () => {
     setCurrentUser(null);
   };
@@ -76,6 +87,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         isAdmin,
         businessId,
         loginAs,
+        loginAsRole,
         logout,
         updateCurrentUser,
       }}
