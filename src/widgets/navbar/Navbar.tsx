@@ -33,7 +33,8 @@ import { CategoryMegaOverlay } from './CategoryMegaOverlay';
 import styles from './Navbar.module.css';
 
 export const Navbar: React.FC = () => {
-  const { itemCount } = useCart();
+  const { itemCount, lastAdded } = useCart();
+  const [cartAnimate, setCartAnimate] = useState(false);
   const { currentUser, logout } = useSession();
   const { isOnline } = useConnectivity();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -47,6 +48,14 @@ export const Navbar: React.FC = () => {
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (lastAdded) {
+      setCartAnimate(true);
+      const timer = window.setTimeout(() => setCartAnimate(false), 900);
+      return () => window.clearTimeout(timer);
+    }
+  }, [lastAdded]);
 
   const searchParams = new URLSearchParams(location.search);
   const isInicioActive = location.pathname === ROUTES.HOME;
@@ -196,8 +205,8 @@ export const Navbar: React.FC = () => {
                 <MessageCircle size={18} />
               </div>
               <div className={styles.contactItemText}>
-                <span className={styles.contactItemTitle}>+51 962 881 234</span>
-                <span className={styles.contactItemSub}>Solo WhatsApp • Pedidos MYPE</span>
+                <span className={styles.contactItemTitle}>Pedidos WhatsApp</span>
+                <span className={styles.contactItemSub}>Atención directa MYPE</span>
               </div>
             </div>
 
@@ -489,12 +498,12 @@ export const Navbar: React.FC = () => {
             {/* Carrito de Compras - Lleva directo al Carrito */}
             <Link
               to={ROUTES.CART}
-              className={styles.actionIconButton}
+              className={`${styles.actionIconButton} ${cartAnimate ? styles.actionIconButtonBump : ''}`}
               title={`Ver carrito (${itemCount} productos)`}
               aria-label="Ver carrito de compras"
             >
-              <ShoppingCart size={22} />
-              {itemCount > 0 && <span className={styles.actionBadge}>{itemCount}</span>}
+              <ShoppingCart size={22} className={cartAnimate ? styles.cartIconBump : ''} />
+              {itemCount > 0 && <span className={`${styles.actionBadge} ${cartAnimate ? styles.actionBadgePop : ''}`}>{itemCount}</span>}
             </Link>
 
             {/* Botón de Menú Móvil */}
@@ -627,7 +636,10 @@ export const Navbar: React.FC = () => {
                           }}
                           role="menuitem"
                         >
-                          <span className={styles.mercadoLibreItemName}>📍 {loc}</span>
+                          <span className={styles.mercadoLibreItemName}>
+                            <MapPin size={15} className={styles.locationPinIcon} aria-hidden="true" />
+                            <span>{loc}</span>
+                          </span>
                           <ChevronRight size={14} className={styles.mercadoLibreItemArrow} />
                         </button>
                       ))}

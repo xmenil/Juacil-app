@@ -5,9 +5,14 @@ import { LocalStoreRepository } from '@/shared/lib/storage';
 
 interface AddItemResult {
   success: boolean;
-  needsConfirmation?: boolean;
-  otherBusinessName?: string;
   error?: string;
+}
+
+/** Señal que cambia cada vez que se agrega un producto; la usa el navbar para animar el contador. */
+export interface CartAddSignal {
+  id: number;
+  productName: string;
+  quantity: number;
 }
 
 interface CartContextType {
@@ -15,15 +20,12 @@ interface CartContextType {
   itemCount: number;
   totalCents: number;
   addItem: (product: Product, quantity?: number) => AddItemResult;
-  confirmReplaceCart: () => void;
-  cancelReplaceCart: () => void;
   updateQuantity: (productId: string, quantity: number) => { success: boolean; error?: string };
   removeItem: (productId: string) => void;
+  /** Retira del carrito los productos de una tienda (p. ej. después de registrar su pedido). */
+  removeBusinessItems: (businessId: string) => void;
   clearCart: () => void;
-  // Estado para el modal de confirmación de reemplazo
-  isReplaceModalOpen: boolean;
-  pendingItem: { product: Product; quantity: number } | null;
-  currentBusinessName: string;
+  lastAdded: CartAddSignal | null;
   // Estado para la bandeja deslizante del carrito
   isDrawerOpen: boolean;
   openDrawer: () => void;
@@ -43,14 +45,23 @@ const EMPTY_CART: Cart = {
   itemCount: 0,
 };
 
-function calculateCartTotals(items: CartItem[]): { totalCents: number; itemCount: number } {
+/**
+ * Recalcula totales y la tienda única del carrito.
+ * El carrito admite productos de varias tiendas: al confirmar se registra un pedido por tienda.
+ * `businessId` / `businessName` solo se completan cuando todos los productos son de la misma tienda.
+ */
+function buildCart(items: CartItem[]): Cart {
+  if (!items.length) return EMPTY_CART;
   let totalCents = 0;
   let itemCount = 0;
   for (const item of items) {
     totalCents += item.subtotalCents;
     itemCount += item.quantity;
   }
-  return { totalCents, itemCount };
+  const businessIds = new Set(items.map((item) => item.product.businessId));
+  const singleId = businessIds.size === 1 ? items[0].product.businessId : null;
+  const singleName = singleId ? LocalStoreRepository.getBusinessById(singleId)?.name || 'Tienda aliada' : null;
+  return { businessId: singleId, businessName: singleName, items, totalCents, itemCount };
 }
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -59,7 +70,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const stored = localStorage.getItem(CART_STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored) as Cart;
-        if (parsed && Array.isArray(parsed.items)) return parsed;
+        if (parsed && Array.isArray(parsed.items)) return buildCart(parsed.items);
       }
     } catch {
       // Ignorar error y usar vacío
@@ -67,8 +78,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return EMPTY_CART;
   });
 
-  const [pendingItem, setPendingItem] = useState<{ product: Product; quantity: number } | null>(null);
-  const [isReplaceModalOpen, setIsReplaceModalOpen] = useState(false);
+  const [lastAdded, setLastAdded] = useState<CartAddSignal | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const openDrawer = () => setIsDrawerOpen(true);
@@ -89,21 +99,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, error: 'Este producto se encuentra agotado.' };
     }
 
-    const business = LocalStoreRepository.getBusinessById(product.businessId);
-    const businessName = business?.name || 'Tienda aliada';
-
-    // 2. Si el carrito ya tiene artículos de OTRO negocio -> Solicitar confirmación obligatoria (P02)
-    if (cart.businessId && cart.businessId !== product.businessId && cart.items.length > 0) {
-      setPendingItem({ product, quantity });
-      setIsReplaceModalOpen(true);
-      return {
-        success: false,
-        needsConfirmation: true,
-        otherBusinessName: cart.businessName || 'otra tienda',
-      };
-    }
-
-    // 3. Mismo negocio o carrito vacío: agregar o sumar
+    // 2. Agregar o sumar (se permiten productos de varias tiendas en el mismo carrito)
     const existingIndex = cart.items.findIndex((it) => it.productId === product.id);
     let newItems: CartItem[] = [];
 
@@ -145,49 +141,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       newItems = [...cart.items, newItem];
     }
 
-    const { totalCents, itemCount } = calculateCartTotals(newItems);
-
-    setCart({
-      businessId: product.businessId,
-      businessName,
-      items: newItems,
-      totalCents,
-      itemCount,
-    });
+    setCart(buildCart(newItems));
+    setLastAdded({ id: Date.now(), productName: product.name, quantity });
 
     return { success: true };
-  };
-
-  const confirmReplaceCart = () => {
-    if (!pendingItem) return;
-
-    const { product, quantity } = pendingItem;
-    const business = LocalStoreRepository.getBusinessById(product.businessId);
-    const businessName = business?.name || 'Tienda aliada';
-
-    const newItem: CartItem = {
-      productId: product.id,
-      product,
-      quantity,
-      unitPriceCents: product.priceCents,
-      subtotalCents: product.priceCents * quantity,
-    };
-
-    setCart({
-      businessId: product.businessId,
-      businessName,
-      items: [newItem],
-      totalCents: newItem.subtotalCents,
-      itemCount: quantity,
-    });
-
-    setPendingItem(null);
-    setIsReplaceModalOpen(false);
-  };
-
-  const cancelReplaceCart = () => {
-    setPendingItem(null);
-    setIsReplaceModalOpen(false);
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
@@ -219,31 +176,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         : it
     );
 
-    const { totalCents, itemCount } = calculateCartTotals(newItems);
-
-    setCart({
-      ...cart,
-      items: newItems,
-      totalCents,
-      itemCount,
-    });
+    setCart(buildCart(newItems));
 
     return { success: true };
   };
 
   const removeItem = (productId: string) => {
-    const newItems = cart.items.filter((it) => it.productId !== productId);
-    if (newItems.length === 0) {
-      clearCart();
-    } else {
-      const { totalCents, itemCount } = calculateCartTotals(newItems);
-      setCart({
-        ...cart,
-        items: newItems,
-        totalCents,
-        itemCount,
-      });
-    }
+    setCart((current) => buildCart(current.items.filter((it) => it.productId !== productId)));
+  };
+
+  const removeBusinessItems = (businessId: string) => {
+    setCart((current) => buildCart(current.items.filter((it) => it.product.businessId !== businessId)));
   };
 
   const clearCart = () => {
@@ -257,14 +200,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         itemCount: cart.itemCount,
         totalCents: cart.totalCents,
         addItem,
-        confirmReplaceCart,
-        cancelReplaceCart,
         updateQuantity,
         removeItem,
+        removeBusinessItems,
         clearCart,
-        isReplaceModalOpen,
-        pendingItem,
-        currentBusinessName: cart.businessName || 'la tienda actual',
+        lastAdded,
         isDrawerOpen,
         openDrawer,
         closeDrawer,

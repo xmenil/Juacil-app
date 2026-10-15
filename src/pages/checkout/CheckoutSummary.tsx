@@ -21,8 +21,11 @@ export function CheckoutSummary({ review, deliveryType, isSubmitting, isOnline }
 }) {
   return <aside className={styles.summary} aria-label="Resumen del pedido">
     <div className={styles.summaryHeader}><h2>Tu pedido</h2>{!isSubmitting && <Link to={ROUTES.CART}>Editar carrito</Link>}</div>
-    <p className={styles.businessName}>{review.business?.name || 'Tienda no disponible'}<span>{review.business?.location}</span></p>
-    <ul className={styles.summaryItems} aria-label="Productos a confirmar">{review.items.map(item => <SummaryItem key={item.productId} item={item} />)}</ul>
+    {review.groups.map(group => <div key={group.businessId} className={styles.summaryGroup}>
+      <p className={styles.businessName}>{group.business?.name || 'Tienda no disponible'}<span>{group.business?.location}{review.groups.length > 1 && ` · Subtotal ${formatMoney(group.totalCents)}`}</span></p>
+      <ul className={styles.summaryItems} aria-label={`Productos de ${group.business?.name || 'la tienda'}`}>{group.items.map(item => <SummaryItem key={item.productId} item={item} />)}</ul>
+    </div>)}
+    {review.groups.length > 1 && <p className={styles.summaryNote}>Se registrarán {review.groups.length} pedidos, uno por tienda. Cada negocio confirma y coordina el suyo.</p>}
     {review.pricesChanged && <p className={styles.warning}>Hay precios actualizados desde que agregaste los productos. El resumen muestra los importes vigentes.</p>}
     <div className={styles.total}><span>Total de productos</span><strong>{formatMoney(review.totalCents)}</strong></div>
     <p className={styles.summaryNote}>{deliveryType === 'delivery' ? 'El costo y el horario de entrega se coordinan con la tienda. El envío no está incluido en este importe.' : 'El horario y el punto de recojo se coordinan con la tienda.'}</p>

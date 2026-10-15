@@ -136,28 +136,11 @@ describe('Recorridos del carrito', () => {
     expect(screen.getByRole('heading', { name: 'Catálogo' })).toBeInTheDocument();
   });
 
-  it('conserva la selección al cancelar el cambio de tienda y la reemplaza al confirmar', async () => {
-    seedCart(); const originalBusiness = storedCart().businessId; const user = mount();
+  it('permite agregar productos de múltiples tiendas al mismo carrito', async () => {
+    seedCart(); const user = mount();
     await user.click(screen.getByRole('button', { name: 'Agregar otra tienda' }));
-    expect(storedCart().businessId).toBe(originalBusiness);
-    await user.click(screen.getByRole('button', { name: 'Conservar mi carrito' }));
-    expect(storedCart().businessId).toBe(originalBusiness);
-    await user.click(screen.getByRole('button', { name: 'Agregar otra tienda' }));
-    await user.click(screen.getByRole('button', { name: 'Cambiar de tienda' }));
-    expect(storedCart().businessId).not.toBe(originalBusiness);
-    expect(storedCart().items).toHaveLength(1);
+    expect(storedCart().items.length).toBeGreaterThan(1);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    expect(screen.getByLabelText('Ruta actual')).toHaveTextContent('/carrito');
-  });
-
-  it('no reemplaza el carrito si el producto nuevo se agota antes de confirmar', async () => {
-    seedCart(); const originalBusiness = storedCart().businessId; const user = mount();
-    await user.click(screen.getByRole('button', { name: 'Agregar otra tienda' }));
-    const other = LocalStoreRepository.getProducts().find(p => p.businessId !== product.businessId && p.stock > 0)!;
-    LocalStoreRepository.saveProduct({ ...other, stock: 0 });
-    await user.click(screen.getByRole('button', { name: 'Cambiar de tienda' }));
-    expect(screen.getByRole('alert')).toHaveTextContent('El nuevo producto ya no está disponible');
-    expect(storedCart().businessId).toBe(originalBusiness);
   });
 
   it('restaura la selección al volver a montar el prototipo', async () => {

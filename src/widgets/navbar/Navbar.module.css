@@ -234,6 +234,46 @@
   justify-content: center;
   padding: 0 4px;
   border: 2px solid #ffffff;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+
+.actionIconButtonBump {
+  animation: cartButtonPulse 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cartIconBump {
+  animation: cartShake 0.6s ease;
+  color: #135d38;
+}
+
+.actionBadgePop {
+  animation: badgePop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background-color: #84cc16 !important;
+  color: #064e3b !important;
+  font-weight: 900;
+}
+
+@keyframes cartButtonPulse {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.18); background-color: #ecfdf5; }
+  50% { transform: scale(0.95); }
+  75% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes cartShake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-14deg); }
+  40% { transform: rotate(14deg); }
+  60% { transform: rotate(-8deg); }
+  80% { transform: rotate(8deg); }
+}
+
+@keyframes badgePop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.45); }
+  60% { transform: scale(0.9); }
+  100% { transform: scale(1); }
 }
 
 /* Barra Inferior de Navegación por Categorías */
@@ -404,6 +444,20 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.locationPinIcon {
+  color: #10b981;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.mercadoLibreItem:hover .locationPinIcon {
+  color: #84cc16;
+  transform: scale(1.15);
 }
 
 .mercadoLibreItemArrow {

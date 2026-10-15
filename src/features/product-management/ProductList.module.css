@@ -5,15 +5,54 @@
 .header h1 { font-size: clamp(1.5rem, 3vw, 1.875rem); margin: var(--space-1) 0 var(--space-2); }
 .header p:last-child { font-size: var(--text-sm); color: var(--color-text-muted); }
 .eyebrow { font-size: var(--text-sm); font-weight: 600; color: var(--color-primary-700); }
-.createButton { white-space: normal; max-width: 100%; padding-block: var(--space-3); }
-.createButton:hover { background: var(--color-accent-lime-light); color: var(--color-accent-lime-text); }
-.feedback { margin-bottom: var(--space-5); }
-.searchRow { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); margin-bottom: var(--space-4); }
-.searchRow > div { max-width: 420px; flex: 1; min-width: min(240px, 100%); }
+.createButton {
+  min-height: 36px;
+  height: 36px;
+  font-size: 13px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: #135d38;
+  color: #ffffff;
+}
+.createButton:hover {
+  background: #0f4e2f;
+  color: #ffffff;
+}
+.feedback { margin-bottom: var(--space-4); }
+.searchRow { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); margin-bottom: 12px; }
+.searchRow > div { max-width: 380px; flex: 1; min-width: min(240px, 100%); }
+.searchRow input {
+  min-height: 36px;
+  height: 36px;
+  font-size: 13px;
+  border-radius: 6px;
+}
 .searchRow input::placeholder { color: var(--color-text-muted); }
-.filters { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.filterButton { min-height: 44px; font-size: var(--text-sm); padding: var(--space-2) var(--space-3); white-space: normal; }
-.resultCount { font-size: var(--text-sm); color: var(--color-text-muted); margin: var(--space-4) 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.filterButton {
+  min-height: 32px;
+  height: 32px;
+  font-size: 12.5px;
+  padding: 0 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+}
+.filterButton:hover {
+  border-color: #135d38;
+  color: #135d38;
+  background: #f8fafc;
+}
+.filterButtonActive {
+  background: #135d38 !important;
+  color: #ffffff !important;
+  border-color: #135d38 !important;
+  font-weight: 600;
+}
+.resultCount { font-size: 12.5px; color: var(--color-text-muted); margin: 8px 0 14px; }
 .productList { display: grid; gap: var(--space-3); list-style: none; }
 .listHeader { display: none; }
 .productRow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; gap: var(--space-4); padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
@@ -28,10 +67,41 @@
 .stock strong { font-size: var(--text-sm); font-weight: 500; }
 .visibility { grid-column: 1 / -1; }
 .mobileLabel { display: block; font-size: var(--text-xs); color: var(--color-text-muted); margin-bottom: var(--space-1); }
-.actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); padding-top: var(--space-3); border-top: 1px solid var(--color-border-subtle); }
-.actions button { min-height: 44px; font-size: var(--text-xs); white-space: normal; }
-.deleteButton { color: var(--color-danger); min-width: 44px; }
-.deleteButton:hover { color: var(--color-danger-text); background: var(--color-danger-bg); }
+.actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-top: var(--space-3); border-top: 1px solid var(--color-border-subtle); }
+.actions button {
+  min-height: 32px;
+  height: 32px;
+  font-size: 12px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #334155;
+  transition: all 0.15s ease;
+}
+.actions button:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+.deleteButton {
+  min-width: 32px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #dc2626 !important;
+  border-color: #fecaca !important;
+  background: #fef2f2 !important;
+}
+.deleteButton:hover {
+  background: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+  color: #b91c1c !important;
+}
 .emptyState { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-8) var(--space-5); text-align: center; }
 .emptyState > svg { margin: 0 auto var(--space-4); color: var(--color-primary-700); }
 .emptyState h2 { font-size: var(--text-xl); }

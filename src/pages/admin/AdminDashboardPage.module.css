@@ -44,7 +44,7 @@
 .filters { display: flex; align-items: flex-end; flex-wrap: wrap; gap: var(--space-4); padding: var(--space-6); }
 .filters > div:first-child { flex: 1 1 240px; }
 .filters > div:not(:first-child) { flex: 0 1 210px; }
-.filters input, .filters select, .form input, .form select, .form textarea { min-height: 44px; border-color: var(--color-text-muted); font-size: var(--text-base); }
+.filters input, .filters select, .form input, .form select, .form textarea { min-height: 36px; border-color: var(--color-text-muted); font-size: 13px; border-radius: 6px; }
 .resultCount { padding: 0 var(--space-6) var(--space-4); font-size: var(--text-xs); color: var(--color-text-muted); }
 .tableWrap { overflow-x: auto; }
 .table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
@@ -57,11 +57,11 @@
 .identity strong, .identity span:not(.recordAvatar) { display: block; }
 .identity > div > span { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-1); overflow-wrap: anywhere; }
 .recordAvatar { flex-shrink: 0; width: 40px; height: 40px; display: grid; place-items: center; background: var(--color-surface-subtle); color: var(--color-primary-800); border-radius: var(--radius-sm); font-weight: 600; }
-.actions { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
-.actions button { min-height: 44px; white-space: nowrap; }
-.textLink { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--color-primary-700); font-size: var(--text-sm); font-weight: 500; min-height: 44px; white-space: nowrap; }
+.actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.actions button { min-height: 32px; height: 32px; padding: 0 10px; font-size: 12px; font-weight: 600; border-radius: 6px; white-space: nowrap; }
+.textLink { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--color-primary-700); font-size: 12.5px; font-weight: 600; min-height: 32px; white-space: nowrap; }
 .textLink:hover { text-decoration: underline; }
-.deleteButton { display: grid; place-items: center; width: 44px; min-width: 44px; height: 44px; border-radius: var(--radius-sm); color: var(--color-danger); }
+.deleteButton { display: grid; place-items: center; width: 32px; min-width: 32px; height: 32px; border-radius: 6px; color: var(--color-danger); }
 .deleteButton:hover { background: var(--color-danger-bg); }
 .amount { text-align: right !important; }
 .localNote, .muted { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; }

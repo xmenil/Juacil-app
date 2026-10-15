@@ -45,8 +45,9 @@ export const ProductList: React.FC<ProductListProps> = ({
       {PRODUCT_FILTERS.map(({ value, label }) => {
         const count = value === 'all' ? products.length : products.filter(product =>
           value === 'outOfStock' ? product.stock === 0 : product.status === value).length;
-        return <Button key={value} variant={filter === value ? 'primary' : 'outline'}
-          className={styles.filterButton} aria-pressed={filter === value} onClick={() => onFilterChange(value)}>{label} ({count})</Button>;
+        const isActive = filter === value;
+        return <Button key={value} variant={isActive ? 'primary' : 'outline'}
+          className={`${styles.filterButton} ${isActive ? styles.filterButtonActive : ''}`} aria-pressed={isActive} onClick={() => onFilterChange(value)}>{label} ({count})</Button>;
       })}
     </div>
     <p className={styles.resultCount} role="status">Mostrando {filteredProducts.length} de {products.length} {products.length === 1 ? 'producto' : 'productos'}.</p>

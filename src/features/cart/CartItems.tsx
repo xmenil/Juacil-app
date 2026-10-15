@@ -8,7 +8,7 @@ import { formatMoney } from '@/shared/lib/money';
 import { ROUTES } from '@/shared/config/routes';
 import styles from './CartItems.module.css';
 
-function CartItemRow({ item, onNavigate, onFeedback }: { item: CartItem; onNavigate?: () => void; onFeedback: (message: string, error?: boolean) => void }) {
+function CartItemRow({ item, onNavigate, onFeedback, selected, onSelect }: { item: CartItem; onNavigate?: () => void; onFeedback: (message: string, error?: boolean) => void; selected?: boolean; onSelect?: (id: string) => void }) {
   const { updateQuantity, removeItem } = useCart();
   const [imageFailed, setImageFailed] = useState(false);
   const current = LocalStoreRepository.getProductById(item.productId);
@@ -24,6 +24,7 @@ function CartItemRow({ item, onNavigate, onFeedback }: { item: CartItem; onNavig
       {item.product.imageUrl && !imageFailed ? <img src={item.product.imageUrl} alt={item.product.imageAlt || item.product.name} loading="lazy" onError={() => setImageFailed(true)} /> : <Package size={26} aria-label="Producto sin imagen" />}
     </div>
     <div className={styles.info}>
+      {onSelect && <label className={styles.selection}><input type="checkbox" checked={selected} onChange={() => onSelect(item.productId)} aria-label={`Comprar ${item.product.name}`} />Seleccionar para comprar</label>}
       <Link to={ROUTES.PRODUCT_DETAIL(item.productId)} onClick={onNavigate} className={styles.name}>{item.product.name}</Link>
       <span className={styles.unitPrice}>{formatMoney(item.unitPriceCents)} por unidad</span>
       <span className={needsAdjustment ? styles.stockWarning : styles.stock}>{!available ? 'Producto no disponible' : stock === 0 ? 'Agotado' : `${stock} unidades disponibles`}</span>
@@ -40,13 +41,13 @@ function CartItemRow({ item, onNavigate, onFeedback }: { item: CartItem; onNavig
   </li>;
 }
 
-export function CartItems({ onNavigate }: { onNavigate?: () => void }) {
+export function CartItems({ onNavigate, items, selectedIds, onSelect }: { onNavigate?: () => void; items?: CartItem[]; selectedIds?: string[]; onSelect?: (id: string) => void }) {
   const { cart } = useCart();
   const [feedback, setFeedback] = useState({ message: '', error: false });
   return <div className={styles.listArea}>
     {feedback.message && <p className={feedback.error ? styles.error : styles.feedback} role={feedback.error ? 'alert' : 'status'}>{feedback.message}</p>}
     <ul className={styles.list} aria-label="Productos del carrito">
-      {cart.items.map(item => <CartItemRow key={item.productId} item={item} onNavigate={onNavigate} onFeedback={(message, error = false) => setFeedback({ message, error })} />)}
+      {(items ?? cart.items).map(item => <CartItemRow key={item.productId} item={item} onNavigate={onNavigate} selected={selectedIds?.includes(item.productId)} onSelect={onSelect} onFeedback={(message, error = false) => setFeedback({ message, error })} />)}
     </ul>
   </div>;
 }

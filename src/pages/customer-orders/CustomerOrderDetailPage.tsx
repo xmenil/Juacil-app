@@ -7,6 +7,7 @@ import { formatDateTime } from '@/shared/lib/date';
 import { buildOrderWhatsAppMessage, createWhatsAppLink } from '@/shared/lib/whatsapp';
 import { ROUTES } from '@/shared/config/routes';
 import { OrderStatusBadge } from '@/entities/order/ui/OrderStatusBadge';
+import { OrderDeliveryTracking } from '@/entities/order/ui/OrderDeliveryTracking';
 import { Button } from '@/shared/ui/Button';
 import { Modal } from '@/shared/ui/Modal';
 import { Alert } from '@/shared/ui/Alert';
@@ -195,6 +196,7 @@ export const CustomerOrderDetailPage: React.FC = () => {
           </section>
 
           {/* Historial de Estados */}
+          <OrderDeliveryTracking order={order} />
           <section className={styles.history} aria-labelledby="order-history">
             <h2 id="order-history" className={styles.sectionTitle}>
               <Clock size={16} aria-hidden="true" /> Historial del pedido

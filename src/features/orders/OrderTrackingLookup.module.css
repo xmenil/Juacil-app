@@ -1,0 +1,9 @@
+.lookup { padding: var(--space-5); margin-bottom: var(--space-6); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); min-width: 0; }
+.lookup h2 { font-size: var(--text-lg); font-weight: 600; color: var(--color-primary-900); }
+.lookup p { font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-2); overflow-wrap: anywhere; }
+.form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--space-3); margin-top: var(--space-4); }
+.form button { white-space: normal; min-height: 44px; }
+.result { display: grid; gap: var(--space-3); margin-top: var(--space-4); overflow-wrap: anywhere; }
+.detail { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-primary-800); font-size: var(--text-sm); text-decoration: underline; }
+.lookup :focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 3px; }
+@media (max-width: 600px) { .form { grid-template-columns: minmax(0, 1fr); } .lookup { padding: var(--space-4); } }

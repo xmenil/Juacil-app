@@ -6,6 +6,9 @@ import { formatMoney } from '@/shared/lib/money';
 import { formatDateTime } from '@/shared/lib/date';
 import { ROUTES } from '@/shared/config/routes';
 import { OrderStatusBadge } from '@/entities/order/ui/OrderStatusBadge';
+import { OrderDeliveryTracking } from '@/entities/order/ui/OrderDeliveryTracking';
+import { OrderTrackingLookup } from '@/features/orders/OrderTrackingLookup';
+import buttonStyles from '@/shared/ui/Button.module.css';
 import { Button } from '@/shared/ui/Button';
 import { Package, Store, Calendar, ArrowRight, ShoppingBag } from 'lucide-react';
 
@@ -34,13 +37,14 @@ export const CustomerOrdersPage: React.FC = () => {
       <div className="container">
         <div style={{ marginBottom: '32px' }}>
           <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--color-primary-950)' }}>
-            Mis Pedidos
+            Pedidos y compras
           </h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '14px' }}>
             Historial de compras realizadas por <strong>{currentUser.name}</strong>.
           </p>
         </div>
 
+        <OrderTrackingLookup key={currentUser.id} customerId={currentUser.id} />
         {orders.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {orders.map((order) => (
@@ -68,7 +72,7 @@ export const CustomerOrdersPage: React.FC = () => {
                     paddingBottom: '12px',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
                     <span
                       style={{
                         fontFamily: 'var(--font-display)',
@@ -106,12 +110,11 @@ export const CustomerOrdersPage: React.FC = () => {
                     </span>
                   </div>
 
-                  <Link to={ROUTES.CUSTOMER_ORDER_DETAIL(order.id)}>
-                    <Button size="sm" variant="outline" rightIcon={<ArrowRight size={14} />}>
-                      Ver detalle de la orden
-                    </Button>
+                  <Link to={ROUTES.CUSTOMER_ORDER_DETAIL(order.id)} className={`${buttonStyles.button} ${buttonStyles.md} ${buttonStyles.outline}`} style={{ whiteSpace: 'normal', textAlign: 'center' }}>
+                    Ver detalle de la orden <ArrowRight size={14} aria-hidden="true" />
                   </Link>
                 </div>
+                <OrderDeliveryTracking order={order} />
               </div>
             ))}
           </div>

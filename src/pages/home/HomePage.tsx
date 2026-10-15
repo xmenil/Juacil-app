@@ -12,11 +12,13 @@ import {
   ShoppingBasket,
   Sparkles,
   Coffee,
-  Leaf,
   Sun,
   Apple,
-  Wine,
-  Feather,
+  Footprints,
+  Shirt,
+  Hammer,
+  Boxes,
+  Smartphone,
 } from 'lucide-react';
 import styles from './HomePage.module.css';
 
@@ -30,60 +32,66 @@ export const HomePage: React.FC = () => {
   const featuredProducts = allProducts.slice(0, 8);
   const businesses = LocalStoreRepository.getBusinesses();
 
-const homeCategories = [
+  const homeCategories = [
+    {
+      id: 'calzado-moda',
+      title: 'Calzado y zapatillas',
+      icon: Footprints,
+      imageUrl: '/images/products/prod_zapatillas_urbanas_1792017893233.jpg',
+    },
+    {
+      id: 'ropa-textil',
+      title: 'Ropa y polos',
+      icon: Shirt,
+      imageUrl: '/images/products/prod_polos_algodon_1792017944753.jpg',
+    },
+    {
+      id: 'ferreteria',
+      title: 'Ferretería y herramientas',
+      icon: Hammer,
+      imageUrl: '/images/products/prod_taladro_percutor_1792018046434.jpg',
+    },
+    {
+      id: 'plastiqueria',
+      title: 'Plastiquería y hogar',
+      icon: Boxes,
+      imageUrl: 'https://live.staticflickr.com/4029/4378675576_38ac9b699c_b.jpg',
+    },
+    {
+      id: 'tecnologia',
+      title: 'Tecnología y celulares',
+      icon: Smartphone,
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Bose_QuietComfort_35_II_Wireless_Headphones.jpg',
+    },
     {
       id: 'abarrotes',
       title: 'Abarrotes y canasta básica',
       icon: ShoppingBasket,
-      imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80',
+      imageUrl: '/images/hero-cart-groceries.jpg',
     },
     {
       id: 'hogar',
-      title: 'Hogar, papelería y limpieza',
+      title: 'Hogar y limpieza',
       icon: Sparkles,
-      imageUrl: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=300&q=80',
+      imageUrl: '/images/hero-stacked-goods.jpg',
     },
     {
       id: 'cafe',
-      title: 'Café',
+      title: 'Café de especialidad',
       icon: Coffee,
       imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=300&q=80',
     },
     {
       id: 'cacao',
-      title: 'Cacao y chocolate',
-      icon: Leaf,
+      title: 'Cacao, chocolate y miel',
+      icon: Sun,
       imageUrl: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=300&q=80',
     },
     {
-      id: 'miel',
-      title: 'Miel y apicultura',
-      icon: Sun,
-      imageUrl: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?auto=format&fit=crop&w=300&q=80',
-    },
-    {
       id: 'frutas',
-      title: 'Frutas y snacks',
+      title: 'Frutas y snacks selva',
       icon: Apple,
-      imageUrl: 'https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=300&q=80',
-    },
-    {
-      id: 'licores',
-      title: 'Bebidas y licores',
-      icon: Wine,
-      imageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=300&q=80',
-    },
-    {
-      id: 'artesania',
-      title: 'Artesanías',
-      icon: Feather,
-      imageUrl: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=300&q=80',
-    },
-    {
-      id: 'superfoods',
-      title: 'Productos del campo',
-      icon: Leaf,
-      imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=80',
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/PLANTAIN_CHIPS.jpg',
     },
   ];
 

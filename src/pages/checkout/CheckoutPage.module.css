@@ -66,6 +66,11 @@
 .nextStep h2 { font-size: var(--text-lg); font-weight: 600; }
 .nextStep > p { color: var(--color-text-muted); font-size: var(--text-sm); line-height: 1.7; }
 .nextStep a { justify-self: start; }
+.summaryGroup { display: grid; gap: var(--space-3); margin-bottom: var(--space-4); padding-bottom: var(--space-4); border-bottom: 1px dashed var(--color-border); }
+.summaryGroup:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.orderBlock { padding: var(--space-5); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); margin-top: var(--space-4); }
+.orderBlockTitle { font-size: var(--text-base); font-weight: 600; color: var(--color-primary-950); margin-bottom: var(--space-2); }
+.orderBlockActions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-4); }
 .confirmationActions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-6); }
 @media (max-width: 960px) { .layout { grid-template-columns: 1fr; gap: var(--space-6); } .summary { position: static; } }
 @media (max-width: 600px) {

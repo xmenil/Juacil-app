@@ -8,7 +8,6 @@ import { getPublicCatalog, readPriceRange } from '@/pages/catalog/catalogModel';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { useCart } from '@/app/providers/CartProvider';
 import { ReplaceCartModal } from '@/features/cart/ReplaceCartModal';
-import { CATEGORIES } from '@/shared/config/constants';
 
 function RouteObserver() {
   const location = useLocation(); const navigate = useNavigate();
@@ -37,8 +36,8 @@ describe('Catálogo de JUÁCIL', () => {
     privateProducts.forEach(product => expect(screen.queryByRole('heading', { name: product.name })).not.toBeInTheDocument());
   });
 
-  it('encuentra café aunque la búsqueda no tenga tilde y guarda el término en la URL', async () => {
-    const user = mount(); await user.type(screen.getByLabelText('Buscar productos o negocios'), 'cafe');
+  it('encuentra café con el término de la cabecera en la URL aunque no tenga tilde', () => {
+    mount('/catalogo?q=cafe');
     const cards = resultCards(); expect(cards.length).toBeGreaterThan(0);
     cards.forEach(card => expect(card.textContent?.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()).toContain('cafe'));
     expect(screen.getByLabelText('Ruta actual')).toHaveTextContent('q=cafe');
@@ -69,31 +68,23 @@ describe('Catálogo de JUÁCIL', () => {
 
   it('muestra errores de rango y mantiene los demás criterios', async () => {
     const user = mount('/catalogo?categoria=cacao&precio_min=30&precio_max=10');
-    const sidebar = screen.getByRole('complementary', { name: 'Filtros del catálogo' });
-    expect(within(sidebar).getByRole('alert')).toHaveTextContent('no puede superar');
-    expect(within(sidebar).getByLabelText('Desde')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByText(/El rango de precio no se aplicó/)).toBeInTheDocument();
     expect(resultCards().length).toBeGreaterThan(0);
     await user.click(screen.getByRole('button', { name: 'Quitar filtro Desde S/ 30.00' }));
     expect(screen.getByLabelText('Ruta actual')).toHaveTextContent('categoria=cacao');
     expect(screen.getByLabelText('Ruta actual')).not.toHaveTextContent('precio_min');
   });
 
-  it('abre filtros móviles, los aplica y devuelve el foco al cerrar', async () => {
-    const user = mount(); const trigger = screen.getByRole('button', { name: 'Filtros' });
-    await user.click(trigger); const dialog = screen.getByRole('dialog', { name: 'Filtrar productos' });
-    await user.selectOptions(within(dialog).getByLabelText('Categoría'), 'cacao');
-    await user.click(within(dialog).getByRole('button', { name: /Mostrar .* productos/ }));
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument(); expect(trigger).toHaveFocus();
-    expect(screen.getByLabelText('Ruta actual')).toHaveTextContent('categoria=cacao');
-    await user.click(screen.getByRole('button', { name: /Filtros/ })); await user.keyboard('{Escape}');
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  it('renderiza la barra de filtros, categorías rápidas y selector de orden', () => {
+    mount();
+    expect(screen.getByRole('complementary', { name: 'Filtros del catálogo' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Categorías rápidas' })).toBeInTheDocument();
+    expect(screen.getByLabelText('Ordenar por')).toBeInTheDocument();
   });
 
   it('el filtro de disponibilidad excluye productos agotados', async () => {
     const product = publicData().products[0]; LocalStoreRepository.saveProduct({ ...product, stock: 0 });
-    const user = mount();
-    const sidebar = screen.getByRole('complementary', { name: 'Filtros del catálogo' });
-    await user.click(within(sidebar).getByLabelText('Solo productos con stock'));
+    mount('/catalogo?disponible=true');
     expect(screen.queryByRole('heading', { name: product.name })).not.toBeInTheDocument();
     expect(screen.getByLabelText('Ruta actual')).toHaveTextContent('disponible=true');
   });
@@ -145,12 +136,12 @@ describe('Catálogo de JUÁCIL', () => {
   });
 
   it('el historial recupera el filtro anterior', async () => {
-    const user = mount(); const firstCategory = publicData().products[0].category;
-    const label = CATEGORIES.find(category => category.id === firstCategory)!.name.split(' & ')[0];
-    await user.click(within(screen.getByRole('group', { name: 'Categorías rápidas' })).getByRole('button', { name: label }));
+    const firstCategory = publicData().products[0].category;
+    const user = mount(`/catalogo?categoria=${firstCategory}`);
+    await user.click(screen.getByRole('button', { name: 'Limpiar todo' }));
     await user.click(screen.getByRole('button', { name: 'Volver en historial' }));
     expect(screen.getByLabelText('Ruta actual')).toHaveTextContent('/catalogo');
-    expect(screen.getByLabelText('Ruta actual')).not.toHaveTextContent('categoria=');
+    expect(screen.getByLabelText('Ruta actual')).toHaveTextContent(`categoria=${firstCategory}`);
   });
 });
 

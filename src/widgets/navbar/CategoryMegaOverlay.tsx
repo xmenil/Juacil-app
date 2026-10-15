@@ -7,9 +7,11 @@ import {
   Coffee,
   Sun,
   Apple,
-  Feather,
-  ShieldCheck,
-  Wine,
+  Footprints,
+  Shirt,
+  Hammer,
+  Boxes,
+  Smartphone,
   ArrowRight,
   Store,
   Tag,
@@ -53,17 +55,52 @@ export const CategoryMegaOverlay: React.FC<CategoryMegaOverlayProps> = ({ isOpen
 
   const categories: CategoryItem[] = [
     {
+      id: 'calzado-moda',
+      name: 'Calzado & Zapatillas',
+      badge: 'Moda & Deporte',
+      description: 'Zapatillas urbanas, running, calzado escolar, sandalias y botas de jebe para el campo.',
+      icon: <Footprints size={22} />,
+    },
+    {
+      id: 'ropa-textil',
+      name: 'Ropa & Polos',
+      badge: 'Confección',
+      description: 'Polos de algodón, deportivos dry-fit, jeans clásicos, pantalones cargo y casacas.',
+      icon: <Shirt size={22} />,
+    },
+    {
+      id: 'ferreteria',
+      name: 'Ferretería & Herramientas',
+      badge: 'Trabajo & Obra',
+      description: 'Taladros percutores, machetes agrícolas, juegos de llaves, carretillas y candados.',
+      icon: <Hammer size={22} />,
+    },
+    {
+      id: 'plastiqueria',
+      name: 'Plastiquería & Contenedores',
+      badge: 'Hogar & Negocio',
+      description: 'Baldes plásticos reforzados, sillas de alto tránsito y recipientes herméticos.',
+      icon: <Boxes size={22} />,
+    },
+    {
+      id: 'tecnologia',
+      name: 'Tecnología & Celulares',
+      badge: 'Garantía',
+      description: 'Auriculares inalámbricos, parlantes bluetooth, smartwatches, power banks y USB.',
+      icon: <Smartphone size={22} />,
+    },
+    {
       id: 'abarrotes',
       name: 'Abarrotes & Canasta Básica',
       badge: 'Esencial',
-      description: 'Arroz, azúcar, aceites, fideos, menestras y conservas familiares y mayoristas.',
+      description: 'Arroz superior, azúcar rubia de caña, aceites vegetales y fideos clásicos.',
       icon: <ShoppingBasket size={22} />,
     },
     {
       id: 'hogar',
-      name: 'Hogar, Papelería & Limpieza',
+      name: 'Hogar & Limpieza',
       badge: 'Empresas & Hogar',
-      description: 'Papel higiénico, servilletas, detergentes, lejía y útiles de aseo.',
+      description: 'Papel higiénico suave pack familiar y detergentes multiuso poder activo.',
       icon: <Sparkles size={22} />,
     },
     {
@@ -75,45 +112,17 @@ export const CategoryMegaOverlay: React.FC<CategoryMegaOverlayProps> = ({ isOpen
     },
     {
       id: 'cacao',
-      name: 'Cacao, Chocolate & Confitería',
+      name: 'Cacao, Chocolate & Miel',
       badge: 'Cacao Nativo',
-      description: 'Tabletas al 70%, pasta pura para taza tradicional y nibs crocantes.',
-      icon: <Sparkles size={22} />,
-    },
-    {
-      id: 'miel',
-      name: 'Miel Pura & Apicultura',
-      badge: '100% Virgen',
-      description: 'Miel de monte de la Bella Durmiente, propóleo silvestre y polen puro.',
+      description: 'Tabletas al 70%, pasta pura para taza, nibs y miel pura de monte.',
       icon: <Sun size={22} />,
     },
     {
       id: 'frutas',
       name: 'Frutas, Chifles & Snacks',
       badge: 'Crocantes',
-      description: 'Chifles de plátano bellaco de Castillo Grande, frutas deshidratadas y snacks.',
+      description: 'Chifles de plátano bellaco de Castillo Grande, frutas y licores típicos.',
       icon: <Apple size={22} />,
-    },
-    {
-      id: 'licores',
-      name: 'Bebidas & Licores Amazónicos',
-      badge: 'Tradicional',
-      description: 'Uvachado, 7 Raíces, chuchuhuasi y macerados típicos de Tingo María.',
-      icon: <Wine size={22} />,
-    },
-    {
-      id: 'artesania',
-      name: 'Artesanías & Cultura Amazónica',
-      badge: 'Hecho a Mano',
-      description: 'Tallados en madera noble, huayruro y recuerdos emblemáticos de la selva.',
-      icon: <Feather size={22} />,
-    },
-    {
-      id: 'superfoods',
-      name: 'Superfoods & Derivados del Campo',
-      badge: 'Nutrición',
-      description: 'Sacha inchi, harina de plátano, aguaje y productos naturales de Leoncio Prado.',
-      icon: <ShieldCheck size={22} />,
     },
   ];
 
@@ -137,8 +146,8 @@ export const CategoryMegaOverlay: React.FC<CategoryMegaOverlayProps> = ({ isOpen
             <span className={styles.eyebrow}>Explorador de Categorías</span>
             <h2 className={styles.title}>Todas las Categorías de JUÁCIL</h2>
             <p className={styles.subtitle}>
-              Todo lo que necesitas en un solo lugar: de la canasta familiar y abarrotes para empresas y hogares,
-              hasta los cafés de especialidad, cacao fino y artesanías de la Amazonía.
+              Todo lo que necesitas en un solo lugar: calzado, ropa, herramientas de trabajo, ferretería,
+              plastiquería, tecnología, abarrotes y productos del campo de Tingo María.
             </p>
           </div>
           <button
