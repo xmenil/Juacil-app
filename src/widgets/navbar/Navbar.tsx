@@ -35,7 +35,7 @@ import styles from './Navbar.module.css';
 export const Navbar: React.FC = () => {
   const { itemCount, lastAdded } = useCart();
   const [cartAnimate, setCartAnimate] = useState(false);
-  const { currentUser, logout } = useSession();
+  const { currentUser, logout, loginAs } = useSession();
   const { isOnline } = useConnectivity();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesModalOpen, setCategoriesModalOpen] = useState(false);

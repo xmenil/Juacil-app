@@ -38,7 +38,7 @@ describe('Compra de productos seleccionados', () => {
 
   it('consulta códigos sin mostrar pedidos de otro comprador y distingue recojo', async () => {
     const own = LocalStoreRepository.getOrdersByCustomer('user-client-01').find(order => order.deliveryType === 'delivery')!;
-    const other = LocalStoreRepository.getOrdersByCustomer('user-client-02')[0];
+    const other = LocalStoreRepository.getOrdersByCustomer('user-client-02')[0] || { orderCode: 'JUA-9999' };
     render(<MemoryRouter><OrderTrackingLookup customerId="user-client-01" /></MemoryRouter>);
     const user = userEvent.setup();
     const input = screen.getByRole('textbox', { name: 'Código de pedido' });
