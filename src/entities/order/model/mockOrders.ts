@@ -41,9 +41,9 @@ export const MOCK_ORDERS: Order[] = [
     businessId: 'biz-cacao-miel',
     businessName: 'Chocolates & Miel Bella Durmiente',
     businessWhatsapp: '962881234',
-    customerId: 'user-client-02',
-    customerName: 'Carlos Mendoza Silva',
-    customerPhone: '992345678',
+    customerId: 'user-client-01',
+    customerName: 'Lucía Ramos Córdova',
+    customerPhone: '984512301',
     deliveryType: 'pickup',
     notes: 'Pasaré a recoger el sábado al local frente a la plaza de armas de Tingo María.',
     items: [

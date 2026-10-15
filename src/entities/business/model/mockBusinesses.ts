@@ -107,7 +107,7 @@ export const MOCK_BUSINESSES: Business[] = [
     ruc: '20608912345',
     logoUrl: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=200&q=80',
     bannerUrl: 'https://images.unsplash.com/photo-1614088685112-0a760b71a3c8?auto=format&fit=crop&w=1200&q=80',
-    ownerId: 'user-merchant-02',
+    ownerId: 'user-merchant-01',
     onboardingStep: 4,
     createdAt: '2026-01-15T08:00:00.000Z',
     status: 'active',

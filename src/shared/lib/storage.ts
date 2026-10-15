@@ -34,6 +34,15 @@ function getInitialData(): StorageSchema {
 export class LocalStoreRepository {
   private static load(): StorageSchema {
     try {
+      // Limpiar versiones anteriores obsoletas de almacenamiento
+      try {
+        localStorage.removeItem('juacil_app_store_v2.4');
+        localStorage.removeItem('juacil_app_store_v2.3');
+        localStorage.removeItem('juacil_app_store_v2.2');
+        localStorage.removeItem('juacil_app_store_v2.1');
+        localStorage.removeItem('juacil_app_store_v2.0');
+      } catch {}
+
       const serialized = localStorage.getItem(STORAGE_KEY);
       if (!serialized) {
         const initial = getInitialData();
@@ -41,7 +50,7 @@ export class LocalStoreRepository {
         return initial;
       }
       const parsed = JSON.parse(serialized) as StorageSchema;
-      if (!parsed || parsed.version !== '2.5.0' || !Array.isArray(parsed.products)) {
+      if (!parsed || parsed.version !== '2.5.0' || !Array.isArray(parsed.products) || !Array.isArray(parsed.users)) {
         console.warn('Almacenamiento local incompatible o corrupto. Restaurando estado seguro.');
         const initial = getInitialData();
         this.save(initial);

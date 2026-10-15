@@ -191,6 +191,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearCart = () => {
     setCart(EMPTY_CART);
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(EMPTY_CART));
+    } catch {}
   };
 
   return (

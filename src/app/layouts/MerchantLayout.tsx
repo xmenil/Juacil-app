@@ -4,6 +4,7 @@ import { LayoutDashboard, ShoppingBag, Package, Store, ArrowUpRight, LogOut } fr
 import { useSession } from '@/app/providers/SessionProvider';
 import { LocalStoreRepository } from '@/shared/lib/storage';
 import { ROUTES } from '@/shared/config/routes';
+import { DemoUserSwitcher } from '@/features/auth/DemoUserSwitcher';
 import styles from './MerchantLayout.module.css';
 
 const navigation = [
@@ -32,7 +33,9 @@ export const MerchantLayout: React.FC = () => {
   };
 
   return (
-    <div className={styles.merchantRoot}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh' }}>
+      <DemoUserSwitcher />
+      <div className={styles.merchantRoot}>
       <a href="#merchant-content" className={styles.skipLink}>Ir al contenido</a>
       <aside className={styles.sidebar} aria-label="Panel de tienda">
         <Link to={`${ROUTES.MERCHANT_DASHBOARD}?tab=reportes`} className={styles.brand} aria-label="JUÁCIL, resumen de tu tienda">
@@ -85,5 +88,6 @@ export const MerchantLayout: React.FC = () => {
         <footer className={styles.footer}>JUÁCIL · Negocios de la Selva Central</footer>
       </div>
     </div>
+  </div>
   );
 };
