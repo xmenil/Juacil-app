@@ -16,7 +16,7 @@ export const MOCK_ORDERS: Order[] = [
     items: [
       {
         productId: 'prod-cafe-01',
-        productName: 'Café de Especialidad Valle del Monzón 250g',
+        productName: 'Café Valle del Monzón 250g',
         productImageUrl: 'https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=600&q=80',
         unitPriceCents: 2300,
         quantity: 2,
@@ -49,7 +49,7 @@ export const MOCK_ORDERS: Order[] = [
     items: [
       {
         productId: 'prod-cacao-01',
-        productName: 'Tableta de Chocolate 70% Cacao Fino Tingo María 80g',
+        productName: 'Chocolate Bitter 70% 80g',
         productImageUrl: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=600&q=80',
         unitPriceCents: 1600,
         quantity: 3,
@@ -57,7 +57,7 @@ export const MOCK_ORDERS: Order[] = [
       },
       {
         productId: 'prod-cacao-02',
-        productName: 'Miel Pura de Monte de la Bella Durmiente 500g',
+        productName: 'Miel de Monte Pura 500g',
         productImageUrl: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=600&q=80',
         unitPriceCents: 2600,
         quantity: 1,

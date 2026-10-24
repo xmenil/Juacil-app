@@ -7,7 +7,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-calzado-01',
     businessId: 'biz-calzados-tingo',
-    name: 'Zapatillas Urbanas Cuero Blanco & Verde Tingo',
+    name: 'Zapatillas Urbanas Blancas',
     category: 'calzado-moda',
     priceCents: 12900, // S/ 129.00
     stock: 24,
@@ -22,7 +22,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-calzado-02',
     businessId: 'biz-calzados-tingo',
-    name: 'Zapatillas de Running Transpirables Ultra Grip',
+    name: 'Zapatillas Running Deportivas',
     category: 'calzado-moda',
     priceCents: 14500, // S/ 145.00
     stock: 18,
@@ -37,7 +37,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-calzado-03',
     businessId: 'biz-calzados-tingo',
-    name: 'Botas de Jebe Negras de Caña Alta para Campo',
+    name: 'Botas de Jebe Negras',
     category: 'calzado-moda',
     priceCents: 4200, // S/ 42.00
     stock: 50,
@@ -52,7 +52,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-calzado-04',
     businessId: 'biz-calzados-tingo',
-    name: 'Sandalias de Cuero Genuino Hechas a Mano',
+    name: 'Sandalias de Cuero Marrón',
     category: 'calzado-moda',
     priceCents: 6800, // S/ 68.00
     stock: 22,
@@ -67,7 +67,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-calzado-05',
     businessId: 'biz-calzados-tingo',
-    name: 'Zapatos Escolares de Cuero Lustrado con Pasadores',
+    name: 'Zapatos Escolares de Cuero',
     category: 'calzado-moda',
     priceCents: 8500, // S/ 85.00
     stock: 30,
@@ -86,7 +86,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-ropa-01',
     businessId: 'biz-confecciones-tingo',
-    name: 'Pack x3 Polos Clásicos de Algodón Cuello Redondo',
+    name: 'Pack x3 Polos de Algodón',
     category: 'ropa-textil',
     priceCents: 5800, // S/ 58.00
     stock: 40,
@@ -101,7 +101,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-ropa-02',
     businessId: 'biz-confecciones-tingo',
-    name: 'Polo Deportivo Dry-Fit Verde Lima Antitranspirante',
+    name: 'Polo Deportivo Dry-Fit',
     category: 'ropa-textil',
     priceCents: 3200, // S/ 32.00
     stock: 35,
@@ -116,7 +116,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-ropa-03',
     businessId: 'biz-confecciones-tingo',
-    name: 'Pantalón Jean Clásico Denim 14oz Costura Reforzada',
+    name: 'Pantalón Jean Clásico',
     category: 'ropa-textil',
     priceCents: 7900, // S/ 79.00
     stock: 25,
@@ -131,7 +131,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-ropa-04',
     businessId: 'biz-confecciones-tingo',
-    name: 'Pantalón Cargo Drill Verde Oliva Multibolsillos',
+    name: 'Pantalón Cargo Drill',
     category: 'ropa-textil',
     priceCents: 7500, // S/ 75.00
     stock: 28,
@@ -146,7 +146,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-ropa-05',
     businessId: 'biz-confecciones-tingo',
-    name: 'Casaca Cortaviento Impermeable con Capucha Selva',
+    name: 'Casaca Cortaviento Impermeable',
     category: 'ropa-textil',
     priceCents: 8900, // S/ 89.00
     stock: 20,
@@ -165,7 +165,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-ferr-01',
     businessId: 'biz-ferreteria-tingo',
-    name: 'Taladro Percutor Eléctrico Industrial 850W Mandril 13mm',
+    name: 'Taladro Percutor 850W',
     category: 'ferreteria',
     priceCents: 18500, // S/ 185.00
     stock: 12,
@@ -180,7 +180,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-ferr-02',
     businessId: 'biz-ferreteria-tingo',
-    name: 'Machete Agrícola Selva Acero Forjado Mango Madera 22"',
+    name: 'Machete Agrícola 22"',
     category: 'ferreteria',
     priceCents: 3800, // S/ 38.00
     stock: 45,
@@ -195,7 +195,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-ferr-03',
     businessId: 'biz-ferreteria-tingo',
-    name: 'Juego de Llaves y Dados Mecánicos 46 Piezas en Maletín',
+    name: 'Juego de Dados y Llaves 46 pcs',
     category: 'ferreteria',
     priceCents: 9500, // S/ 95.00
     stock: 16,
@@ -210,7 +210,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-ferr-04',
     businessId: 'biz-ferreteria-tingo',
-    name: 'Carretilla de Construcción Tolva Metálica Reforzada',
+    name: 'Carretilla Tolva Reforzada',
     category: 'ferreteria',
     priceCents: 16000, // S/ 160.00
     stock: 10,
@@ -225,7 +225,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-ferr-05',
     businessId: 'biz-ferreteria-tingo',
-    name: 'Candado de Alta Seguridad Latón Macizo 50mm con 3 Llaves',
+    name: 'Candado de Latón 50mm',
     category: 'ferreteria',
     priceCents: 2500, // S/ 25.00
     stock: 35,
@@ -244,7 +244,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-plast-01',
     businessId: 'biz-plastiqueria-tingo',
-    name: 'Balde Plástico Industrial Reforzado 20L con Manija Metálica',
+    name: 'Balde Industrial 20 Litros',
     category: 'plastiqueria',
     priceCents: 1800, // S/ 18.00
     stock: 60,
@@ -259,7 +259,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-plast-02',
     businessId: 'biz-plastiqueria-tingo',
-    name: 'Silla Plástica Monobloc Alto Tránsito Blanca',
+    name: 'Silla Monobloc Blanca',
     category: 'plastiqueria',
     priceCents: 3200, // S/ 32.00
     stock: 40,
@@ -274,7 +274,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-plast-03',
     businessId: 'biz-plastiqueria-tingo',
-    name: 'Set de 4 Recipientes Herméticos para Alimentos con Tapa Click',
+    name: 'Recipientes Herméticos x4',
     category: 'plastiqueria',
     priceCents: 2400, // S/ 24.00
     stock: 35,
@@ -289,7 +289,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-plast-04',
     businessId: 'biz-plastiqueria-tingo',
-    name: 'Canasta / Cesto Plástico para Ropa y Lavandería 50L',
+    name: 'Cesto para Ropa 50L',
     category: 'plastiqueria',
     priceCents: 2800, // S/ 28.00
     stock: 25,
@@ -308,7 +308,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-tec-01',
     businessId: 'biz-tecnologia-tingo',
-    name: 'Auriculares Inalámbricos Bluetooth con Cancelación de Ruido',
+    name: 'Auriculares Bluetooth',
     category: 'tecnologia',
     priceCents: 8900, // S/ 89.00
     stock: 18,
@@ -323,7 +323,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-tec-02',
     businessId: 'biz-tecnologia-tingo',
-    name: 'Parlante Bluetooth Portátil Resistente al Agua IPX7',
+    name: 'Parlante Bluetooth IPX7',
     category: 'tecnologia',
     priceCents: 11000, // S/ 110.00
     stock: 15,
@@ -338,7 +338,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-tec-03',
     businessId: 'biz-tecnologia-tingo',
-    name: 'Batería Portátil Power Bank 20,000mAh Carga Rápida 22.5W',
+    name: 'Power Bank 20,000 mAh',
     category: 'tecnologia',
     priceCents: 7500, // S/ 75.00
     stock: 22,
@@ -353,7 +353,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-tec-04',
     businessId: 'biz-tecnologia-tingo',
-    name: 'Smartwatch Deportivo con Monitor Cardíaco y Notificaciones',
+    name: 'Smartwatch Deportivo',
     category: 'tecnologia',
     priceCents: 9800, // S/ 98.00
     stock: 14,
@@ -368,7 +368,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-tec-05',
     businessId: 'biz-tecnologia-tingo',
-    name: 'Memoria USB Flash 64GB 3.0 Metálica Resistente al Agua',
+    name: 'Memoria USB 64GB',
     category: 'tecnologia',
     priceCents: 2800, // S/ 28.00
     stock: 40,
@@ -387,7 +387,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-abarrotes-01',
     businessId: 'biz-distribuidora-tingo',
-    name: 'Saco de Arroz Extra Superior Añejo 5kg',
+    name: 'Arroz Extra Superior 5kg',
     category: 'abarrotes',
     priceCents: 2350, // S/ 23.50
     stock: 60,
@@ -402,7 +402,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-hogar-01',
     businessId: 'biz-distribuidora-tingo',
-    name: 'Papel Higiénico Doble Hoja Suave Pack 12 Rollos',
+    name: 'Papel Higiénico x12 Rollos',
     category: 'hogar',
     priceCents: 1700, // S/ 17.00
     stock: 45,
@@ -417,7 +417,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-abarrotes-02',
     businessId: 'biz-distribuidora-tingo',
-    name: 'Aceite Vegetal 100% Puro de Soya 1 Litro',
+    name: 'Aceite Vegetal 1 Litro',
     category: 'abarrotes',
     priceCents: 850, // S/ 8.50
     stock: 50,
@@ -432,7 +432,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-abarrotes-03',
     businessId: 'biz-distribuidora-tingo',
-    name: 'Fideos Spaghetti Clásico Especial 1kg',
+    name: 'Fideos Spaghetti 1kg',
     category: 'abarrotes',
     priceCents: 490, // S/ 4.90
     stock: 80,
@@ -447,7 +447,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-hogar-02',
     businessId: 'biz-distribuidora-tingo',
-    name: 'Detergente Multiuso Poder Activo Floral 2.5kg',
+    name: 'Detergente Multiuso 2.5kg',
     category: 'hogar',
     priceCents: 1450, // S/ 14.50
     stock: 35,
@@ -462,7 +462,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-abarrotes-04',
     businessId: 'biz-distribuidora-tingo',
-    name: 'Azúcar Rubia Doméstica Especial de Caña 5kg',
+    name: 'Azúcar Rubia 5kg',
     category: 'abarrotes',
     priceCents: 2000, // S/ 20.00
     stock: 40,
@@ -481,7 +481,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-cacao-01',
     businessId: 'biz-cacao-miel',
-    name: 'Tableta de Chocolate 70% Cacao Fino Tingo María 80g',
+    name: 'Chocolate Bitter 70% 80g',
     category: 'cacao',
     priceCents: 1600, // S/ 16.00
     stock: 25,
@@ -496,7 +496,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-cacao-02',
     businessId: 'biz-cacao-miel',
-    name: 'Miel Pura de Monte de la Bella Durmiente 500g',
+    name: 'Miel de Monte Pura 500g',
     category: 'cacao',
     priceCents: 2600, // S/ 26.00
     stock: 14,
@@ -511,7 +511,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-cacao-03',
     businessId: 'biz-cacao-miel',
-    name: 'Nibs de Cacao Fino Tostado de Tingo María 200g',
+    name: 'Nibs de Cacao 200g',
     category: 'cacao',
     priceCents: 1750, // S/ 17.50
     stock: 18,
@@ -526,7 +526,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-cacao-04',
     businessId: 'biz-cacao-miel',
-    name: 'Pasta Tradicional de Cacao Puro para Taza 250g',
+    name: 'Pasta de Cacao para Taza 250g',
     category: 'cacao',
     priceCents: 1400, // S/ 14.00
     stock: 20,
@@ -545,7 +545,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-cafe-01',
     businessId: 'biz-cafe-aroma',
-    name: 'Café de Especialidad Valle del Monzón 250g',
+    name: 'Café Valle del Monzón 250g',
     category: 'cafe',
     priceCents: 2300, // S/ 23.00
     stock: 16,
@@ -560,7 +560,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-cafe-02',
     businessId: 'biz-cafe-aroma',
-    name: 'Café Microlote Castillo Grande Lavado 250g',
+    name: 'Café Castillo Grande 250g',
     category: 'cafe',
     priceCents: 3200, // S/ 32.00
     stock: 15,
@@ -579,7 +579,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-fruta-01',
     businessId: 'biz-castillo-grande',
-    name: 'Chifles Crocantes de Plátano Bellaco Castillo Grande 150g',
+    name: 'Chifles de Plátano 150g',
     category: 'frutas',
     priceCents: 750, // S/ 7.50
     stock: 40,
@@ -594,7 +594,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-fruta-02',
     businessId: 'biz-castillo-grande',
-    name: 'Chifles Dulces de Plátano Maduro de Leoncio Prado 150g',
+    name: 'Chifles Dulces 150g',
     category: 'frutas',
     priceCents: 800, // S/ 8.00
     stock: 28,
@@ -609,7 +609,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-fruta-03',
     businessId: 'biz-castillo-grande',
-    name: 'Aceite Virgen de Sacha Inchi Prensado en Frío 250ml',
+    name: 'Aceite Sacha Inchi 250ml',
     category: 'frutas',
     priceCents: 3200, // S/ 32.00
     stock: 9,
@@ -628,7 +628,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-arte-01',
     businessId: 'biz-yanesha-arte',
-    name: 'Licor Tradicional Uvachado de Tingo María 500ml',
+    name: 'Licor Uvachado 500ml',
     category: 'frutas',
     priceCents: 2800, // S/ 28.00
     stock: 15,
@@ -643,7 +643,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-arte-02',
     businessId: 'biz-yanesha-arte',
-    name: 'Licor Afrodisíaco 7 Raíces de la Selva 500ml',
+    name: 'Licor 7 Raíces 500ml',
     category: 'frutas',
     priceCents: 3000, // S/ 30.00
     stock: 12,
