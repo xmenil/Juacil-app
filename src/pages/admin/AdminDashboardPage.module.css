@@ -111,4 +111,35 @@
   .formGrid, .detailGrid { grid-template-columns: 1fr; }
   .reviewList li { padding: var(--space-4); flex-wrap: wrap; }
 }
+.kpiBar { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6); }
+.kpiCard { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); }
+.kpiLabel { font-size: var(--text-xs); color: var(--color-text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.kpiValue { font-size: var(--text-2xl); font-weight: 700; color: var(--color-primary-950); font-family: var(--font-display); }
+.kpiSub { font-size: var(--text-xs); color: var(--color-text-muted); }
+
+.surveySectionTitle { font-size: var(--text-lg); font-weight: 600; color: var(--color-primary-950); margin: var(--space-6) 0 var(--space-4); display: flex; align-items: center; justify-content: space-between; }
+.surveyQuestionsGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-8); }
+.questionStatCard { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); transition: border-color 0.2s; }
+.questionStatCard:hover { border-color: var(--color-primary-600); }
+.questionTop { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); }
+.questionNum { background: var(--color-primary-100); color: var(--color-primary-900); font-weight: 700; font-size: var(--text-xs); padding: 2px 8px; border-radius: 12px; }
+.questionScore { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; font-size: var(--text-sm); color: var(--color-primary-800); }
+.questionTitle { font-size: var(--text-xs); color: var(--color-text-main); font-weight: 600; line-height: 1.4; margin: 0; }
+.questionDim { font-size: 11px; color: var(--color-text-muted); font-weight: 500; }
+
+.barTrack { width: 100%; height: 8px; background: var(--color-surface-subtle, #f1f5f9); border-radius: 4px; overflow: hidden; }
+.barFill { height: 100%; background: linear-gradient(90deg, var(--color-primary-600), var(--color-primary-400)); border-radius: 4px; transition: width 0.3s ease; }
+
+.distRow { display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: var(--color-text-muted); padding-top: var(--space-1); border-top: 1px dashed var(--color-border-subtle); }
+.distPill { display: inline-flex; align-items: center; gap: 2px; }
+
+.surveyModalList { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-4); max-height: 60vh; overflow-y: auto; padding-right: var(--space-2); }
+.surveyModalItem { padding: var(--space-3); background: var(--color-surface-subtle); border-radius: var(--radius-sm); border-left: 3px solid var(--color-primary-700); }
+.surveyModalItemHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.surveyModalQNum { font-size: 11px; font-weight: 700; color: var(--color-primary-900); }
+.surveyModalDim { font-size: 10px; color: var(--color-text-muted); }
+.surveyModalQTitle { font-size: 12.5px; color: var(--color-text-main); font-weight: 500; margin: 2px 0 6px; }
+.surveyModalAns { font-size: 12px; font-weight: 700; color: var(--color-primary-800); background: #fff; padding: 4px 8px; border-radius: 4px; display: inline-block; border: 1px solid var(--color-border); }
+
 @media (prefers-reduced-motion: reduce) { .page *, .page *::before, .page *::after { animation: none !important; transition: none !important; } }
+

@@ -34,6 +34,7 @@ export const ROUTES = {
   ADMIN_USERS: '/admin/usuarios',
   ADMIN_STORES: '/admin/tiendas',
   ADMIN_ORDERS: '/admin/pedidos',
+  ADMIN_SURVEYS: '/admin/encuestas',
   
   // Errores
   FORBIDDEN: '/403',

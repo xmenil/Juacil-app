@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { LayoutDashboard, Store, Users, ShoppingBag, ArrowUpRight, LogOut } from 'lucide-react';
+import { LayoutDashboard, Store, Users, ShoppingBag, ArrowUpRight, LogOut, BarChart3 } from 'lucide-react';
 import { useSession } from '@/app/providers/SessionProvider';
 import { getAdminSection } from '@/pages/admin/adminNavigation';
 import { ROUTES } from '@/shared/config/routes';
@@ -12,6 +12,7 @@ const navigation = [
   { id: 'tiendas', label: 'Tiendas', to: ROUTES.ADMIN_STORES, icon: Store },
   { id: 'usuarios', label: 'Usuarios', to: ROUTES.ADMIN_USERS, icon: Users },
   { id: 'pedidos', label: 'Pedidos', to: ROUTES.ADMIN_ORDERS, icon: ShoppingBag },
+  { id: 'encuestas', label: 'Encuestas UX', to: ROUTES.ADMIN_SURVEYS, icon: BarChart3 },
 ] as const;
 
 export const AdminLayout: React.FC = () => {

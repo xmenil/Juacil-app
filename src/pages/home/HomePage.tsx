@@ -55,25 +55,25 @@ export const HomePage: React.FC = () => {
       id: 'plastiqueria',
       title: 'Plastiquería y hogar',
       icon: Boxes,
-      imageUrl: 'https://live.staticflickr.com/4029/4378675576_38ac9b699c_b.jpg',
+      imageUrl: '/images/products/prod_balde_plastico_1792869898399.jpg',
     },
     {
       id: 'tecnologia',
       title: 'Tecnología y celulares',
       icon: Smartphone,
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Bose_QuietComfort_35_II_Wireless_Headphones.jpg',
+      imageUrl: '/images/products/prod_auriculares_bluetooth_1792870212802.jpg',
     },
     {
       id: 'abarrotes',
       title: 'Abarrotes y canasta básica',
       icon: ShoppingBasket,
-      imageUrl: '/images/hero-cart-groceries.jpg',
+      imageUrl: '/images/products/prod_arroz_saco_1792870049422.jpg',
     },
     {
       id: 'hogar',
       title: 'Hogar y limpieza',
       icon: Sparkles,
-      imageUrl: '/images/hero-stacked-goods.jpg',
+      imageUrl: '/images/products/prod_papel_higienico_1792870086439.jpg',
     },
     {
       id: 'cafe',
@@ -91,7 +91,7 @@ export const HomePage: React.FC = () => {
       id: 'frutas',
       title: 'Frutas y snacks selva',
       icon: Apple,
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/PLANTAIN_CHIPS.jpg',
+      imageUrl: '/images/products/prod_chifles_bellaco_1792870167740.jpg',
     },
   ];
 

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, Navigate, useLocation, useSearchParams } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, Check, Download, Plus, Search, Store, Users, ShoppingBag, Pause, Trash2, RotateCcw } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, Download, Plus, Search, Store, Users, ShoppingBag, Pause, Trash2, RotateCcw, BarChart3, Star, FileText } from 'lucide-react';
 import { useSession } from '@/app/providers/SessionProvider';
 import { LocalStoreRepository } from '@/shared/lib/storage';
+import { SurveyRepository, type SurveySubmission, QUESTION_DEFINITIONS } from '@/entities/survey/model/surveyRepository';
 import { formatMoney } from '@/shared/lib/money';
 import { formatDateTime } from '@/shared/lib/date';
 import { CATEGORIES } from '@/shared/config/constants';
@@ -32,6 +33,7 @@ const headings = {
   tiendas: { title: 'Tiendas de la comunidad', description: 'Consulta las MYPES registradas y gestiona su estado en la plataforma.' },
   usuarios: { title: 'Usuarios y accesos', description: 'Gestiona cuentas de clientes, emprendedores y administradores.' },
   pedidos: { title: 'Pedidos de la plataforma', description: 'Consulta las compras registradas y su estado. Los importes corresponden a pedidos demo.' },
+  encuestas: { title: 'Validación de Usabilidad (UX)', description: 'Estadísticas y análisis de las 10 preguntas de validación para el informe de innovación (Capítulo III).' },
 };
 
 function StoreStatus({ business }: { business: Business }) {
@@ -51,6 +53,35 @@ function downloadDemoData(businesses: Business[], users: User[], products: Retur
   anchor.click(); URL.revokeObjectURL(url);
 }
 
+function downloadSurveyCSV(submissions: SurveySubmission[]) {
+  const headers = ['ID', 'Evaluador', 'Perfil', 'Dispositivo', 'Fecha', 'Puntaje_Total (10-50)', 'Porcentaje (%)', 'P1_Navegacion', 'P2_Catalogo', 'P3_Busqueda', 'P4_Carrito', 'P5_Checkout', 'P6_WhatsApp', 'P7_Celular', 'P8_Velocidad', 'P9_Utilidad_MYPE', 'P10_Recomendacion'];
+  const rows = submissions.map(s => [
+    s.id,
+    `"${s.respondentName}"`,
+    s.respondentType === 'merchant' ? 'Emprendedor MYPE' : 'Cliente Comprador',
+    s.device,
+    s.date.slice(0, 10),
+    s.score,
+    `${s.percentage}%`,
+    `"${s.answers.q1 || ''}"`,
+    `"${s.answers.q2 || ''}"`,
+    `"${s.answers.q3 || ''}"`,
+    `"${s.answers.q4 || ''}"`,
+    `"${s.answers.q5 || ''}"`,
+    `"${s.answers.q6 || ''}"`,
+    `"${s.answers.q7 || ''}"`,
+    `"${s.answers.q8 || ''}"`,
+    `"${s.answers.q9 || ''}"`,
+    `"${s.answers.q10 || ''}"`,
+  ]);
+  const csvContent = '\uFEFF' + [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url; anchor.download = `juacil-resultados-encuesta-${new Date().toISOString().slice(0, 10)}.csv`;
+  anchor.click(); URL.revokeObjectURL(url);
+}
+
 export const AdminDashboardPage: React.FC = () => {
   const { currentUser, isAdmin } = useSession();
   const location = useLocation();
@@ -62,10 +93,13 @@ export const AdminDashboardPage: React.FC = () => {
   const [creating, setCreating] = useState<'store' | 'user' | null>(null);
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
   const [detail, setDetail] = useState<Order | null>(null);
+  const [surveyDetail, setSurveyDetail] = useState<SurveySubmission | null>(null);
   const businesses = LocalStoreRepository.getBusinesses();
   const users = LocalStoreRepository.getUsers();
   const orders = LocalStoreRepository.getOrders().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const products = LocalStoreRepository.getProducts(true);
+  const surveyStats = SurveyRepository.getStatistics();
+  const surveySubmissions = SurveyRepository.getAll();
   const query = params.get('q') || '';
   const statusFilter = params.get('estado') || 'all';
   const roleFilter = params.get('rol') || 'all';
@@ -78,6 +112,10 @@ export const AdminDashboardPage: React.FC = () => {
   const filteredStores = businesses.filter(b => matches(b.name, b.location, categoryName(b.category)) && (statusFilter === 'all' || (b.status || 'active') === statusFilter));
   const filteredUsers = users.filter(u => matches(u.name, u.email, u.phone) && (roleFilter === 'all' || u.role === roleFilter) && (statusFilter === 'all' || (u.status || 'active') === statusFilter));
   const filteredOrders = orders.filter(o => matches(o.orderCode, o.businessName, o.customerName) && (statusFilter === 'all' || o.status === statusFilter));
+  const filteredSurveys = surveySubmissions.filter(s =>
+    matches(s.respondentName, s.device, s.score.toString(), s.percentage.toString()) &&
+    (roleFilter === 'all' || s.respondentType === roleFilter)
+  );
 
   if (!isAdmin) return <Navigate to="/403" replace />;
   const updateFilter = (key: string, value: string) => {
@@ -135,7 +173,7 @@ export const AdminDashboardPage: React.FC = () => {
       <button className={styles.deleteButton} aria-label={`Eliminar usuario ${user.name}`} title="Eliminar usuario" onClick={() => setConfirmation({ kind: 'delete-user', user })}><Trash2 size={17} aria-hidden="true" /></button>
     </>}
   </div>;
-  const count = section === 'tiendas' ? filteredStores.length : section === 'usuarios' ? filteredUsers.length : filteredOrders.length;
+  const count = section === 'tiendas' ? filteredStores.length : section === 'usuarios' ? filteredUsers.length : section === 'encuestas' ? filteredSurveys.length : filteredOrders.length;
   const confirmationTitle = confirmation?.kind === 'delete-store' ? 'Eliminar tienda' : confirmation?.kind === 'delete-user' ? 'Eliminar usuario' : confirmation?.status === 'suspended' ? 'Confirmar suspensión' : 'Confirmar activación';
   const candidateName = confirmation && ('business' in confirmation ? confirmation.business.name : confirmation.user.name);
 
@@ -144,6 +182,7 @@ export const AdminDashboardPage: React.FC = () => {
       <div><p className={styles.eyebrow}>JUÁCIL / {section === 'resumen' ? 'Resumen general' : 'Gestión'}</p><h1>{headings[section].title}</h1><p className={styles.description}>{headings[section].description}</p></div>
       {section === 'tiendas' ? <Button leftIcon={<Plus size={18} />} onClick={() => setCreating('store')}>Registrar tienda</Button>
         : section === 'usuarios' ? <Button leftIcon={<Plus size={18} />} onClick={() => setCreating('user')}>Crear usuario</Button>
+        : section === 'encuestas' ? <div className={styles.actions}><Button variant="outline" leftIcon={<Download size={17} />} onClick={() => { downloadSurveyCSV(filteredSurveys); setNotice('Se descargó el informe de encuestas en formato CSV.'); }}>Exportar CSV</Button><Link to="/ayuda#encuesta" target="_blank" className={styles.textLink}><FileText size={15} /> Probar Encuesta (Web)</Link></div>
         : <Button variant="outline" leftIcon={<Download size={17} />} onClick={exportData}>Exportar datos</Button>}
     </header>
     {notice && <div className={styles.notice} role="status"><Check size={18} aria-hidden="true" /><span>{notice}</span><button aria-label="Cerrar confirmación" onClick={() => setNotice('')}>Cerrar</button></div>}
@@ -153,8 +192,8 @@ export const AdminDashboardPage: React.FC = () => {
       <dl className={styles.metrics}>
         <div><dt>Tiendas activas</dt><dd>{activeStores.length}<span>de {businesses.length} registradas</span></dd></div>
         <div><dt>Usuarios</dt><dd>{users.length}<span>{users.filter(u => u.role === 'merchant').length} emprendedores</span></dd></div>
-        <div><dt>Pedidos registrados</dt><dd>{orders.length}<span>{orders.filter(o => o.status === 'pendiente').length} pendientes de confirmación</span></dd></div>
-        <div><dt>Importe de pedidos entregados</dt><dd className={styles.money}>{formatMoney(deliveredTotal)}<span>Acumulado de la demostración</span></dd></div>
+        <div><dt>Pedidos registrados</dt><dd>{orders.length}<span>{orders.filter(o => o.status === 'pendiente').length} pendientes · {formatMoney(deliveredTotal)} entregados</span></dd></div>
+        <div><dt>Validación de Usabilidad</dt><dd className={styles.money} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Star size={20} fill="#f59e0b" color="#f59e0b" /> {surveyStats.avgScoreOutOf5}<span>{surveyStats.totalCount} encuestas · {surveyStats.globalPercentage}% UX</span></dd></div>
       </dl>
       <div className={styles.overviewGrid}>
         <section className={styles.panel}>
@@ -168,6 +207,7 @@ export const AdminDashboardPage: React.FC = () => {
           <Link to="/admin/tiendas"><Store size={23} aria-hidden="true" /><div><strong>Tiendas y emprendimientos</strong><span>{businesses.length} negocios registrados</span></div><ArrowUpRight size={18} aria-hidden="true" /></Link>
           <Link to="/admin/usuarios"><Users size={23} aria-hidden="true" /><div><strong>Cuentas de usuario</strong><span>Clientes, emprendedores y administradores</span></div><ArrowUpRight size={18} aria-hidden="true" /></Link>
           <Link to="/admin/pedidos"><ShoppingBag size={23} aria-hidden="true" /><div><strong>Pedidos de la plataforma</strong><span>Consulta estados y detalles de compra</span></div><ArrowUpRight size={18} aria-hidden="true" /></Link>
+          <Link to="/admin/encuestas"><BarChart3 size={23} aria-hidden="true" /><div><strong>Validación de Usabilidad (UX)</strong><span>{surveyStats.totalCount} encuestas · {surveyStats.avgScoreOutOf5} / 5.0 ⭐ ({surveyStats.validationLevel})</span></div><ArrowUpRight size={18} aria-hidden="true" /></Link>
         </section>
       </div>
       <section className={styles.panel}>
@@ -175,6 +215,127 @@ export const AdminDashboardPage: React.FC = () => {
         {orders.length ? <ul className={styles.recentOrders}>{orders.slice(0, 5).map(o => <li key={o.id}><button className={styles.orderLink} onClick={() => setDetail(o)}>{o.orderCode}<span>{o.businessName}</span></button><span className={styles.recentCustomer}>{o.customerName}</span><OrderStatusBadge status={o.status} /><strong className={styles.money}>{formatMoney(o.totalCents)}</strong></li>)}</ul>
           : <div className={styles.calmState}><p>Los pedidos aparecerán cuando un cliente confirme una compra demo.</p></div>}
       </section>
+    </> : section === 'encuestas' ? <>
+      <div className={styles.kpiBar}>
+        <div className={styles.kpiCard}>
+          <span className={styles.kpiLabel}>Total Evaluadores</span>
+          <span className={styles.kpiValue}>{surveyStats.totalCount}</span>
+          <span className={styles.kpiSub}>{surveyStats.clientCount} clientes · {surveyStats.merchantCount} comerciantes MYPE</span>
+        </div>
+        <div className={styles.kpiCard}>
+          <span className={styles.kpiLabel}>Índice Global UX</span>
+          <span className={styles.kpiValue} style={{ color: 'var(--color-primary-800)' }}>{surveyStats.globalPercentage}%</span>
+          <span className={styles.kpiSub}>{surveyStats.avgScore} de 50 puntos promedio</span>
+        </div>
+        <div className={styles.kpiCard}>
+          <span className={styles.kpiLabel}>Puntuación Promedio</span>
+          <span className={styles.kpiValue} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Star size={24} fill="#f59e0b" color="#f59e0b" /> {surveyStats.avgScoreOutOf5} <small style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-text-muted)' }}>/ 5.0</small>
+          </span>
+          <span className={styles.kpiSub}>{surveyStats.validationLevel}</span>
+        </div>
+        <div className={styles.kpiCard}>
+          <span className={styles.kpiLabel}>Disposición de Adopción (P10)</span>
+          <span className={styles.kpiValue} style={{ color: '#16a34a' }}>{surveyStats.recommendationRate}%</span>
+          <span className={styles.kpiSub}>Compradores y MYPES dispuestos a usar JUÁCIL</span>
+        </div>
+      </div>
+
+      <div className={styles.surveySectionTitle}>
+        <span>Estadísticas por Dimensión de Usabilidad (10 Preguntas Cerradas)</span>
+        <Badge variant="success">Baremo Académico Capítulo III</Badge>
+      </div>
+      <div className={styles.surveyQuestionsGrid}>
+        {surveyStats.questions.map((q) => (
+          <div key={q.key} className={styles.questionStatCard}>
+            <div className={styles.questionTop}>
+              <span className={styles.questionNum}>P{q.num}</span>
+              <span className={styles.questionDim}>{q.dimension}</span>
+              <span className={styles.questionScore}>
+                <Star size={13} fill="#f59e0b" color="#f59e0b" /> {q.avgScore} <small>/ 5</small>
+              </span>
+            </div>
+            <p className={styles.questionTitle}>{q.title}</p>
+            <div className={styles.barTrack} title={`${q.percentage}% satisfacción`}>
+              <div className={styles.barFill} style={{ width: `${q.percentage}%` }} />
+            </div>
+            <div className={styles.distRow}>
+              <span className={styles.distPill}><strong>5★:</strong> {q.distribution[5]}</span>
+              <span className={styles.distPill}><strong>4★:</strong> {q.distribution[4]}</span>
+              <span className={styles.distPill}><strong>3★:</strong> {q.distribution[3]}</span>
+              <span className={styles.distPill}><strong>2★:</strong> {q.distribution[2]}</span>
+              <span className={styles.distPill}><strong>1★:</strong> {q.distribution[1]}</span>
+              <span style={{ fontWeight: 700, color: 'var(--color-primary-800)' }}>{q.percentage}%</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <section className={styles.panel} aria-label="Respuestas individuales de clientes">
+        <div className={styles.panelHeader}>
+          <div>
+            <h2>Registro de Respuestas de Campo</h2>
+            <p>Tabulación individual para el análisis del Capítulo III de Innovación II</p>
+          </div>
+          <Button variant="outline" leftIcon={<Download size={16} />} onClick={() => { downloadSurveyCSV(filteredSurveys); setNotice('Se descargó el archivo CSV de encuestas.'); }}>
+            Exportar CSV
+          </Button>
+        </div>
+        <div className={styles.filters}>
+          <Input id="admin-search-survey" label="Buscar evaluador" leftIcon={<Search size={17} />} value={query} onChange={e => updateFilter('q', e.target.value)} placeholder="Nombre o dispositivo..." />
+          <Select id="admin-role-survey" label="Perfil de evaluador" value={roleFilter} onChange={e => updateFilter('rol', e.target.value)} options={[{ value: 'all', label: 'Todos los perfiles' }, { value: 'cliente', label: 'Clientes compradores' }, { value: 'merchant', label: 'Comerciantes MYPE' }]} />
+          {(query || roleFilter !== 'all') && <Button variant="ghost" leftIcon={<RotateCcw size={16} />} onClick={clearFilters}>Limpiar</Button>}
+        </div>
+        <div className={styles.resultCount} role="status">{filteredSurveys.length} evaluaciones registradas</div>
+        
+        <div className={styles.tableWrap}>
+          <table className={styles.table}>
+            <caption className="sr-only">Respuestas de encuestas</caption>
+            <thead>
+              <tr>
+                <th scope="col">ID / Evaluador</th>
+                <th scope="col">Perfil</th>
+                <th scope="col">Dispositivo</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Puntaje</th>
+                <th scope="col">Índice UX</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredSurveys.map(s => (
+                <tr key={s.id}>
+                  <td data-label="ID / Evaluador">
+                    <strong>{s.respondentName}</strong>
+                    <span className={styles.cellSub}>{s.id}</span>
+                  </td>
+                  <td data-label="Perfil">
+                    <Badge variant={s.respondentType === 'merchant' ? 'info' : 'neutral'}>
+                      {s.respondentType === 'merchant' ? 'Comerciante MYPE' : 'Cliente Comprador'}
+                    </Badge>
+                  </td>
+                  <td data-label="Dispositivo">{s.device}</td>
+                  <td data-label="Fecha">{s.date.slice(0, 10)}</td>
+                  <td data-label="Puntaje">
+                    <strong>{s.score} / 50 pts</strong>
+                  </td>
+                  <td data-label="Índice UX">
+                    <Badge variant={s.score >= 42 ? 'success' : s.score >= 34 ? 'warning' : 'danger'}>
+                      {s.percentage}% {s.score >= 42 ? 'Excelente' : s.score >= 34 ? 'Aceptable' : 'Regular'}
+                    </Badge>
+                  </td>
+                  <td data-label="Acciones">
+                    <Button variant="outline" size="sm" onClick={() => setSurveyDetail(s)}>
+                      Ver 10 respuestas
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <p className={styles.localNote}>Las respuestas se registran al escanear el QR o completar el formulario en /ayuda#encuesta.</p>
     </> : <>
       <section className={styles.panel} aria-label={headings[section].title}>
         <div className={styles.filters}>
@@ -244,6 +405,40 @@ export const AdminDashboardPage: React.FC = () => {
       {detail.notes && <p><strong>Notas:</strong> {detail.notes}</p>}
       <h3>Historial de estados</h3><ol className={styles.history}>{detail.statusHistory.map((event, index) => <li key={index}><strong>{ORDER_STATUS_LABELS[event.status]}</strong><span>{formatDateTime(event.timestamp)}</span>{event.note && <p>{event.note}</p>}</li>)}</ol>
       <p className={styles.muted}>Consulta administrativa. El negocio gestiona los cambios de estado desde su panel.</p></div>}
+    </Modal>
+
+    <Modal isOpen={!!surveyDetail} onClose={() => setSurveyDetail(null)} title={surveyDetail ? `Respuestas de ${surveyDetail.respondentName}` : 'Detalle de la evaluación'} size="lg">
+      {surveyDetail && <div>
+        <div style={{ marginBottom: '16px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
+          <Badge variant={surveyDetail.respondentType === 'merchant' ? 'info' : 'neutral'}>
+            {surveyDetail.respondentType === 'merchant' ? 'Comerciante MYPE' : 'Cliente Comprador'}
+          </Badge>
+          <span style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Dispositivo: <strong>{surveyDetail.device}</strong></span>
+          <span style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Fecha: <strong>{surveyDetail.date.slice(0, 10)}</strong></span>
+          <strong style={{ marginLeft: 'auto', fontSize: '15px', color: 'var(--color-primary-900)' }}>
+            {surveyDetail.score} / 50 puntos ({surveyDetail.percentage}%)
+          </strong>
+        </div>
+
+        <div className={styles.surveyModalList}>
+          {QUESTION_DEFINITIONS.map(q => (
+            <div key={q.key} className={styles.surveyModalItem}>
+              <div className={styles.surveyModalItemHeader}>
+                <span className={styles.surveyModalQNum}>Pregunta {q.num}</span>
+                <span className={styles.surveyModalDim}>{q.dimension}</span>
+              </div>
+              <p className={styles.surveyModalQTitle}>{q.title}</p>
+              <div className={styles.surveyModalAns}>
+                ✓ Opción elegida: <strong>{surveyDetail.answers[q.key] || 'Sin respuesta'}</strong>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+          <Button onClick={() => setSurveyDetail(null)}>Cerrar</Button>
+        </div>
+      </div>}
     </Modal>
   </div>;
 };

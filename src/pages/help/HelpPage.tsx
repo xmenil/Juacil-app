@@ -5,131 +5,62 @@ import styles from './HelpPage.module.css';
 import { Link, useLocation } from 'react-router-dom';
 import { Alert } from '@/shared/ui/Alert';
 import { ROUTES } from '@/shared/config/routes';
+import { SurveyRepository } from '@/entities/survey/model/surveyRepository';
 
-interface SurveyAnswers {
-  q1: string;
-  q2: string;
-  q3: string;
-  q4: string;
-  q5: string;
-  q6: string;
-  q7: string;
-  q8: string;
-  q9: string;
-  q10: string;
-}
+type SurveyKey = 'q1' | 'q2' | 'q3' | 'q4' | 'q5' | 'q6' | 'q7' | 'q8' | 'q9' | 'q10';
+type SurveyAnswers = Record<SurveyKey, string>;
 
 const surveyQuestions: { key: keyof SurveyAnswers; title: string; options: string[] }[] = [
   {
-    "key": "q1",
-    "title": "¿Qué tan útil considera JUÁCIL para las MYPES?",
-    "options": [
-      "Muy útil",
-      "Útil",
-      "Regular",
-      "Poco útil",
-      "Nada útil"
-    ]
+    key: 'q1',
+    title: '¿Qué tan fácil e intuitivo le resultó navegar y explorar las secciones de la plataforma JUÁCIL?',
+    options: ['Muy fácil', 'Fácil', 'Regular', 'Difícil', 'Muy difícil'],
   },
   {
-    "key": "q2",
-    "title": "¿Qué tan clara le parece la presentación de los productos?",
-    "options": [
-      "Muy clara",
-      "Clara",
-      "Regular",
-      "Poco clara",
-      "Nada clara"
-    ]
+    key: 'q2',
+    title: '¿Qué tan clara y comprensible le pareció la presentación de los productos (fotografías, precios y descripciones)?',
+    options: ['Muy clara', 'Clara', 'Regular', 'Poco clara', 'Nada clara'],
   },
   {
-    "key": "q3",
-    "title": "¿Qué tan fácil considera encontrar información como precio, fotografía y características?",
-    "options": [
-      "Muy fácil",
-      "Fácil",
-      "Regular",
-      "Difícil",
-      "Muy difícil"
-    ]
+    key: 'q3',
+    title: '¿Qué tan fácil le resultó encontrar tiendas o productos de su interés según su rubro o categoría?',
+    options: ['Muy fácil', 'Fácil', 'Regular', 'Difícil', 'Muy difícil'],
   },
   {
-    "key": "q4",
-    "title": "¿Considera que JUÁCIL facilitaría la comunicación entre el cliente y la MYPE?",
-    "options": [
-      "Sí, bastante",
-      "Sí, un poco",
-      "No estoy seguro(a)",
-      "Poco",
-      "No"
-    ]
+    key: 'q4',
+    title: 'Al seleccionar productos, ¿qué tan sencillo y comprensible fue para usted agregar y revisar los artículos en el carrito?',
+    options: ['Muy sencillo', 'Sencillo', 'Regular', 'Complicado', 'Muy complicado'],
   },
   {
-    "key": "q5",
-    "title": "¿Qué tan sencillo considera el proceso para realizar un pedido?",
-    "options": [
-      "Muy sencillo",
-      "Sencillo",
-      "Regular",
-      "Difícil",
-      "Muy difícil"
-    ]
+    key: 'q5',
+    title: 'Al momento de ingresar sus datos para generar el pedido, ¿qué tan rápido y claro le resultó este paso?',
+    options: ['Muy rápido y claro', 'Rápido y claro', 'Regular', 'Lento o confuso', 'Muy lento o confuso'],
   },
   {
-    "key": "q6",
-    "title": "¿Considera que JUÁCIL ayudaría a una MYPE a llegar a más clientes?",
-    "options": [
-      "Sí, bastante",
-      "Sí, en cierta medida",
-      "No estoy seguro(a)",
-      "Poco",
-      "No"
-    ]
+    key: 'q6',
+    title: '¿Qué tan práctico considera el envío automático del pedido directamente al WhatsApp del comerciante?',
+    options: ['Muy práctico', 'Práctico', 'Regular', 'Poco práctico', 'Nada práctico'],
   },
   {
-    "key": "q7",
-    "title": "¿Qué tan fácil considera utilizar JUÁCIL desde un celular?",
-    "options": [
-      "Muy fácil",
-      "Fácil",
-      "Regular",
-      "Difícil",
-      "Muy difícil"
-    ]
+    key: 'q7',
+    title: '¿Qué tan cómoda y fluida fue su experiencia al utilizar JUÁCIL desde su teléfono móvil?',
+    options: ['Muy cómoda y fluida', 'Cómoda', 'Regular', 'Incómoda', 'Muy incómoda'],
   },
   {
-    "key": "q8",
-    "title": "¿Considera que JUÁCIL facilitaría la digitalización de las ventas de las MYPES?",
-    "options": [
-      "Totalmente de acuerdo",
-      "De acuerdo",
-      "Ni de acuerdo ni en desacuerdo",
-      "En desacuerdo",
-      "Totalmente en desacuerdo"
-    ]
+    key: 'q8',
+    title: '¿Qué tan rápida y estable percibió la respuesta de la aplicación al interactuar con imágenes, filtros y botones?',
+    options: ['Muy rápida y estable', 'Rápida', 'Regular', 'Lenta', 'Muy lenta'],
   },
   {
-    "key": "q9",
-    "title": "Después de conocer JUÁCIL, ¿qué tan dispuesto(a) estaría a utilizarlo?",
-    "options": [
-      "Muy dispuesto(a)",
-      "Dispuesto(a)",
-      "Indeciso(a)",
-      "Poco dispuesto(a)",
-      "Nada dispuesto(a)"
-    ]
+    key: 'q9',
+    title: '¿En qué medida considera que JUÁCIL facilitará a los pequeños negocios de la región vender por internet y llegar a más clientes?',
+    options: ['En gran medida', 'En buena medida', 'De forma moderada', 'En poca medida', 'Nada'],
   },
   {
-    "key": "q10",
-    "title": "¿Qué aspecto considera que debería mejorarse principalmente?",
-    "options": [
-      "Diseño y presentación",
-      "Facilidad de uso",
-      "Información de los productos",
-      "Proceso de pedidos",
-      "Comunicación con el vendedor"
-    ]
-  }
+    key: 'q10',
+    title: 'Tomando en cuenta toda su experiencia general, ¿qué tan dispuesto(a) estaría a utilizar o recomendar JUÁCIL en la localidad?',
+    options: ['Totalmente dispuesto(a)', 'Dispuesto(a)', 'Indeciso(a)', 'Poco dispuesto(a)', 'Nada dispuesto(a)'],
+  },
 ];
 
 export const HelpPage: React.FC = () => {
@@ -168,7 +99,19 @@ export const HelpPage: React.FC = () => {
     }
     setShowErrors(false);
     setIsSurveySubmitted(true);
+    try {
+      SurveyRepository.addSubmission(answers as Record<string, string>, 'cliente');
+    } catch {}
   };
+
+  const totalScore = Object.entries(answers).reduce((acc, [key, val]) => {
+    const q = surveyQuestions.find((sq) => sq.key === key);
+    if (!q) return acc;
+    const idx = q.options.indexOf(val);
+    if (idx === -1) return acc;
+    return acc + (5 - idx);
+  }, 0);
+  const usabilityPercent = Math.max(0, Math.min(100, Math.round(((totalScore - 10) / 40) * 100)));
 
   return (
     <div className={styles.page}>
@@ -241,16 +184,40 @@ export const HelpPage: React.FC = () => {
         ) : (
           <div className={styles.survey} id="encuesta">
             <div className={styles.surveyIntro}>
-              <h2 className={styles.groupTitle}>Cuéntanos cómo te fue</h2>
-              <p>Responde estas 10 preguntas después de probar JUÁCIL.</p>
-              <p className={styles.demoNote}>Esta encuesta es demostrativa. Las respuestas permanecen mientras esta página siga abierta; no se envían a un equipo ni se guardan al recargar.</p>
-              <p className={styles.sourceNote}>Cuestionario de evaluación del proyecto JUÁCIL.</p>
+              <h2 className={styles.groupTitle}>Instrumento de Validación de Usabilidad</h2>
+              <p>Responde estas 10 preguntas cerradas sobre tu experiencia al probar la plataforma JUÁCIL.</p>
+              <p className={styles.demoNote}>Evaluación de experiencia de usuario (UX) para el proyecto de innovación.</p>
+              <p className={styles.sourceNote}>Cuestionario oficial del Proyecto JUÁCIL — Selva Central.</p>
             </div>
             {isSurveySubmitted ? (
               <div className={styles.result}>
-                <CheckCircle2 size={32} className={styles.successIcon} aria-hidden="true" />
+                <CheckCircle2 size={36} className={styles.successIcon} aria-hidden="true" />
                 <h3 ref={resultRef} tabIndex={-1} className={styles.resultTitle}>Terminaste la encuesta demo</h3>
-                <p>Puedes revisar tus respuestas mientras esta página siga abierta. No se enviaron ni se guardan al recargar.</p>
+                
+                <div style={{
+                  background: 'var(--color-primary-50, #f0fdf4)',
+                  border: '1px solid var(--color-primary-200, #bbf7d0)',
+                  borderRadius: '10px',
+                  padding: '16px 20px',
+                  margin: '12px 0'
+                }}>
+                  <div style={{ fontSize: '13px', color: '#166534', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Resultado de Evaluación de Usabilidad (UX)
+                  </div>
+                  <div style={{ fontSize: '26px', fontWeight: 800, color: 'var(--color-primary-950, #0c3e25)', margin: '4px 0' }}>
+                    {totalScore} / 50 puntos ({usabilityPercent}%)
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#15803d', fontWeight: 600 }}>
+                    {totalScore >= 42 ? '⭐ Nivel Excelente: Usabilidad Alta y Validación Favorable' :
+                     totalScore >= 34 ? '✅ Nivel Aceptable: Usabilidad Moderada' :
+                     totalScore >= 26 ? '⚠️ Nivel Regular: Se sugieren ajustes menores' :
+                     '❌ Nivel Crítico: Requiere optimización de funciones'}
+                  </div>
+                  <p style={{ margin: '8px 0 0', fontSize: '12px', color: '#4b5563' }}>
+                    Tus respuestas han sido procesadas para la evaluación estadística del Capítulo III (Validación de Resultados) del proyecto JUÁCIL.
+                  </p>
+                </div>
+
                 <div className={styles.resultActions}>
                   <Button type="button" onClick={() => {
                     setIsSurveySubmitted(false);

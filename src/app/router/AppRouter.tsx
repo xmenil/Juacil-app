@@ -75,6 +75,7 @@ export const router = createBrowserRouter([
           { path: 'usuarios', element: <AdminDashboardPage /> },
           { path: 'tiendas', element: <AdminDashboardPage /> },
           { path: 'pedidos', element: <AdminDashboardPage /> },
+          { path: 'encuestas', element: <AdminDashboardPage /> },
         ],
       },
     ],
